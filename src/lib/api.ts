@@ -33,7 +33,10 @@ export interface GetEventSessionsParams {
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 
-async function http<T>(path: string, init?: RequestInit & { timeout?: number }): Promise<T> {
+async function http<T>(
+  path: string,
+  init?: RequestInit & { timeout?: number },
+): Promise<T> {
   const timeout = init?.timeout ?? DEFAULT_TIMEOUT_MS;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
@@ -61,7 +64,7 @@ async function http<T>(path: string, init?: RequestInit & { timeout?: number }):
     }
 
     const text = await res.text();
-    return text ? JSON.parse(text) as T : ({} as T);
+    return text ? (JSON.parse(text) as T) : ({} as T);
   } catch (err) {
     if (err instanceof Error && err.name === "AbortError") {
       throw new Error(`Request timed out after ${timeout}ms`);
@@ -82,15 +85,14 @@ export const api = {
     if (params?.limit) searchParams.set("limit", params.limit.toString());
     if (params?.upcoming !== undefined)
       searchParams.set("upcoming", params.upcoming.toString());
-    
+
     const query = searchParams.toString();
     return http<PaginatedResponse<EventSummaryDto>>(
-      `/api/events${query ? `?${query}` : ""}`
+      `/api/events${query ? `?${query}` : ""}`,
     );
   },
 
-  getEvent: (eventId: string) =>
-    http<EventDetailDto>(`/api/events/${eventId}`),
+  getEvent: (eventId: string) => http<EventDetailDto>(`/api/events/${eventId}`),
 
   // Sessions
   getEventSessions: (eventId: string, params?: GetEventSessionsParams) => {
@@ -98,10 +100,10 @@ export const api = {
     if (params?.room) searchParams.set("room", params.room);
     if (params?.liveOnly)
       searchParams.set("liveOnly", params.liveOnly.toString());
-    
+
     const query = searchParams.toString();
     return http<{ data: SessionSummaryDto[] }>(
-      `/api/events/${eventId}/sessions${query ? `?${query}` : ""}`
+      `/api/events/${eventId}/sessions${query ? `?${query}` : ""}`,
     );
   },
 
@@ -114,13 +116,16 @@ export const api = {
 
   getRoomSessions: (eventId: string, roomName: string) =>
     http<{ data: SessionSummaryDto[] }>(
-      `/api/events/${eventId}/rooms/${encodeURIComponent(roomName)}/sessions`
+      `/api/events/${eventId}/rooms/${encodeURIComponent(roomName)}/sessions`,
     ),
 };
 
 // ============= Helpers =============
 
-export function isEventLive(event: { startDate: string; endDate: string }): boolean {
+export function isEventLive(event: {
+  startDate: string;
+  endDate: string;
+}): boolean {
   const now = new Date();
   return now >= new Date(event.startDate) && now <= new Date(event.endDate);
 }
