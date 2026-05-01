@@ -2,7 +2,6 @@ import prisma from "@/lib/db/prisma";
 import { getSessionStatus } from "@/lib/utils/getSessionStatus";
 import { isValidUUID } from "@/lib/utils/validation";
 import { QuestionDto } from "@/types";
-import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 
 export async function GET(
