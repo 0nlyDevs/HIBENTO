@@ -27,7 +27,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<{
     100,
     Math.max(1, parseInt(searchParams.get("limit") || "20"))
   );
-  const upcoming = searchParams.get("upcoming") !== "false";
+  const upcoming = searchParams.get("upcoming") === "true";
 
   const skip = (page - 1) * limit;
 
