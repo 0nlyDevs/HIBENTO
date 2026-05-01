@@ -29,7 +29,7 @@ model Event {
   rooms    Room[]
   sessions Session[]
 
-  @@map("events")
+  @@map("event")
 }
 
 model Room {
@@ -43,7 +43,7 @@ model Room {
 
   @@unique([eventId, name])
   @@index([eventId])
-  @@map("rooms")
+  @@map("room")
 }
 
 model Speaker {
@@ -57,7 +57,7 @@ model Speaker {
   links    SpeakerExternalLink[]
   sessions SessionSpeaker[]
 
-  @@map("speakers")
+  @@map("speaker")
 }
 
 model SpeakerExternalLink {
@@ -69,7 +69,7 @@ model SpeakerExternalLink {
 
   speaker Speaker @relation(fields: [speakerId], references: [id], onDelete: Cascade)
 
-  @@map("speaker_external_links")
+  @@map("speaker_external_link")
 }
 
 model Session {
@@ -92,7 +92,7 @@ model Session {
   @@index([eventId])
   @@index([startTime])
   @@index([roomId])
-  @@map("sessions")
+  @@map("session")
 }
 
 model SessionSpeaker {
@@ -104,7 +104,7 @@ model SessionSpeaker {
   speaker Speaker @relation(fields: [speakerId], references: [id], onDelete: Cascade)
 
   @@id([sessionId, speakerId])
-  @@map("session_speakers")
+  @@map("session_speaker")
 }
 
 model Question {
@@ -119,5 +119,5 @@ model Question {
 
   @@index([sessionId])
   @@index([upvotes])
-  @@map("questions")
+  @@map("question")
 }
