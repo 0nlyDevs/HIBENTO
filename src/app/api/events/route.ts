@@ -10,7 +10,7 @@ type EventWithCount = {
   startDate: Date;
   endDate: Date;
   location: string | null;
-  sessions: { id: string }[];  // ← Fixed this line
+  sessions: { id: string }[];  
 };
 
 export async function GET(request: NextRequest): Promise<NextResponse<{
