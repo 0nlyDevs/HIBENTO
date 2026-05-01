@@ -1,0 +1,76 @@
+import type { Session } from "@/generated/prisma/client";
+
+// ==================== PAGINATION UTILITIES ====================
+export interface PaginationOptions {
+  page?: number;
+  limit?: number;
+}
+
+export interface PaginationResult {
+  skip: number;
+  take: number;
+}
+
+export function getPagination(options: PaginationOptions): PaginationResult {
+  const page = Math.max(1, options.page || 1);
+  const limit = Math.min(100, Math.max(1, options.limit || 20));
+  return {
+    skip: (page - 1) * limit,
+    take: limit,
+  };
+}
+
+// ==================== SESSION UTILITIES ====================
+export function isSessionLive(session: Pick<Session, "startTime" | "endTime">): boolean {
+  const now = new Date();
+  return now >= session.startTime && now <= session.endTime;
+}
+
+export function getSessionStatus(
+  session: Pick<Session, "startTime" | "endTime">
+): "live" | "upcoming" | "ended" {
+  const now = new Date();
+  if (now < session.startTime) return "upcoming";
+  if (now > session.endTime) return "ended";
+  return "live";
+}
+
+// ==================== DATE UTILITIES ====================
+export function toISOString(date: Date): string {
+  return date.toISOString();
+}
+
+export function fromISOString(isoString: string): Date {
+  return new Date(isoString);
+}
+
+// ==================== RESPONSE UTILITIES ====================
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
+export function createSuccessResponse<T>(data: T): ApiResponse<T> {
+  return { success: true, data };
+}
+
+export function createErrorResponse(error: string): ApiResponse {
+  return { success: false, error };
+}
+
+// ==================== TYPE GUARDS ====================
+export function isValidUUID(str: string): boolean {
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(str);
+}
+
+export function isValidUrl(str: string): boolean {
+  try {
+    new URL(str);
+    return true;
+  } catch {
+    return false;
+  }
+}

@@ -1,7 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/db/prisma";
+import prisma from "../../../lib/db/prisma";
+import type { EventSummaryDto } from "@/types";
 
-export async function GET(request: NextRequest) {
+
+type EventWithCount = {
+  id: string;
+  title: string;
+  description: string | null;
+  startDate: Date;
+  endDate: Date;
+  location: string | null;
+  sessions: { id: string }[];  // ← Fixed this line
+};
+
+export async function GET(request: NextRequest): Promise<NextResponse<{
+  data: EventSummaryDto[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+  };
+}>> {
   const { searchParams } = new URL(request.url);
   const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
   const limit = Math.min(
@@ -12,7 +31,12 @@ export async function GET(request: NextRequest) {
 
   const skip = (page - 1) * limit;
 
-  const where: { startDate?: { gte: Date } } = {};
+  const where: {
+    startDate?: {
+      gte: Date;
+    };
+  } = {};
+  
   if (upcoming) {
     where.startDate = { gte: new Date() };
   }
@@ -22,30 +46,24 @@ export async function GET(request: NextRequest) {
       where,
       skip,
       take: limit,
-      orderBy: { startDate: "asc" },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        startDate: true,
-        endDate: true,
-        location: true,
-        _count: {
-          select: { sessions: true },
-        },
-      },
+      orderBy: { startDate: "asc" as const },
+      include: {
+        sessions: {
+          select: { id: true } 
+        }
+      }
     }),
     prisma.event.count({ where }),
   ]);
 
-  const data = events.map((event) => ({
+  const data: EventSummaryDto[] = events.map((event:EventWithCount) => ({
     id: event.id,
     title: event.title,
     description: event.description,
     startDate: event.startDate.toISOString(),
     endDate: event.endDate.toISOString(),
     location: event.location,
-    sessionCount: event._count.sessions,
+    sessionCount: event.sessions.length,
   }));
 
   return NextResponse.json({
