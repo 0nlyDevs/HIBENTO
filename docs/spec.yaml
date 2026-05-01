@@ -1,14 +1,14 @@
 openapi: 3.0.3
 info:
-  title: EventSync API
+  title: HiBento API
   description: |
-    EventSync is a real-time event management and participant engagement platform.
+    HiBento is a real-time event management and participant engagement platform.
     It replaces static supports (PDF, paper programs) with a dynamic interface allowing
     easy navigation through an event and interaction with sessions.
   version: 1.0.0
 
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:3000/api
     description: Local development server
 
 tags:
@@ -181,7 +181,7 @@ paths:
                 speakers:
                   - id: "spk_1"
                     name: "Jane Doe"
-                    avatar: "https://cdn.eventsync.com/avatars/jane_doe.jpg"
+                    avatar: "https://cdn.HiBento.com/avatars/jane_doe.jpg"
                     bio: "Tech lead at WebCorp"
                 questions: []
         '404':
@@ -276,12 +276,12 @@ paths:
                 data:
                   - id: "spk_1"
                     name: "Jane Doe"
-                    avatar: "https://cdn.eventsync.com/avatars/jane_doe.jpg"
+                    avatar: "https://cdn.HiBento.com/avatars/jane_doe.jpg"
                     bio: "Tech lead at WebCorp"
                     sessionCount: 3
                   - id: "spk_2"
                     name: "John Smith"
-                    avatar: "https://cdn.eventsync.com/avatars/john_smith.jpg"
+                    avatar: "https://cdn.HiBento.com/avatars/john_smith.jpg"
                     bio: "Rust core contributor"
                     sessionCount: 2
                 pagination:
@@ -307,7 +307,7 @@ paths:
               example:
                 id: "spk_1"
                 name: "Jane Doe"
-                avatar: "https://cdn.eventsync.com/avatars/jane_doe.jpg"
+                avatar: "https://cdn.HiBento.com/avatars/jane_doe.jpg"
                 bio: "Jane is a tech lead at WebCorp with 10+ years of experience in web technologies."
                 externalLinks:
                   - type: "twitter"
