@@ -1,6 +1,13 @@
-import type { Event, Room, Speaker, SpeakerExternalLink, Session, SessionSpeaker, Question } from "@/generated/prisma/client";
+import type {
+  Event,
+  Room,
+  Speaker,
+  SpeakerExternalLink,
+  Session,
+  SessionSpeaker,
+  Question,
+} from "@prisma/client";
 
-// Re-export Prisma generated types
 export type {
   Event,
   Room,
@@ -11,7 +18,6 @@ export type {
   Question,
 };
 
-// Extended types with relations
 export type EventWithRelations = Event & {
   rooms?: Room[];
   sessions?: Session[];

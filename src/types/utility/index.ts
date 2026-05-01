@@ -1,4 +1,4 @@
-import type { Session } from "@/generated/prisma/client";
+import type { Session } from "@prisma/client";
 
 // ==================== PAGINATION UTILITIES ====================
 export interface PaginationOptions {
