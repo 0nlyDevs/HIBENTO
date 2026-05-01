@@ -1,0 +1,914 @@
+openapi: 3.0.3
+info:
+  title: EventSync API
+  description: |
+    EventSync is a real-time event management and participant engagement platform.
+    It replaces static supports (PDF, paper programs) with a dynamic interface allowing
+    easy navigation through an event and interaction with sessions.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+tags:
+  - name: Events
+    description: Public event consultation and listing
+  - name: Sessions
+    description: Session details, live detection, and filtering
+  - name: Rooms
+    description: Room-based session filtering
+  - name: Speakers
+    description: Public speaker profiles and their sessions
+  - name: Questions
+    description: Live Q&A system (submit, list, upvote)
+  - name: Favorites
+    description: Personal itinerary (client-side storage, API for sync)
+
+paths:
+  # ==================== EVENTS ====================
+  /events:
+    get:
+      tags:
+        - Events
+      summary: List all events
+      description: Returns a paginated list of all public events. Used for the main events listing page.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - $ref: '#/components/parameters/UpcomingFilter'
+      responses:
+        '200':
+          description: A paginated list of events.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventListResponse'
+              example:
+                data:
+                  - id: "evt_1"
+                    title: "DevConf 2025"
+                    description: "The annual developer conference."
+                    startDate: "2025-09-15T09:00:00Z"
+                    endDate: "2025-09-17T18:00:00Z"
+                    location: "Anjanahary Convention Center"
+                    sessionCount: 42
+                  - id: "evt_2"
+                    title: "AI Summit 2025"
+                    description: "Explore the future of AI."
+                    startDate: "2025-10-05T10:00:00Z"
+                    endDate: "2025-10-06T17:00:00Z"
+                    location: "Digital Lab"
+                    sessionCount: 18
+                pagination:
+                  page: 1
+                  limit: 20
+                  total: 2
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /events/{eventId}:
+    get:
+      tags:
+        - Events
+      summary: Get event details
+      description: Returns full details of a specific event including its sessions with live detection. Maps to section 4.1 (Event Consultation).
+      parameters:
+        - $ref: '#/components/parameters/EventId'
+      responses:
+        '200':
+          description: Event details with session list and live indicators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetailResponse'
+              example:
+                id: "evt_1"
+                title: "DevConf 2025"
+                description: "The annual developer conference."
+                startDate: "2025-09-15T09:00:00Z"
+                endDate: "2025-09-17T18:00:00Z"
+                location: "Anjanahary Convention Center"
+                sessions:
+                  - id: "sess_1"
+                    title: "Keynote: The Future of Web"
+                    startTime: "2025-09-15T09:00:00Z"
+                    endTime: "2025-09-15T10:30:00Z"
+                    room: "Grand Hall"
+                    isLive: false
+                    speakers:
+                      - id: "spk_1"
+                        name: "Jane Doe"
+                    questionCount: 5
+                  - id: "sess_2"
+                    title: "Workshop: Rust for Beginners"
+                    startTime: "2025-09-15T11:00:00Z"
+                    endTime: "2025-09-15T13:00:00Z"
+                    room: "Room A"
+                    isLive: false
+                    speakers:
+                      - id: "spk_2"
+                        name: "John Smith"
+                    questionCount: 0
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ==================== SESSIONS ====================
+  /events/{eventId}/sessions:
+    get:
+      tags:
+        - Sessions
+      summary: List sessions for an event (Multi-Track View)
+      description: Returns all sessions belonging to a specific event. Supports filtering by room and live status. Maps to section 4.2 (Multi-Track Planning) and 4.7 (Room View).
+      parameters:
+        - $ref: '#/components/parameters/EventId'
+        - $ref: '#/components/parameters/RoomFilter'
+        - $ref: '#/components/parameters/LiveOnlyFilter'
+      responses:
+        '200':
+          description: List of sessions with live indicators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionListResponse'
+              example:
+                data:
+                  - id: "sess_1"
+                    title: "Keynote: The Future of Web"
+                    startTime: "2025-09-15T09:00:00Z"
+                    endTime: "2025-09-15T10:30:00Z"
+                    room: "Grand Hall"
+                    isLive: false
+                    speakers:
+                      - id: "spk_1"
+                        name: "Jane Doe"
+                  - id: "sess_3"
+                    title: "Live Coding Session"
+                    startTime: "2025-09-15T14:00:00Z"
+                    endTime: "2025-09-15T15:30:00Z"
+                    room: "Room B"
+                    isLive: true
+                    speakers:
+                      - id: "spk_3"
+                        name: "Alice Johnson"
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /sessions/{sessionId}:
+    get:
+      tags:
+        - Sessions
+      summary: Get session details
+      description: Returns full details of a specific session including speakers and questions (if live). Maps to section 4.4 (Session Detail Page).
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Complete session information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionDetailResponse'
+              example:
+                id: "sess_1"
+                title: "Keynote: The Future of Web"
+                description: "Join us for an inspiring keynote about the future of web technologies."
+                startTime: "2025-09-15T09:00:00Z"
+                endTime: "2025-09-15T10:30:00Z"
+                room: "Grand Hall"
+                capacity: 500
+                isLive: false
+                speakers:
+                  - id: "spk_1"
+                    name: "Jane Doe"
+                    avatar: "https://cdn.eventsync.com/avatars/jane_doe.jpg"
+                    bio: "Tech lead at WebCorp"
+                questions: []
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ==================== ROOMS ====================
+  /events/{eventId}/rooms:
+    get:
+      tags:
+        - Rooms
+      summary: List all rooms for an event
+      description: Returns all rooms available in a specific event. Used for room filter dropdowns.
+      parameters:
+        - $ref: '#/components/parameters/EventId'
+      responses:
+        '200':
+          description: List of rooms.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomListResponse'
+              example:
+                data:
+                  - id: "room_1"
+                    name: "Grand Hall"
+                  - id: "room_2"
+                    name: "Room A"
+                  - id: "room_3"
+                    name: "Room B"
+                  - id: "room_4"
+                    name: "Workshop Studio"
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /events/{eventId}/rooms/{roomName}/sessions:
+    get:
+      tags:
+        - Rooms
+      summary: List sessions by room (Room Timeline View)
+      description: Returns chronological list of sessions for a specific room. Maps to section 4.7 (Room Planning View).
+      parameters:
+        - $ref: '#/components/parameters/EventId'
+        - $ref: '#/components/parameters/RoomName'
+      responses:
+        '200':
+          description: Chronological list of sessions in the room.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionListResponse'
+              example:
+                data:
+                  - id: "sess_2"
+                    title: "Workshop: Rust for Beginners"
+                    startTime: "2025-09-15T11:00:00Z"
+                    endTime: "2025-09-15T13:00:00Z"
+                    room: "Room A"
+                    isLive: false
+                    speakers:
+                      - id: "spk_2"
+                        name: "John Smith"
+                  - id: "sess_4"
+                    title: "Panel: Cloud Native"
+                    startTime: "2025-09-15T14:00:00Z"
+                    endTime: "2025-09-15T15:30:00Z"
+                    room: "Room A"
+                    isLive: true
+                    speakers:
+                      - id: "spk_4"
+                        name: "Emily Brown"
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ==================== SPEAKERS ====================
+  /speakers:
+    get:
+      tags:
+        - Speakers
+      summary: List all speakers
+      description: Returns all public speaker profiles. Used for speaker directory.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: List of speakers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeakerListResponse'
+              example:
+                data:
+                  - id: "spk_1"
+                    name: "Jane Doe"
+                    avatar: "https://cdn.eventsync.com/avatars/jane_doe.jpg"
+                    bio: "Tech lead at WebCorp"
+                    sessionCount: 3
+                  - id: "spk_2"
+                    name: "John Smith"
+                    avatar: "https://cdn.eventsync.com/avatars/john_smith.jpg"
+                    bio: "Rust core contributor"
+                    sessionCount: 2
+                pagination:
+                  page: 1
+                  limit: 20
+                  total: 2
+
+  /speakers/{speakerId}:
+    get:
+      tags:
+        - Speakers
+      summary: Get speaker profile
+      description: Returns public profile of a speaker with their sessions. Maps to section 4.6 (Speaker Public Page).
+      parameters:
+        - $ref: '#/components/parameters/SpeakerId'
+      responses:
+        '200':
+          description: Complete speaker profile.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeakerDetailResponse'
+              example:
+                id: "spk_1"
+                name: "Jane Doe"
+                avatar: "https://cdn.eventsync.com/avatars/jane_doe.jpg"
+                bio: "Jane is a tech lead at WebCorp with 10+ years of experience in web technologies."
+                externalLinks:
+                  - type: "twitter"
+                    url: "https://twitter.com/janedoe"
+                  - type: "github"
+                    url: "https://github.com/janedoe"
+                  - type: "website"
+                    url: "https://janedoe.dev"
+                sessions:
+                  - id: "sess_1"
+                    title: "Keynote: The Future of Web"
+                    eventName: "DevConf 2025"
+                    startTime: "2025-09-15T09:00:00Z"
+                    room: "Grand Hall"
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ==================== QUESTIONS ====================
+  /sessions/{sessionId}/questions:
+    get:
+      tags:
+        - Questions
+      summary: Get questions for a session
+      description: Returns all questions for a live session, sorted by upvotes (descending). Only accessible when session is live. Maps to section 4.5 (Q&A System).
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: List of questions sorted by upvotes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionListResponse'
+              example:
+                data:
+                  - id: "q_1"
+                    content: "Will the slides be available after the talk?"
+                    authorName: "Alice"
+                    upvotes: 15
+                    createdAt: "2025-09-15T09:15:00Z"
+                  - id: "q_2"
+                    content: "Is there a recording available?"
+                    authorName: "Anonymous"
+                    upvotes: 8
+                    createdAt: "2025-09-15T09:20:00Z"
+                  - id: "q_3"
+                    content: "What about open source contributions?"
+                    authorName: "Bob"
+                    upvotes: 3
+                    createdAt: "2025-09-15T09:25:00Z"
+        '403':
+          $ref: '#/components/responses/SessionNotLive'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    post:
+      tags:
+        - Questions
+      summary: Submit a question
+      description: Submits a new question for a live session. Author name is optional (anonymous allowed). Maps to section 4.5 (Question Submission).
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionCreateRequest'
+            example:
+              content: "What are the prerequisites for this workshop?"
+              authorName: "Charlie"
+      responses:
+        '201':
+          description: Question created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionResponse'
+              example:
+                id: "q_4"
+                content: "What are the prerequisites for this workshop?"
+                authorName: "Charlie"
+                upvotes: 0
+                createdAt: "2025-09-15T09:30:00Z"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/SessionNotLive'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /questions/{questionId}/upvote:
+    post:
+      tags:
+        - Questions
+      summary: Upvote a question
+      description: Increments the upvote counter for a question. Only allowed if the associated session is live. Maps to section 4.5 (Upvote Feature).
+      parameters:
+        - $ref: '#/components/parameters/QuestionId'
+      responses:
+        '200':
+          description: Upvote successful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpvoteResponse'
+              example:
+                success: true
+                upvotes: 16
+        '403':
+          $ref: '#/components/responses/SessionNotLive'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ==================== FAVORITES ====================
+  /sessions/{sessionId}/favorite:
+    post:
+      tags:
+        - Favorites
+      summary: Add session to favorites
+      description: Adds a session to the user's favorites list. Maps to section 4.8 (Personal Itinerary). Client should sync with localStorage.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Session added to favorites.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavoriteResponse'
+              example:
+                success: true
+                message: "Session added to favorites"
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Favorites
+      summary: Remove session from favorites
+      description: Removes a session from the user's favorites list. Maps to section 4.8 (Remove from Itinerary).
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Session removed from favorites.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavoriteResponse'
+              example:
+                success: true
+                message: "Session removed from favorites"
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Page number for pagination
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+
+    LimitParam:
+      name: limit
+      in: query
+      description: Number of items per page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+    UpcomingFilter:
+      name: upcoming
+      in: query
+      description: Filter to only upcoming events
+      required: false
+      schema:
+        type: boolean
+        default: true
+
+    RoomFilter:
+      name: room
+      in: query
+      description: Filter sessions by room name
+      required: false
+      schema:
+        type: string
+
+    LiveOnlyFilter:
+      name: liveOnly
+      in: query
+      description: Filter to only live sessions
+      required: false
+      schema:
+        type: boolean
+        default: false
+
+    EventId:
+      name: eventId
+      in: path
+      description: Unique identifier of the event
+      required: true
+      schema:
+        type: string
+        pattern: '^evt_[a-zA-Z0-9]+$'
+      example: "evt_1"
+
+    SessionId:
+      name: sessionId
+      in: path
+      description: Unique identifier of the session
+      required: true
+      schema:
+        type: string
+        pattern: '^sess_[a-zA-Z0-9]+$'
+      example: "sess_1"
+
+    QuestionId:
+      name: questionId
+      in: path
+      description: Unique identifier of the question
+      required: true
+      schema:
+        type: string
+        pattern: '^q_[a-zA-Z0-9]+$'
+      example: "q_1"
+
+    SpeakerId:
+      name: speakerId
+      in: path
+      description: Unique identifier of the speaker
+      required: true
+      schema:
+        type: string
+        pattern: '^spk_[a-zA-Z0-9]+$'
+      example: "spk_1"
+
+    RoomName:
+      name: roomName
+      in: path
+      description: Name of the room (URL encoded)
+      required: true
+      schema:
+        type: string
+      example: "Grand Hall"
+
+  schemas:
+    # ==================== PAGINATION DTO ====================
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number
+        limit:
+          type: integer
+          description: Items per page
+        total:
+          type: integer
+          description: Total number of items
+
+    # ==================== SPEAKER DTOs (Single definition, reused everywhere) ====================
+    SpeakerRef:
+      type: object
+      description: Minimal speaker reference for lists
+      properties:
+        id:
+          type: string
+          example: "spk_1"
+        name:
+          type: string
+          example: "Jane Doe"
+
+    SpeakerDetail:
+      type: object
+      description: Complete speaker information for detail pages
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        bio:
+          type: string
+        externalLinks:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExternalLink'
+
+    SpeakerSummary:
+      type: object
+      description: Speaker summary for list views with session count
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        bio:
+          type: string
+        sessionCount:
+          type: integer
+
+    ExternalLink:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [twitter, github, linkedin, website]
+        url:
+          type: string
+          format: uri
+
+    # ==================== EVENT DTOs ====================
+    EventSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "evt_1"
+        title:
+          type: string
+          example: "DevConf 2025"
+        description:
+          type: string
+          example: "The annual developer conference."
+        startDate:
+          type: string
+          format: date-time
+          example: "2025-09-15T09:00:00Z"
+        endDate:
+          type: string
+          format: date-time
+          example: "2025-09-17T18:00:00Z"
+        location:
+          type: string
+          example: "Anjanahary Convention Center"
+        sessionCount:
+          type: integer
+          example: 42
+
+    EventDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        location:
+          type: string
+        sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionSummary'
+
+    EventListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventSummary'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    EventDetailResponse:
+      $ref: '#/components/schemas/EventDetail'
+
+    # ==================== SESSION DTOs ====================
+    SessionSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        room:
+          type: string
+        isLive:
+          type: boolean
+          description: "True if current time is between startTime and endTime"
+        speakers:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpeakerRef'
+        questionCount:
+          type: integer
+          description: "Number of questions submitted for this session"
+
+    SessionDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        room:
+          type: string
+        capacity:
+          type: integer
+          description: "Informative only, not enforced"
+        isLive:
+          type: boolean
+        speakers:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpeakerDetail'
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+          description: "Only included if session is live"
+
+    SessionListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionSummary'
+
+    SessionDetailResponse:
+      $ref: '#/components/schemas/SessionDetail'
+
+    # ==================== ROOM DTOs ====================
+    Room:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+    RoomListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Room'
+
+    # ==================== SPEAKER PROFILE DTO ====================
+    SpeakerProfile:
+      allOf:
+        - $ref: '#/components/schemas/SpeakerDetail'
+        - type: object
+          properties:
+            sessions:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  eventName:
+                    type: string
+                  startTime:
+                    type: string
+                    format: date-time
+                  room:
+                    type: string
+
+    SpeakerListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpeakerSummary'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    SpeakerDetailResponse:
+      $ref: '#/components/schemas/SpeakerProfile'
+
+    # ==================== QUESTION DTOs ====================
+    Question:
+      type: object
+      properties:
+        id:
+          type: string
+        content:
+          type: string
+        authorName:
+          type: string
+          description: "Can be 'Anonymous' if not provided"
+        upvotes:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    QuestionCreateRequest:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: The question text
+        authorName:
+          type: string
+          maxLength: 100
+          description: "Optional. If empty, defaults to 'Anonymous'"
+
+    QuestionResponse:
+      $ref: '#/components/schemas/Question'
+
+    QuestionListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+
+    UpvoteResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        upvotes:
+          type: integer
+
+    # ==================== FAVORITE DTOs ====================
+    FavoriteResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters or body
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Invalid limit value. Must be between 1 and 100"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Event not found"
+    SessionNotLive:
+      description: This action is only allowed when the session is live
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Questions can only be submitted for live sessions"
