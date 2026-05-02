@@ -1,3 +1,4 @@
+
 -- ==================== CLEAN EXISTING DATA (OPTIONAL) ====================
 TRUNCATE TABLE question CASCADE;
 TRUNCATE TABLE session_speaker CASCADE;
