@@ -15,7 +15,6 @@
   --color-ivory: hsl(84 64% 98%);            /* #FAFDF6 — Foreground */
   --color-chartreuse: hsl(59 73% 52%);       /* #DDD92A — Primary Accent */
   --color-chartreuse-soft: hsl(57 79% 62%);  /* #EAE151 — Secondary */
-  --color-chartreuse-pale: hsl(61 69% 80%);  /* #EEEFA8 — Muted Foreground */
   --color-rose: hsl(348 100% 63%);           /* #FF4D6D — Destructive (preserved) */
 
   /* Mapped to shadcn/ui tokens */
@@ -49,25 +48,6 @@
   --color-border: hsl(260 8% 22%);           /* ~#34313A */
   --color-input: var(--color-surface);
   --color-ring: var(--color-chartreuse);
-
-  --radius: 0.75rem;      /* 12px - Cartes généreuses */
-  --radius-pill: 999px;    /* Pill-shaped buttons */
-  --radius-lg: 1rem;       /* 16px pour casser la rigidité */
-
-  /* HiBento custom tokens (remapped for Acid Chartreuse) */
-  --color-espresso: var(--color-ivory);
-  --color-espresso-soft: var(--color-chartreuse-pale);
-  --color-terracotta: var(--color-chartreuse);
-  --color-terracotta-deep: hsl(59 73% 32%);
-  --color-cream: var(--color-charcoal);
-  --color-cream-soft: var(--color-surface);
-  --color-paper: var(--color-surface);
-
-
-  /* Shadows with Chartreuse glow */
-  --shadow-soft: 0 1px 2px hsl(260 9% 10% / 0.4), 0 8px 24px -8px hsl(260 9% 10% / 0.5);
-  --shadow-deep: 0 30px 60px -20px hsl(var(--color-chartreuse) / 0.25);
-  --shadow-glow: 0 0 60px hsl(var(--color-chartreuse) / 0.45);
 
   /* Easing curves */
   --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
