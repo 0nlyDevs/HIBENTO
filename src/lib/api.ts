@@ -35,6 +35,7 @@ export interface GetEventSessionsParams {
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 
+// src/lib/api.ts - Update the http function
 async function http<T>(
   path: string,
   init?: RequestInit & { timeout?: number },
@@ -54,19 +55,25 @@ async function http<T>(
     });
 
     if (!res.ok) {
-      let detail = `${res.status} ${res.statusText}`;
+      let errorMessage = `${res.status} ${res.statusText}`;
       try {
         const body = await res.json();
-        if (body?.error) detail = body.error;
-        if (body?.detail) detail = body.detail;
+        if (body?.error) errorMessage = body.error;
       } catch {
-        // ignore
+        // ignore JSON parse errors
       }
-      throw new Error(detail);
+      throw new Error(errorMessage);
     }
 
     const text = await res.text();
-    return text ? (JSON.parse(text) as T) : ({} as T);
+    if (!text) return {} as T;
+    
+    try {
+      return JSON.parse(text) as T;
+    } catch (parseError) {
+      console.error("Failed to parse response:", text);
+      throw new Error("Invalid JSON response from server");
+    }
   } catch (err) {
     if (err instanceof Error && err.name === "AbortError") {
       throw new Error(`Request timed out after ${timeout}ms`);
@@ -76,7 +83,6 @@ async function http<T>(
     clearTimeout(timer);
   }
 }
-
 // ============= API surface =============
 
 export const api = {
