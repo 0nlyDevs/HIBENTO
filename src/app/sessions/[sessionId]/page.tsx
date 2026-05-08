@@ -265,7 +265,7 @@ export default function SessionDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-cream">
+      <div className="min-h-screen bg-cream relative overflow-hidden">
         <nav className="border-b border-charcoal/10 bg-cream/95 backdrop-blur sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
@@ -283,7 +283,7 @@ export default function SessionDetailPage() {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center relative overflow-hidden">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-charcoal mb-4">SESSION NOT FOUND</h1>
           <Link href="/events" className="btn-primary">BACK TO EVENTS</Link>
@@ -293,7 +293,7 @@ export default function SessionDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex flex-col">
+    <div className="min-h-screen bg-cream flex flex-col relative overflow-hidden">
       <nav className="border-b border-charcoal/10 bg-cream/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-full mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">

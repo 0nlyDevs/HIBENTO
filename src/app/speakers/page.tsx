@@ -16,13 +16,14 @@ export default function SpeakersPage() {
   const speakers = speakersResponse?.data || [];
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-cream relative overflow-hidden">
+      <div className="absolute inset-0 bg-grid pointer-events-none"></div>
       {/* Navigation */}
       <nav className="border-b border-charcoal/10 bg-cream/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
             <Image 
-              src="/logo.png" 
+              src="/logo.svg" 
               alt="HIBENTO" 
               width={28} 
               height={28} 

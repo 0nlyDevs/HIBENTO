@@ -17,7 +17,8 @@ export default function SpeakerProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid pointer-events-none"></div>
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-charcoal border-t-yellow animate-spin mx-auto mb-4"></div>
           <p className="text-sm tracking-wider text-charcoal/60">LOADING</p>
@@ -28,7 +29,8 @@ export default function SpeakerProfilePage() {
 
   if (!speaker) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid pointer-events-none"></div>
         <div className="text-center">
           <h1 className="text-2xl font-bold text-charcoal mb-4">SPEAKER NOT FOUND</h1>
           <Link href="/speakers" className="btn-primary">BACK TO SPEAKERS</Link>
@@ -38,7 +40,8 @@ export default function SpeakerProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-cream relative overflow-hidden">
+      <div className="absolute inset-0 bg-grid pointer-events-none"></div>
       <nav className="border-b border-charcoal/10 bg-cream/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
