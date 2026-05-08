@@ -1,0 +1,16 @@
+export const marqueeItems: string[] = [
+  "Live Q&A",
+  "✦",
+  "Upvote what matters",
+  "✦",
+  "Multi-track planning",
+  "✦",
+  "No login for guests",
+  "✦",
+  "Speaker pages",
+  "✦",
+  "Save your itinerary",
+  "✦",
+  "Works on any phone",
+  "✦",
+];
