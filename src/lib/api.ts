@@ -70,8 +70,7 @@ async function http<T>(
     
     try {
       return JSON.parse(text) as T;
-    } catch (parseError) {
-      console.error("Failed to parse response:", text);
+    } catch {
       throw new Error("Invalid JSON response from server");
     }
   } catch (err) {
