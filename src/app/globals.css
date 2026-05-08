@@ -1,26 +1,148 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-cream: #FFFDF7;
+  --color-charcoal: #282828;
+  --color-yellow: #EAE151;
+  --color-yellow-dark: #D4CA3C;
+  --color-paper: #F5F2E9;
+  --color-ink: #1A1814;
+  --color-matcha: #7B8B6F;
+  --color-sakura: #F2E0DE;
+  --color-nori: #1C2E1A;
+  --color-rice: #FEFEF5;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-cream);
+  color: var(--color-ink);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-paper);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-charcoal);
+  border-radius: 0;
+}
+
+.bento-card {
+  background: var(--color-rice);
+  border: 1px solid color-mix(in srgb, var(--color-charcoal) 10%, transparent);
+  padding: 1.5rem;
+  transition: all 0.3s;
+}
+
+.bento-card:hover {
+  border-color: color-mix(in srgb, var(--color-charcoal) 30%, transparent);
+  box-shadow: 4px 4px 0 0 rgba(234, 225, 81, 0.3);
+}
+
+.tag-pill {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid color-mix(in srgb, var(--color-charcoal) 20%, transparent);
+  background: var(--color-paper);
+  color: var(--color-charcoal);
+  letter-spacing: 0.05em;
+}
+
+.live-badge {
+  background: var(--color-nori);
+  color: var(--color-cream);
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.btn-primary {
+  background: var(--color-charcoal);
+  color: var(--color-cream);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--color-charcoal);
+  transition: all 0.2s;
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  background: var(--color-yellow);
+  color: var(--color-charcoal);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-charcoal);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--color-charcoal);
+  transition: all 0.2s;
+  display: inline-block;
+}
+
+.btn-outline:hover {
+  background: var(--color-yellow);
+}
+
+.input-field {
+  width: 100%;
+  background: var(--color-cream);
+  border: 1px solid color-mix(in srgb, var(--color-charcoal) 20%, transparent);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--color-charcoal);
+  transition: all 0.2s;
+}
+
+.input-field:focus {
+  border-color: var(--color-charcoal);
+  outline: none;
+}
+
+.input-field::placeholder {
+  color: color-mix(in srgb, var(--color-charcoal) 40%, transparent);
+}
+
+.bento-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.7;
+  }
 }

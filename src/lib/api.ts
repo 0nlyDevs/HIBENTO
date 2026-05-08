@@ -4,6 +4,8 @@ import type {
   SessionSummaryDto,
   SessionDetailDto,
   RoomDto,
+  SpeakerSummaryDto,
+  SpeakerProfileDto,
 } from "@/types/dto";
 import { API_BASE_URL } from "./constants";
 
@@ -78,6 +80,23 @@ async function http<T>(
 // ============= API surface =============
 
 export const api = {
+  // Speakers
+// src/lib/api.ts - Update the getSpeakers function
+getSpeakers: (params?: { page?: number; limit?: number }) => {
+  const searchParams = new URLSearchParams();
+  if (params?.page) searchParams.set("page", params.page.toString());
+  if (params?.limit) searchParams.set("limit", params.limit.toString());
+
+  const query = searchParams.toString();
+  return http<{ data: SpeakerSummaryDto[] }>(
+    `/api/speakers${query ? `?${query}` : ""}`
+  );
+},
+
+  getSpeaker: (speakerId: string) => 
+    http<SpeakerProfileDto>(`/api/speakers/${speakerId}`),
+
+  // Events
   // Events
   getEvents: (params?: GetEventsParams) => {
     const searchParams = new URLSearchParams();
