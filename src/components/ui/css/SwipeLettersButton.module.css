@@ -1,7 +1,7 @@
 .root {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem; /* gap between icon and letters — overridable via className */
+  gap: 0.5rem;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
@@ -10,13 +10,12 @@
   font-family: inherit;
   -webkit-appearance: none;
   appearance: none;
-  /* padding, background, border-radius, height intentionally omitted — use className */
 }
 
 .letters {
   display: inline-flex;
   align-items: center;
-  gap: 1px; /* tight gap between individual letter slots */
+  gap: 1px;
 }
 
 .slot {
@@ -35,7 +34,6 @@
   transition-timing-function: cubic-bezier(0.25, 0.75, 0.25, 1);
 }
 
-/* Text chars — color driven by CSS custom properties set on .root */
 .char {
   display: block;
   color: var(--swipe-color, currentColor);
@@ -48,7 +46,6 @@
 .root:hover .from-top .stack    { transform: translateY(0%); }
 .root:hover .from-bottom .stack { transform: translateY(-50%); }
 
-/* Hover color — overrides .char via cascade (no inline style conflict) */
 .root:hover .char {
   color: var(--swipe-hover-color, var(--swipe-color, currentColor));
 }
