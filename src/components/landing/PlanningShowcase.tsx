@@ -36,8 +36,8 @@ export const PlanningShowcase = ({
           </p>
         </div>
 
-        <div ref={ref} className="reveal-up squircle-lg bg-glass border border-border shadow-soft overflow-hidden">
-          <div className="grid grid-cols-[100px_repeat(3,1fr)] border-b border-border bg-glass">
+        <div ref={ref} className="reveal-up squircle-lg card-glass shadow-soft overflow-hidden">
+          <div className="grid grid-cols-[100px_repeat(3,1fr)] border-b border-white/10 bg-white/5">
             <div className="label-mono text-foreground/50 px-4 py-3">TIME</div>
             {displayTracks.map((t) => (
               <div key={t.room} className="label-mono text-foreground px-4 py-3 flex items-center gap-2">
@@ -48,17 +48,17 @@ export const PlanningShowcase = ({
           </div>
 
           <div className="relative grid grid-cols-[100px_repeat(3,1fr)]" style={{ minHeight: "520px" }}>
-            <div className="border-r border-border">
+            <div className="border-r border-white/10">
               {displayHours.map((h) => (
-                <div key={h} className="h-32 px-4 pt-2 label-mono text-foreground/45 border-b border-border/60">
+                <div key={h} className="h-32 px-4 pt-2 label-mono text-foreground/45 border-b border-white/10">
                   {String(h).padStart(2, "0")}:00
                 </div>
               ))}
             </div>
             {displayTracks.map((t, ti) => (
-              <div key={ti} className="relative border-r border-border last:border-r-0">
+              <div key={ti} className="relative border-r border-white/10 last:border-r-0">
                 {displayHours.map((h) => (
-                  <div key={h} className="h-32 border-b border-border/60" />
+                  <div key={h} className="h-32 border-b border-white/10" />
                 ))}
                 {displaySessions
                   .filter((s) => s.room === ti)
