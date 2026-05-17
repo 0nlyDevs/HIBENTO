@@ -30,7 +30,7 @@ export const Speakers = ({ speakers: propSpeakers }: SpeakersProps) => {
           {displaySpeakers.map((s, i) => (
             <article
               key={i}
-              className="group squircle bg-glass border border-border p-6 md:p-7 hover:border-accent cursor-pointer lift"
+              className="group squircle card-glass p-6 md:p-7 hover:border-accent cursor-pointer lift"
             >
               <div
                 className={`w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center font-display font-bold text-2xl md:text-3xl mb-5 transition-transform group-hover:scale-110 group-hover:rotate-3 ${s.tone}`}
