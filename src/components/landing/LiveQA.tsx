@@ -36,11 +36,7 @@ export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
   };
 
   return (
-    <section
-      id="qa"
-      className="relative py-28 md:py-40 overflow-hidden"
-    >
-
+    <section id="qa" className="relative py-28 md:py-40 overflow-hidden">
       <div className="container mx-auto relative">
         <div className="grid lg:grid-cols-12 gap-12">
           <div className="lg:col-span-5">
@@ -63,8 +59,7 @@ export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
           </div>
 
           <div ref={ref} className="reveal-up lg:col-span-7">
-            <div className="bg-glass text-foreground squircle-lg overflow-hidden border border-border shadow-deep">
-              {/* Card header — matches reference */}
+            <div className="squircle-lg card-glass overflow-hidden shadow-deep">
               <div className="flex items-center justify-between px-6 py-5 border-b border-border">
                 <div>
                   <p className="label-mono text-foreground/50">STAGE A · 14:30 — 15:15</p>
@@ -76,7 +71,6 @@ export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
                 </span>
               </div>
 
-              {/* Question form */}
               <form onSubmit={submit} className="px-6 py-5 border-b border-border bg-glass">
                 <textarea
                   value={draft}
@@ -102,10 +96,9 @@ export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
                 </div>
               </form>
 
-              {/* Questions list */}
               <ul className="divide-y divide-border max-h-[420px] overflow-auto">
                 {questions.map((q) => (
-                   <li key={q.id} className="flex gap-4 px-6 py-4 hover:bg-glass">
+                  <li key={q.id} className="flex gap-4 px-6 py-4 hover:bg-glass">
                     <button
                       onClick={() => upvote(q.id)}
                       className={`squircle squish flex flex-col items-center justify-center min-w-[52px] py-2 border transition-all ${
@@ -118,9 +111,7 @@ export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
                       <span className="font-display font-bold text-lg leading-none mt-1">{q.votes}</span>
                     </button>
                     <div className="flex-1">
-                      <p className="text-foreground leading-snug">
-                        {q.text}
-                      </p>
+                      <p className="text-foreground leading-snug">{q.text}</p>
                       <p className="label-mono text-foreground/45 mt-1">— {q.author}</p>
                     </div>
                   </li>
