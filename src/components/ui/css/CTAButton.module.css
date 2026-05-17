@@ -7,12 +7,11 @@
   border: none;
   outline: none;
   font-family: inherit;
-  /* padding, background intentionally omitted — use className */
 }
 
 .text {
   border-radius: 9999px;
-  padding: 16px 54px;      
+  padding: 16px 54px;
   font-size: 15px;
   font-weight: 500;
   white-space: nowrap;
@@ -41,8 +40,8 @@
   transition: opacity 0.15s ease 0s;
 }
 
-.root:hover .text   { padding: 16px 32px; }
-.root:hover .arrow  { width: 51px; height: 51px; }
+.root:hover .text  { padding: 16px 32px; }
+.root:hover .arrow { width: 51px; height: 51px; }
 .root:hover .arrow svg {
   opacity: 1;
   transition: opacity 0.15s ease 0.2s;

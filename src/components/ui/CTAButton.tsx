@@ -7,7 +7,7 @@ interface Props {
   as?: "a" | "button";
   onClick?: () => void;
   newTab?: boolean;
-  className?: string;         
+  className?: string;
   textClassName?: string;
   arrowClassName?: string;
   color?: string;

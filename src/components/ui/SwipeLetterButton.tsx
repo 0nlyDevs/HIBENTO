@@ -42,8 +42,6 @@ export default function SwipeLettersButton({
     [label]
   );
 
-  // Instead of hardcoding color in inline style, use CSS custom properties
-  // so the CSS module can override them on hover.
   const rootVars = {
     "--swipe-color": textColor,
     "--swipe-hover-color": hoverTextColor ?? textColor,
@@ -54,7 +52,6 @@ export default function SwipeLettersButton({
       {icon && iconPosition === "left" && (
         <span className={styles.icon}>{icon}</span>
       )}
-      {/* Letter slots wrapped so gap-between-letters is isolated */}
       <span className={styles.letters}>
         {chars.map((ch, i) => {
           const dir =
