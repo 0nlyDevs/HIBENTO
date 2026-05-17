@@ -44,7 +44,7 @@ export const CTA = ({ config: propConfig }: CTAProps) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@event.com"
-            className="flex-1 bg-glass border border-border px-5 py-4 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-accent pill"
+            className="flex-1 card-glass px-5 py-4 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-accent pill"
           />
           <button
             type="submit"
@@ -57,7 +57,7 @@ export const CTA = ({ config: propConfig }: CTAProps) => {
 
         <div className="mt-16 grid sm:grid-cols-3 gap-6">
           {displayConfig.items.map((s) => (
-            <div key={s.l} className="squircle bg-glass border border-border p-6">
+            <div key={s.l} className="squircle card-glass p-6">
               <p className="font-display font-bold text-5xl text-accent mb-1">{s.n}</p>
               <p className="label-mono text-foreground/60">{s.l}</p>
             </div>
