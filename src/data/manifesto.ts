@@ -4,7 +4,6 @@ export interface ManifestoCard {
   title: string;
   body: string;
   image: string;
-  /** Tailwind bg class for the card background */
   bg: string;
 }
 
