@@ -6,15 +6,11 @@ import SwipeLettersButton from "@/components/ui/SwipeLetterButton";
 
 const glassStyle: React.CSSProperties = {
   background: "#222222E6",
-  backdropFilter: "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
   border: "1px dashed rgba(255,255,255,0.18)",
   borderRadius: "0.75rem",
 };
 
-// accent = hsl(59 73% 52%) = #DDD92A
 const ACCENT = "hsl(59 73% 52%)";
-// accent-foreground = charcoal = hsl(260 9% 18%)
 const ACCENT_FG = "hsl(260 9% 18%)";
 
 export const Nav = ({ links }: { links?: NavLink[] }) => {
@@ -22,8 +18,6 @@ export const Nav = ({ links }: { links?: NavLink[] }) => {
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 flex items-center justify-start gap-1 px-10 py-8 pointer-events-none">
-
-      {/* Block 1 — Burger */}
       <div
         className="flex items-center justify-center w-11 h-12 shrink-0 pointer-events-auto"
         style={glassStyle}
@@ -38,12 +32,10 @@ export const Nav = ({ links }: { links?: NavLink[] }) => {
         </button>
       </div>
 
-      {/* Block 2 — Logo + Nav links */}
       <div
         className="hidden md:flex items-center h-12 px-6 gap-6 pointer-events-auto"
         style={glassStyle}
       >
-        {/* Logo — aggrandi */}
         <a href="#" className="flex items-center pl-1 pr-5 border-r border-dashed border-white/15 shrink-0">
           <Image
             src="/header-white-text.svg"
@@ -54,8 +46,6 @@ export const Nav = ({ links }: { links?: NavLink[] }) => {
             priority
           />
         </a>
-
-        {/* Nav links */}
         <nav className="flex items-center gap-4">
           {displayLinks.map((l) => (
             <SwipeLettersButton
@@ -74,12 +64,10 @@ export const Nav = ({ links }: { links?: NavLink[] }) => {
         </nav>
       </div>
 
-      {/* Block 3 — Program + Get access */}
       <div
-        className="flex items-center h-12   pointer-events-auto"
+        className="flex items-center h-12 pointer-events-auto"
         style={glassStyle}
       >
-        {/* Program */}
         <SwipeLettersButton
           as="a"
           href="#product"
@@ -93,7 +81,7 @@ export const Nav = ({ links }: { links?: NavLink[] }) => {
           icon={
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="14" height="14"
+              width="24" height="24"
               viewBox="0 0 24 25"
               fill="none"
               aria-hidden
@@ -110,7 +98,6 @@ export const Nav = ({ links }: { links?: NavLink[] }) => {
           }
         />
       </div>
-
     </header>
   );
 };
