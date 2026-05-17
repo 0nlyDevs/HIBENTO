@@ -26,8 +26,8 @@ export const FAQ = ({ items: propItems }: { items?: FAQItem[] }) => {
               return (
                 <li
                   key={i}
-                  className={`squircle border ${
-                    isOpen ? "border-accent bg-glass" : "border-border bg-glass hover:border-accent/50"
+                  className={`card-glass border ${
+                    isOpen ? "border-accent" : "border-dashed border-white/18 hover:border-accent/50"
                   }`}
                 >
                   <button
