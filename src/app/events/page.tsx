@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useGetEvents } from "@/lib/hooks/useEvents";
 import { useGetEventRooms, useGetRoomSessions } from "@/lib/hooks/useRooms";
+import { EventSummaryDto } from "@/types";
 
 const CARD_COLORS = ["#EAE151", "#E8D5B7", "#C4D7B2", "#D4C5E2", "#B8D4E3", "#F2E0DE", "#C17D60", "#D4A9A9"];
 
@@ -61,7 +62,7 @@ function SessionCard({ session, compact }: { session: { id: string; title: strin
 }
 
 function EventSlideOver({ event, onClose }: {
-  event: { id: string; title: string; description?: string | null; startDate: string; endDate: string; location?: string | null; sessionCount?: number };
+  event: EventSummaryDto;
   onClose: () => void;
 }) {
   const [selectedRoom, setSelectedRoom] = useState<string>("");
@@ -91,11 +92,11 @@ function EventSlideOver({ event, onClose }: {
             </div>
             <div>
               <div className="text-[0.6rem] tracking-wider mb-1" style={{ color: "rgba(40,40,40,0.4)" }}>LOCATION</div>
-              <div className="text-xs font-bold" style={{ color: "#282828" }}>{event.location || "TBD"}</div>
+              <div className="text-xs font-bold" style={{ color: "#282828" }}>{event.venue.city || "TBD"}</div>
             </div>
             <div>
               <div className="text-[0.6rem] tracking-wider mb-1" style={{ color: "rgba(40,40,40,0.4)" }}>SESSIONS</div>
-              <div className="text-xs font-bold" style={{ color: "#282828" }}>{event.sessionCount || 0} TOTAL</div>
+              <div className="text-xs font-bold" style={{ color: "#282828" }}>{event.eventSessionCount || 0} TOTAL</div>
             </div>
           </div>
           {event.description && <p className="text-sm mb-6" style={{ color: "rgba(40,40,40,0.6)" }}>{event.description}</p>}
@@ -166,7 +167,7 @@ function EventSlideOver({ event, onClose }: {
 }
 
 export default function EventsPage() {
-  const [slideOverEvent, setSlideOverEvent] = useState<any>(null);
+  const [slideOverEvent, setSlideOverEvent] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const { data: eventsData, isLoading: queryLoading } = useGetEvents({ page: 1, limit: 20, upcoming: false });
   const events = eventsData?.data || [];
@@ -244,11 +245,11 @@ export default function EventsPage() {
                     <div className="relative z-10">
                       <div className="grid grid-cols-2 gap-3">
                         <div className="p-4" style={{ background: "#FEFCF7", border: "1px solid rgba(40,40,40,0.1)" }}>
-                          <div className="text-2xl font-black" style={{ color: "#282828" }}>{events[0].sessionCount}</div>
+                          <div className="text-2xl font-black" style={{ color: "#282828" }}>{events[0].eventSessionCount}</div>
                           <div className="text-[0.6rem] tracking-wider mt-1" style={{ color: "rgba(40,40,40,0.4)" }}>SESSIONS</div>
                         </div>
                         <div className="p-4" style={{ background: "rgba(196,215,178,0.15)", border: "1px solid rgba(40,40,40,0.1)" }}>
-                          <div className="text-2xl font-black" style={{ color: "#282828" }}>{events[0].location || "TBD"}</div>
+                          <div className="text-2xl font-black" style={{ color: "#282828" }}>{events[0].venue.city || "TBD"}</div>
                           <div className="text-[0.6rem] tracking-wider mt-1" style={{ color: "rgba(40,40,40,0.4)" }}>LOCATION</div>
                         </div>
                         <div className="col-span-2 p-4" style={{ background: "#282828" }}>
@@ -278,7 +279,7 @@ export default function EventsPage() {
                     <span className="text-[0.6rem] tracking-wider" style={{ color: "rgba(40,40,40,0.4)" }}>{groupEvents.length} EVENTS</span>
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {groupEvents.map((event: any, idx: number) => {
+                    {groupEvents.map((event:EventSummaryDto, idx: number) => {
                       const isLive = new Date(event.startDate) <= new Date() && new Date(event.endDate) >= new Date();
                       const color = CARD_COLORS[idx % CARD_COLORS.length];
                       const isTall = idx % 3 === 1;
@@ -304,8 +305,8 @@ export default function EventsPage() {
                                   <div className="mt-auto pt-4 flex items-center gap-3 text-[0.6rem] tracking-wider" style={{ color: "rgba(40,40,40,0.4)" }}>
                                     <span>{new Date(event.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
                                     <span className="w-px h-3" style={{ background: "rgba(40,40,40,0.1)" }}></span>
-                                    <span>{event.location}</span>
-                                    <span>{event.sessionCount} SESSIONS</span>
+                                    <span>{event.venue.city}</span>
+                                    <span>{event.eventSessionCount} SESSIONS</span>
                                   </div>
                                 </>
                               ) : (
@@ -314,8 +315,8 @@ export default function EventsPage() {
                                   <p className="text-xs line-clamp-2 mb-4" style={{ color: "rgba(40,40,40,0.6)" }}>{event.description}</p>
                                   <div className="mt-auto flex flex-wrap gap-x-4 gap-y-1 text-[0.6rem] tracking-wider" style={{ color: "rgba(40,40,40,0.4)" }}>
                                     <span>{new Date(event.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })} &mdash; {new Date(event.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
-                                    <span>{event.location}</span>
-                                    <span>{event.sessionCount} SESSIONS</span>
+                                    <span>{event.venue.city}</span>
+                                    <span>{event.eventSessionCount} SESSIONS</span>
                                   </div>
                                 </>
                               )}
