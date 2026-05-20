@@ -38,13 +38,14 @@ type EventWithRelations = {
   description: string | null;
   startDate: Date;
   endDate: Date;
+  isOnline: boolean;
   venue: {
     id: string;
     name: string;
     city: string;
     neighborhood: string;
     totalRooms: number;
-  };
+  } | null;
   eventSessions: EventSessionWithRelations[];
 };
 
@@ -119,13 +120,15 @@ export async function GET(
       );
     }
 
-    const venueDto: VenueDto = {
-      id: event.venue.id,
-      name: event.venue.name,
-      city: event.venue.city,
-      neighborhood: event.venue.neighborhood,
-      totalRooms: event.venue.totalRooms,
-    };
+    const venueDto: VenueDto | null = event.venue
+      ? {
+          id: event.venue.id,
+          name: event.venue.name,
+          city: event.venue.city,
+          neighborhood: event.venue.neighborhood,
+          totalRooms: event.venue.totalRooms,
+        }
+      : null;
 
     const response: EventDetailDto = {
       id: event.id,
@@ -134,6 +137,7 @@ export async function GET(
       startDate: event.startDate.toISOString(),
       endDate: event.endDate.toISOString(),
       venue: venueDto,
+      isOnline: event.isOnline,
       eventSessions: event.eventSessions.map(transformToEventSessionSummary),
     };
 

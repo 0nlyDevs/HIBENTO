@@ -18,20 +18,23 @@ INSERT INTO venue (id, name, city, neighborhood, total_rooms, created_at, update
 
 -- ==================== EVENTS ====================
 -- Past event (ended)
-INSERT INTO event (id, title, description, "venueId", start_date, end_date, created_at, updated_at) VALUES
-('660e8400-e29b-41d4-a716-446655440001', 'DevFest Antananarivo 2024', 'Annual developer festival with workshops and talks about web, mobile, and cloud technologies.', '550e8400-e29b-41d4-a716-446655440001', '2024-11-15 08:00:00+00', '2024-11-16 18:00:00+00', NOW(), NOW()),
+INSERT INTO event (id, title, description, "venueId", is_online, start_date, end_date, created_at, updated_at) VALUES
+('660e8400-e29b-41d4-a716-446655440001', 'DevFest Antananarivo 2024', 'Annual developer festival with workshops and talks about web, mobile, and cloud technologies.', '550e8400-e29b-41d4-a716-446655440001', false, '2024-11-15 08:00:00+00', '2024-11-16 18:00:00+00', NOW(), NOW()),
 
 -- Currently live event
-('660e8400-e29b-41d4-a716-446655440002', 'Tech Innovation Summit 2026', 'Ongoing summit about AI, blockchain, and digital transformation in Madagascar.', '550e8400-e29b-41d4-a716-446655440002', '2026-05-19 09:00:00+00', '2026-05-22 17:00:00+00', NOW(), NOW()),
+('660e8400-e29b-41d4-a716-446655440002', 'Tech Innovation Summit 2026', 'Ongoing summit about AI, blockchain, and digital transformation in Madagascar.', '550e8400-e29b-41d4-a716-446655440002', false, '2026-05-19 09:00:00+00', '2026-05-22 17:00:00+00', NOW(), NOW()),
 
 -- Upcoming events
-('660e8400-e29b-41d4-a716-446655440003', 'Startup Weekend Antsirabe', '54-hour weekend event to pitch ideas, form teams, and launch startups.', '550e8400-e29b-41d4-a716-446655440003', '2026-07-10 18:00:00+00', '2026-07-12 20:00:00+00', NOW(), NOW()),
+('660e8400-e29b-41d4-a716-446655440003', 'Startup Weekend Antsirabe', '54-hour weekend event to pitch ideas, form teams, and launch startups.', '550e8400-e29b-41d4-a716-446655440003', false, '2026-07-10 18:00:00+00', '2026-07-12 20:00:00+00', NOW(), NOW()),
 
-('660e8400-e29b-41d4-a716-446655440004', 'AI Conference Fianarantsoa', 'Exploring artificial intelligence applications in education and healthcare.', '550e8400-e29b-41d4-a716-446655440004', '2026-08-20 09:00:00+00', '2026-08-21 18:00:00+00', NOW(), NOW()),
+('660e8400-e29b-41d4-a716-446655440004', 'AI Conference Fianarantsoa', 'Exploring artificial intelligence applications in education and healthcare.', '550e8400-e29b-41d4-a716-446655440004', false, '2026-08-20 09:00:00+00', '2026-08-21 18:00:00+00', NOW(), NOW()),
 
-('660e8400-e29b-41d4-a716-446655440005', 'Mobile Dev Workshop Toamasina', 'Hands-on workshop for Flutter and React Native development.', '550e8400-e29b-41d4-a716-446655440005', '2026-09-05 10:00:00+00', '2026-09-05 17:00:00+00', NOW(), NOW()),
+('660e8400-e29b-41d4-a716-446655440005', 'Mobile Dev Workshop Toamasina', 'Hands-on workshop for Flutter and React Native development.', '550e8400-e29b-41d4-a716-446655440005', false, '2026-09-05 10:00:00+00', '2026-09-05 17:00:00+00', NOW(), NOW()),
 
-('660e8400-e29b-41d4-a716-446655440006', 'Cloud & DevOps Day', 'Full day dedicated to cloud infrastructure and DevOps practices.', '550e8400-e29b-41d4-a716-446655440001', '2026-10-15 09:00:00+00', '2026-10-15 18:00:00+00', NOW(), NOW());
+('660e8400-e29b-41d4-a716-446655440006', 'Cloud & DevOps Day', 'Full day dedicated to cloud infrastructure and DevOps practices.', '550e8400-e29b-41d4-a716-446655440001', false, '2026-10-15 09:00:00+00', '2026-10-15 18:00:00+00', NOW(), NOW()),
+
+-- Online event (live, to have an online event during the current timeframe)
+('660e8400-e29b-41d4-a716-446655440007', 'Global Web Development Summit', 'International online summit covering the latest in web technologies, with live streams and interactive workshops accessible from anywhere.', NULL, true, '2026-05-20 08:00:00+00', '2026-05-22 18:00:00+00', NOW(), NOW());
 
 -- ==================== ROOMS ====================
 INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
@@ -122,7 +125,14 @@ INSERT INTO event_session (id, title, description, start_time, end_time, "roomId
 INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
 ('aa0e8400-e29b-41d4-a716-446655440024', 'Docker & Kubernetes 101', 'Container orchestration fundamentals.', '2026-10-15 09:00:00+00', '2026-10-15 12:00:00+00', '770e8400-e29b-41d4-a716-446655440003', 40, '660e8400-e29b-41d4-a716-446655440006', NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440025', 'CI/CD Pipeline Workshop', 'Build automated deployment pipelines.', '2026-10-15 14:00:00+00', '2026-10-15 17:00:00+00', '770e8400-e29b-41d4-a716-446655440003', 40, '660e8400-e29b-41d4-a716-446655440006', NOW(), NOW()),
-('aa0e8400-e29b-41d4-a716-446655440026', 'AWS Best Practices', 'Optimize your cloud infrastructure.', '2026-10-15 14:00:00+00', '2026-10-15 16:00:00+00', '770e8400-e29b-41d4-a716-446655440001', 300, '660e8400-e29b-41d4-a716-446655440006', NOW(), NOW());
+('aa0e8400-e29b-41d4-a716-446655440026', 'AWS Best Practices', 'Optimize your cloud infrastructure.', '2026-10-15 14:00:00+00', '2026-10-15 16:00:00+00', '770e8400-e29b-41d4-a716-446655440001', 300, '660e8400-e29b-41d4-a716-446655440006', NOW(), NOW()),
+
+-- Global Web Development Summit (Online - Live)
+('aa0e8400-e29b-41d4-a716-446655440027', 'Keynote: The State of Web 2026', 'Live stream keynote covering the latest web platform features.', '2026-05-20 09:00:00+00', '2026-05-20 10:30:00+00', '770e8400-e29b-41d4-a716-446655440001', NULL, '660e8400-e29b-41d4-a716-446655440007', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440028', 'Workshop: Web Components in Production', 'Build reusable components with the native web platform.', '2026-05-20 11:00:00+00', '2026-05-20 13:00:00+00', '770e8400-e29b-41d4-a716-446655440003', NULL, '660e8400-e29b-41d4-a716-446655440007', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440029', 'Panel: The Future of JavaScript', 'Experts discuss where JavaScript is heading.', '2026-05-21 09:00:00+00', '2026-05-21 10:30:00+00', '770e8400-e29b-41d4-a716-446655440002', NULL, '660e8400-e29b-41d4-a716-446655440007', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440030', 'Building Accessible Web Apps', 'Practical guide to web accessibility.', '2026-05-21 14:00:00+00', '2026-05-21 16:00:00+00', '770e8400-e29b-41d4-a716-446655440004', NULL, '660e8400-e29b-41d4-a716-446655440007', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440031', 'Closing: What is Next for the Web', 'Closing keynote and community announcements.', '2026-05-22 16:00:00+00', '2026-05-22 18:00:00+00', '770e8400-e29b-41d4-a716-446655440001', NULL, '660e8400-e29b-41d4-a716-446655440007', NOW(), NOW());
 
 -- ==================== SESSION SPEAKERS ====================
 INSERT INTO event_session_speaker ("eventSessionId", "speakerId", created_at) VALUES
@@ -147,7 +157,14 @@ INSERT INTO event_session_speaker ("eventSessionId", "speakerId", created_at) VA
 -- Cloud Day
 ('aa0e8400-e29b-41d4-a716-446655440024', '880e8400-e29b-41d4-a716-446655440002', NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440025', '880e8400-e29b-41d4-a716-446655440002', NOW()),
-('aa0e8400-e29b-41d4-a716-446655440026', '880e8400-e29b-41d4-a716-446655440002', NOW());
+('aa0e8400-e29b-41d4-a716-446655440026', '880e8400-e29b-41d4-a716-446655440002', NOW()),
+-- Global Web Summit
+('aa0e8400-e29b-41d4-a716-446655440027', '880e8400-e29b-41d4-a716-446655440001', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440028', '880e8400-e29b-41d4-a716-446655440001', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440029', '880e8400-e29b-41d4-a716-446655440004', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440029', '880e8400-e29b-41d4-a716-446655440005', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440030', '880e8400-e29b-41d4-a716-446655440005', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440031', '880e8400-e29b-41d4-a716-446655440001', NOW());
 
 -- ==================== QUESTIONS ====================
 INSERT INTO question (id, content, author_name, upvotes, "eventSessionId", created_at) VALUES

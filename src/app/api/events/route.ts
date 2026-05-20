@@ -31,7 +31,14 @@ export async function GET(
       }
     }
     if (city) {
-      where.venue = { city };
+      where.AND = [
+        {
+          OR: [
+            { venue: { city } },
+            { isOnline: true },
+          ],
+        },
+      ];
     }
 
     const events = await prisma.event.findMany({
@@ -63,13 +70,15 @@ export async function GET(
     );
 
     const data: EventSummaryDto[] = events.map((event) => {
-      const venueDto: VenueDto = {
-        id: event.venue.id,
-        name: event.venue.name,
-        city: event.venue.city,
-        neighborhood: event.venue.neighborhood,
-        totalRooms: event.venue.totalRooms,
-      };
+      const venueDto: VenueDto | null = event.venue
+        ? {
+            id: event.venue.id,
+            name: event.venue.name,
+            city: event.venue.city,
+            neighborhood: event.venue.neighborhood,
+            totalRooms: event.venue.totalRooms,
+          }
+        : null;
 
       return {
         id: event.id,
@@ -78,6 +87,7 @@ export async function GET(
         startDate: event.startDate.toISOString(),
         endDate: event.endDate.toISOString(),
         venue: venueDto,
+        isOnline: event.isOnline,
         eventSessionCount: eventSessionCountMap.get(event.id) || 0,
       };
     });

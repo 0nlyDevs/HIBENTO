@@ -25,7 +25,7 @@ export default function EventsPage() {
   const events = eventsData?.data || [];
 
   // Extract unique cities from events
-  const cities = [...new Set(events.map(e => e.venue.city))].sort();
+  const cities = [...new Set(events.filter(e => e.venue).map(e => e.venue!.city))].sort();
 
   const statusFilters: { value: EventStatus; label: string }[] = [
     { value: "all", label: "ALL" },
@@ -107,7 +107,7 @@ export default function EventsPage() {
             (() => {
               const grouped = events.reduce<Record<string, EventSummaryDto[]>>(
                 (acc, e) => {
-                  const city = e.venue.city;
+                  const city = e.venue?.city ?? "ONLINE";
                   if (!acc[city]) acc[city] = [];
                   acc[city].push(e);
                   return acc;

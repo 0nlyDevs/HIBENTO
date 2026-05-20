@@ -61,7 +61,8 @@ export interface EventSummaryDto {
   description: string | null;
   startDate: string;
   endDate: string;
-  venue: VenueDto;
+  venue: VenueDto | null;
+  isOnline: boolean;
   eventSessionCount: number;
 }
 
@@ -71,7 +72,8 @@ export interface EventDetailDto {
   description: string | null;
   startDate: string;
   endDate: string;
-  venue: VenueDto;
+  venue: VenueDto | null;
+  isOnline: boolean;
   eventSessions: EventSessionSummaryDto[];
 }
 

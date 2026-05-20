@@ -56,8 +56,14 @@ export function EventSlideOver({ event, onClose }: EventSlideOverProps) {
             </div>
             <div>
               <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-1">LOCATION</div>
-              <div className="text-xs font-bold text-charcoal">{event.venue.city}</div>
-              <div className="text-[0.6rem] text-charcoal/40">{event.venue.neighborhood}</div>
+              {event.venue ? (
+                <>
+                  <div className="text-xs font-bold text-charcoal">{event.venue.city}</div>
+                  <div className="text-[0.6rem] text-charcoal/40">{event.venue.neighborhood}</div>
+                </>
+              ) : (
+                <div className="text-xs font-bold text-nori">ONLINE</div>
+              )}
             </div>
             <div>
               <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-1">SESSIONS</div>
