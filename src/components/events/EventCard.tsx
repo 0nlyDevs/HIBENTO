@@ -65,11 +65,11 @@ export function EventCard({ event, index, onSelect }: EventCardProps) {
             {" – "}
             {end.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
           </span>
-          <span>{event.venue.name} {event.venue.neighborhood}</span>
+          <span>{event.venue.name}</span>
           <span>{event.eventSessionCount} SESSIONS</span>
         </div>
+       <span className="text-[0.6rem]">{event.venue.city} | {event.venue.neighborhood}</span>
       </div>
-
       <div
         className="absolute bottom-3 right-3 w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
         style={{ background: color }}
