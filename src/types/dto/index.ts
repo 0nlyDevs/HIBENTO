@@ -1,8 +1,73 @@
-// ==================== PAGINATION DTO ====================
-export interface PaginationDto {
-  page: number;
-  limit: number;
-  total: number;
+// ==================== VENUE DTOs ====================
+export interface VenueDto {
+  id: string;
+  name: string;
+  city: string;
+  neighborhood: string;
+  totalRooms: number;
+}
+
+export interface VenueDetailDto extends VenueDto {
+  rooms: RoomDto[];
+}
+
+// ==================== EVENT DTOs ====================
+export interface EventSummaryDto {
+  id: string;
+  title: string;
+  description?: string | null;
+  startDate: string;
+  endDate: string;
+  venue: VenueDto;
+  eventSessionCount: number;
+}
+
+export interface EventDetailDto {
+  id: string;
+  title: string;
+  description?: string | null;
+  startDate: string;
+  endDate: string;
+  venue: VenueDto;
+  eventSessions: EventSessionSummaryDto[];
+}
+
+// ==================== EVENT SESSION DTOs ====================
+export interface EventSessionSummaryDto {
+  id: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+  room: RoomDto;
+  isLive: boolean;
+  speakers: SpeakerRefDto[];
+  questionCount: number;
+}
+
+export interface EventSessionDetailDto {
+  id: string;
+  title: string;
+  description?: string | null;
+  startTime: string;
+  endTime: string;
+  room: RoomDto;
+  capacity?: number | null;
+  isLive: boolean;
+  speakers: SpeakerDetailDto[];
+  questions?: QuestionDto[];
+}
+
+// ==================== ROOM DTOs ====================
+export interface RoomDto {
+  id: string;
+  name: string;
+  capacity?: number | null;
+  venueId: string;
+}
+
+export interface RoomDetailDto extends RoomDto {
+  venue: VenueDto;
+  currentEventSessions?: EventSessionSummaryDto[];
 }
 
 // ==================== SPEAKER DTOs ====================
@@ -24,7 +89,7 @@ export interface SpeakerSummaryDto {
   name: string;
   avatar?: string | null;
   bio?: string | null;
-  sessionCount: number;
+  eventSessionCount: number;
 }
 
 export interface ExternalLinkDto {
@@ -32,64 +97,12 @@ export interface ExternalLinkDto {
   url: string;
 }
 
-// ==================== EVENT DTOs ====================
-export interface EventSummaryDto {
-  id: string;
-  title: string;
-  description?: string | null;
-  startDate: string;
-  endDate: string;
-  location?: string | null;
-  sessionCount: number;
-}
-
-export interface EventDetailDto {
-  id: string;
-  title: string;
-  description?: string | null;
-  startDate: string;
-  endDate: string;
-  location?: string | null;
-  sessions: SessionSummaryDto[];
-}
-
-// ==================== SESSION DTOs ====================
-export interface SessionSummaryDto {
-  id: string;
-  title: string;
-  startTime: string;
-  endTime: string;
-  room: string;
-  isLive: boolean;
-  speakers: SpeakerRefDto[];
-  questionCount: number;
-}
-
-export interface SessionDetailDto {
-  id: string;
-  title: string;
-  description?: string | null;
-  startTime: string;
-  endTime: string;
-  room: string;
-  capacity?: number | null;
-  isLive: boolean;
-  speakers: SpeakerDetailDto[];
-  questions?: QuestionDto[];
-}
-
-// ==================== ROOM DTOs ====================
-export interface RoomDto {
-  id: string;
-  name: string;
-}
-
 // ==================== SPEAKER PROFILE DTO ====================
 export interface SpeakerProfileDto extends SpeakerDetailDto {
-  sessions: SpeakerSessionDto[];
+  eventSessions: SpeakerEventSessionDto[];
 }
 
-export interface SpeakerSessionDto {
+export interface SpeakerEventSessionDto {
   id: string;
   title: string;
   eventName: string;
@@ -119,4 +132,11 @@ export interface UpvoteResponseDto {
 export interface FavoriteResponseDto {
   success: boolean;
   message: string;
+}
+
+// ==================== PAGINATION DTO ====================
+export interface PaginationDto {
+  page: number;
+  limit: number;
+  total: number;
 }
