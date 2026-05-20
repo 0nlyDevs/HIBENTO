@@ -30,6 +30,9 @@ export interface GetEventsParams {
   upcoming?: boolean;
   status?: "all" | "live" | "upcoming" | "ended";
   city?: string;
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
 }
 
 export interface GetEventSessionsParams {
@@ -119,6 +122,12 @@ export const api = {
       searchParams.set("status", params.status);
     if (params?.city)
       searchParams.set("city", params.city);
+    if (params?.search)
+      searchParams.set("search", params.search);
+    if (params?.dateFrom)
+      searchParams.set("dateFrom", params.dateFrom);
+    if (params?.dateTo)
+      searchParams.set("dateTo", params.dateTo);
 
     const query = searchParams.toString();
     return http<PaginatedResponse<EventSummaryDto>>(

@@ -12,34 +12,46 @@ export async function GET(
     const upcoming = searchParams.get("upcoming") === "true";
     const status = searchParams.get("status");
     const city = searchParams.get("city");
+    const search = searchParams.get("search");
+    const dateFrom = searchParams.get("dateFrom");
+    const dateTo = searchParams.get("dateTo");
 
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = {};
+    const conditions: Record<string, unknown>[] = [];
+
     if (upcoming) {
-      where.startDate = { gte: new Date() };
+      conditions.push({ startDate: { gte: new Date() } });
     }
     if (status) {
       const now = new Date();
       if (status === "live") {
-        where.startDate = { lte: now };
-        where.endDate = { gte: now };
+        conditions.push({ startDate: { lte: now }, endDate: { gte: now } });
       } else if (status === "upcoming") {
-        where.startDate = { gt: now };
+        conditions.push({ startDate: { gt: now } });
       } else if (status === "ended") {
-        where.endDate = { lt: now };
+        conditions.push({ endDate: { lt: now } });
       }
     }
     if (city) {
-      where.AND = [
-        {
-          OR: [
-            { venue: { city } },
-            { isOnline: true },
-          ],
-        },
-      ];
+      conditions.push({
+        OR: [
+          { venue: { city } },
+          { isOnline: true },
+        ],
+      });
     }
+    if (search) {
+      conditions.push({ title: { contains: search, mode: "insensitive" } });
+    }
+    if (dateFrom) {
+      conditions.push({ endDate: { gte: new Date(dateFrom) } });
+    }
+    if (dateTo) {
+      conditions.push({ startDate: { lte: new Date(dateTo) } });
+    }
+
+    const where = conditions.length > 0 ? { AND: conditions } : {};
 
     const events = await prisma.event.findMany({
       where,

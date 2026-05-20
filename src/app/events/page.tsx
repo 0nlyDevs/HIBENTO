@@ -3,7 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
 import { useGetEvents } from "@/lib/hooks/useEvents";
+import { api } from "@/lib/api";
 import type { EventSummaryDto } from "@/types/dto";
 import { EventCard } from "@/components/events/EventCard";
 
@@ -12,18 +14,30 @@ type EventStatus = "all" | "live" | "upcoming" | "ended";
 export default function EventsPage() {
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<EventStatus>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+
+  const { data: venuesData } = useQuery({
+    queryKey: ["venues"],
+    queryFn: () => api.getVenues(),
+  });
 
   const { data: eventsData, isLoading } = useGetEvents({
     page: 1,
     limit: 50,
     ...(selectedCity !== "all" && { city: selectedCity }),
     ...(selectedStatus !== "all" && { status: selectedStatus }),
+    ...(searchQuery && { search: searchQuery }),
+    ...(dateFrom && { dateFrom }),
+    ...(dateTo && { dateTo }),
   });
 
   const events = eventsData?.data || [];
 
-  // Extract unique cities from events
-  const cities = [...new Set(events.filter(e => e.venue).map(e => e.venue!.city))].sort();
+  const cities = [
+    ...new Set((venuesData?.data || []).map((v) => v.city)),
+  ].sort();
 
   const statusFilters: { value: EventStatus; label: string }[] = [
     { value: "all", label: "ALL" },
@@ -34,7 +48,6 @@ export default function EventsPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      {/* Navigation */}
       <nav className="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-charcoal/10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
@@ -53,14 +66,13 @@ export default function EventsPage() {
       </nav>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-black tracking-tighter text-charcoal mb-2">EVENTS</h1>
           <p className="text-sm text-charcoal/60">Browse all events across Madagascar</p>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-4 mb-8">
+        <div className="flex flex-wrap items-end gap-3 mb-8">
           {/* Status Filters */}
           <div className="flex gap-1 bg-charcoal/5 p-1">
             {statusFilters.map(({ value, label }) => (
@@ -78,11 +90,22 @@ export default function EventsPage() {
             ))}
           </div>
 
+          {/* Search */}
+          <div className="relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search events..."
+              className="w-48 px-3 py-2 text-xs tracking-wider bg-cream border border-charcoal/20 text-charcoal placeholder-charcoal/30 focus:outline-none focus:border-charcoal/40"
+            />
+          </div>
+
           {/* City Filter */}
           <select
             value={selectedCity}
             onChange={(e) => setSelectedCity(e.target.value)}
-            className="px-4 py-2 text-xs tracking-wider bg-cream border border-charcoal/20 text-charcoal"
+            className="px-3 py-2 text-xs tracking-wider bg-cream border border-charcoal/20 text-charcoal focus:outline-none focus:border-charcoal/40"
           >
             <option value="all">ALL CITIES</option>
             {cities.map((city) => (
@@ -91,6 +114,26 @@ export default function EventsPage() {
               </option>
             ))}
           </select>
+
+          {/* Date From */}
+          <div>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="w-40 px-3 py-2 text-xs tracking-wider bg-cream border border-charcoal/20 text-charcoal focus:outline-none focus:border-charcoal/40"
+            />
+          </div>
+
+          {/* Date To */}
+          <div>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="w-40 px-3 py-2 text-xs tracking-wider bg-cream border border-charcoal/20 text-charcoal focus:outline-none focus:border-charcoal/40"
+            />
+          </div>
         </div>
 
         {/* Events Grid */}
@@ -167,7 +210,6 @@ export default function EventsPage() {
           </div>
         )}
       </div>
-
     </div>
   );
 }
