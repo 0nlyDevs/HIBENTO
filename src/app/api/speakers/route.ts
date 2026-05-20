@@ -1,4 +1,3 @@
-// src/app/api/speakers/route.ts
 import prisma from "@/lib/db/prisma";
 import { SpeakerSummaryDto } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
@@ -30,13 +29,13 @@ export async function GET(
       skip: (page - 1) * limit,
     });
     
-    const mappedSpeakers: SpeakerSummaryDto[] = speakers.map((s) => ({
-      id: s.id,
-      name: s.name,
-      bio: s.bio,
-      avatar: s.avatarUrl ?? null,
-      sessionCount: s._count.sessions,
-    }));
+const mappedSpeakers: SpeakerSummaryDto[] = speakers.map((s) => ({
+  id: s.id,
+  name: s.name,
+  bio: s.bio,
+  avatar: s.avatarUrl ?? null,
+  eventSessionCount: s._count.sessions,
+}));
     
     return NextResponse.json({ data: mappedSpeakers });
   } catch (err) {

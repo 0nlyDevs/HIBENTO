@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import type { EventSummaryDto } from "@/types";
+import type { EventSummaryDto, VenueDto } from "@/types/dto";
 
 export async function GET(
   request: NextRequest
@@ -18,9 +18,11 @@ export async function GET(
       where.startDate = { gte: new Date() };
     }
 
-    // First get events without relations
     const events = await prisma.event.findMany({
       where,
+      include: {
+        venue: true,
+      },
       skip,
       take: limit,
       orderBy: { startDate: "asc" },
@@ -28,33 +30,41 @@ export async function GET(
 
     const total = await prisma.event.count({ where });
 
-    // Then get session counts separately
-    const sessionCounts = await prisma.session.groupBy({
-      by: ['eventId'],
+    const eventSessionCounts = await prisma.eventSession.groupBy({
+      by: ["eventId"],
       where: {
         eventId: {
-          in: events.map(e => e.id)
-        }
+          in: events.map((e) => e.id),
+        },
       },
       _count: {
-        id: true
-      }
+        id: true,
+      },
     });
 
-    // Create a map of eventId -> session count
-    const sessionCountMap = new Map(
-      sessionCounts.map(sc => [sc.eventId, sc._count.id])
+    const eventSessionCountMap = new Map(
+      eventSessionCounts.map((sc) => [sc.eventId, sc._count.id])
     );
 
-    const data: EventSummaryDto[] = events.map((event) => ({
-      id: event.id,
-      title: event.title,
-      description: event.description,
-      startDate: event.startDate.toISOString(),
-      endDate: event.endDate.toISOString(),
-      location: event.location,
-      sessionCount: sessionCountMap.get(event.id) || 0,
-    }));
+    const data: EventSummaryDto[] = events.map((event) => {
+      const venueDto: VenueDto = {
+        id: event.venue.id,
+        name: event.venue.name,
+        city: event.venue.city,
+        neighborhood: event.venue.neighborhood,
+        totalRooms: event.venue.totalRooms,
+      };
+
+      return {
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        startDate: event.startDate.toISOString(),
+        endDate: event.endDate.toISOString(),
+        venue: venueDto,
+        eventSessionCount: eventSessionCountMap.get(event.id) || 0,
+      };
+    });
 
     return NextResponse.json({
       data,

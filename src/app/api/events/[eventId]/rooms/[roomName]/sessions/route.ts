@@ -1,27 +1,13 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import type { SessionSummaryDto } from "@/types";
+import type { EventSessionSummaryDto } from "@/types";
 import { isValidUUID } from "@/lib/utils/validation";
-import { getSessionStatus } from "@/lib/utils/getSessionStatus";
-
-type SessionWithSpeakers = {
-  id: string;
-  title: string;
-  startTime: Date;
-  endTime: Date;
-  room: string;
-  speakers: Array<{
-    speaker: {
-      id: string;
-      name: string;
-    };
-  }>;
-};
+import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
 export async function GET(
   request: Request,
   context: RouteContext<"/api/events/[eventId]/rooms/[roomName]/sessions">
-): Promise<NextResponse<{ data: SessionSummaryDto[] } | { error: string }>> {
+): Promise<NextResponse<{ data: EventSessionSummaryDto[] } | { error: string }>> {
   try {
     const { eventId, roomName } = await context.params;
 
@@ -46,7 +32,7 @@ export async function GET(
       );
     }
 
-const rawSessions = await prisma.session.findMany({
+const rawSessions = await prisma.eventSession.findMany({
   where: {
     eventId: eventId,
     room: {
@@ -56,6 +42,7 @@ const rawSessions = await prisma.session.findMany({
     },
   },
   include: {
+    room:true,
     speakers: {
       include: {
         speaker: true,
@@ -74,20 +61,22 @@ const rawSessions = await prisma.session.findMany({
       );
     }
 
-    const sessions = rawSessions as unknown as SessionWithSpeakers[];
 
-    const data: SessionSummaryDto[] = sessions.map((session) => ({
+    const sessions = rawSessions;
+
+
+    const data: EventSessionSummaryDto[] = sessions.map((session) => ({
       id: session.id,
       title: session.title,
       startTime: session.startTime.toISOString(),
       endTime: session.endTime.toISOString(),
       room: session.room,
-      isLive: getSessionStatus(session) === "live",
+      isLive: getEventSessionStatus(session) === "live",
       speakers: session.speakers.map((sessionSpeaker) => ({
         id: sessionSpeaker.speaker.id,
         name: sessionSpeaker.speaker.name
       })),
-      questionCount: 0
+      questionCount: 0 // TODO: map the real question counts , 
     }));
 
     return NextResponse.json({ data }, { status: 200 });

@@ -1,4 +1,4 @@
-export function getSessionStatus(session: { 
+export function getEventSessionStatus(session: { 
   startTime: Date; 
   endTime: Date; 
 }): "live" | "upcoming" | "ended" {

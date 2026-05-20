@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import type { RoomDto } from "@/types";
+import type { RoomDto } from "@/types/dto";
 import { isValidUUID } from "@/lib/utils/validation";
 
 export async function GET(
@@ -12,45 +12,51 @@ export async function GET(
 
     if (!isValidUUID(eventId)) {
       return NextResponse.json(
-        { error: "invalid event id format" },
+        { error: "Invalid event ID format" },
         { status: 400 }
       );
     }
 
     const eventExists = await prisma.event.findUnique({
       where: { id: eventId },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!eventExists) {
       return NextResponse.json(
-        { error: "event not found" },
+        { error: "Event not found" },
         { status: 404 }
       );
     }
 
-const sessions = await prisma.session.findMany({
-  where: { eventId },
-  select: {
-    room: {
+    // Get unique rooms used by sessions in this event
+    const sessionsWithRooms = await prisma.eventSession.findMany({
+      where: { eventId },
       select: {
-        name: true,
+        room: {
+          select: {
+            id: true,
+            name: true,
+            capacity: true,
+            venueId: true,
+          },
+        },
       },
-    },
-  },
-  distinct: ["roomId"],
-});
+      distinct: ["roomId"],
+    });
 
-const data: RoomDto[] = sessions.map((session, index) => ({
-  id: `room_${index + 1}`,
-  name: session.room.name,
-}));
+    const data: RoomDto[] = sessionsWithRooms.map((session) => ({
+      id: session.room.id,
+      name: session.room.name,
+      capacity: session.room.capacity,
+      venueId: session.room.venueId,
+    }));
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (err) {
     console.error("[GET /api/events/:eventId/rooms] error:", err);
     return NextResponse.json(
-      { error: "internal server error" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

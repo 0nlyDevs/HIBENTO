@@ -147,11 +147,7 @@ export const api = {
     http<QuestionDto>(`/api/event-sessions/${eventSessionId}/questions`, {
       method: "POST",
       body: JSON.stringify({ content, authorName }),
-    }),
-  upvoteQuestion: (questionId: string) =>
-    http<UpvoteResponseDto>(`/api/questions/${questionId}/upvote`, {
-      method: "POST",
-    }),
+    })
 };
 
 // ============= Helpers =============

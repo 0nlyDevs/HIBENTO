@@ -185,13 +185,13 @@ function FeaturedEvents() {
                 </div>
                 <h3 className="text-lg font-bold text-charcoal mb-2 group-hover:text-yellow-dark transition-colors">{event.title}</h3>
                 <p className="text-sm text-charcoal/60 mb-4 line-clamp-2">{event.description}</p>
-                <div className="flex items-center gap-3 text-xs tracking-wider text-charcoal/50">
-                  <span>{new Date(event.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
-                  <span className="w-px h-3 bg-charcoal/20"></span>
-                  <span>{event.location}</span>
-                  <span className="w-px h-3 bg-charcoal/20"></span>
-                  <span>{event.sessionCount} SESSIONS</span>
-                </div>
+          <div className="flex items-center gap-3 text-xs tracking-wider text-charcoal/50">
+  <span>{new Date(event.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+  <span className="w-px h-3 bg-charcoal/20"></span>
+  <span>{event.venue?.neighborhood}, {event.venue?.city}</span>
+  <span className="w-px h-3 bg-charcoal/20"></span>
+  <span>{event.eventSessionCount} SESSIONS</span>
+</div>
               </div>
             </Link>
           ))}
@@ -248,8 +248,7 @@ function LiveNowSection() {
                 <h3 className="text-lg font-bold text-cream mb-2 group-hover:text-yellow transition-colors">{event.title}</h3>
                 <p className="text-sm text-cream/50 mb-4 line-clamp-2">{event.description}</p>
                 <div className="flex items-center gap-4 text-xs text-cream/40">
-                  <span>{event.sessionCount} SESSIONS</span>
-                  <span>{event.location}</span>
+                  <span>{event.venue.city}</span>
                 </div>
               </Link>
             ))}

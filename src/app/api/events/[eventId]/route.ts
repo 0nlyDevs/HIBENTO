@@ -1,15 +1,26 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import type { EventDetailDto, SessionSummaryDto, SpeakerRefDto } from "@/types";
+import type {
+  EventDetailDto,
+  EventSessionSummaryDto,
+  SpeakerRefDto,
+  RoomDto,
+  VenueDto,
+} from "@/types/dto";
 import { isValidUUID } from "@/lib/utils/validation";
-import { getSessionStatus } from "@/lib/utils/getSessionStatus";
+import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
-type SessionWithSpeakersAndCount = {
+type EventSessionWithRelations = {
   id: string;
   title: string;
   startTime: Date;
   endTime: Date;
-  room: string;
+  room: {
+    id: string;
+    name: string;
+    capacity: number | null;
+    venueId: string;
+  };
   speakers: Array<{
     speaker: {
       id: string;
@@ -21,29 +32,46 @@ type SessionWithSpeakersAndCount = {
   };
 };
 
-type EventWithSessions = {
+type EventWithRelations = {
   id: string;
   title: string;
   description: string | null;
   startDate: Date;
   endDate: Date;
-  location: string | null;
-  sessions: SessionWithSpeakersAndCount[];
+  venue: {
+    id: string;
+    name: string;
+    city: string;
+    neighborhood: string;
+    totalRooms: number;
+  };
+  eventSessions: EventSessionWithRelations[];
 };
 
-function transformToSessionSummary(session: SessionWithSpeakersAndCount): SessionSummaryDto {
+function transformToEventSessionSummary(
+  session: EventSessionWithRelations
+): EventSessionSummaryDto {
+  const roomDto: RoomDto = {
+    id: session.room.id,
+    name: session.room.name,
+    capacity: session.room.capacity,
+    venueId: session.room.venueId,
+  };
+
   return {
     id: session.id,
     title: session.title,
     startTime: session.startTime.toISOString(),
     endTime: session.endTime.toISOString(),
-    room: session.room,
-    isLive: getSessionStatus(session) === "live",
-    speakers: session.speakers.map((sessionSpeaker): SpeakerRefDto => ({
-      id: sessionSpeaker.speaker.id,
-      name: sessionSpeaker.speaker.name
-    })),
-    questionCount: session._count.questions
+    room: roomDto,
+    isLive: getEventSessionStatus(session) === "live",
+    speakers: session.speakers.map(
+      (sessionSpeaker): SpeakerRefDto => ({
+        id: sessionSpeaker.speaker.id,
+        name: sessionSpeaker.speaker.name,
+      })
+    ),
+    questionCount: session._count.questions,
   };
 }
 
@@ -56,38 +84,48 @@ export async function GET(
 
     if (!isValidUUID(eventId)) {
       return NextResponse.json(
-        { error: "invalid event id format" },
+        { error: "Invalid event ID format" },
         { status: 400 }
       );
     }
 
-    const event = await prisma.event.findUnique({
+    const event = (await prisma.event.findUnique({
       where: { id: eventId },
       include: {
-        sessions: {
+        venue: true,
+        eventSessions: {
           include: {
+            room: true,
             speakers: {
               include: {
-                speaker: true
-              }
+                speaker: true,
+              },
             },
             _count: {
-              select: { questions: true }
-            }
+              select: { questions: true },
+            },
           },
           orderBy: {
-            startTime: "asc" as const
-          }
-        }
-      }
-    }) as EventWithSessions | null;
+            startTime: "asc",
+          },
+        },
+      },
+    })) as EventWithRelations | null;
 
     if (!event) {
       return NextResponse.json(
-        { error: "event not found" },
+        { error: "Event not found" },
         { status: 404 }
       );
     }
+
+    const venueDto: VenueDto = {
+      id: event.venue.id,
+      name: event.venue.name,
+      city: event.venue.city,
+      neighborhood: event.venue.neighborhood,
+      totalRooms: event.venue.totalRooms,
+    };
 
     const response: EventDetailDto = {
       id: event.id,
@@ -95,15 +133,15 @@ export async function GET(
       description: event.description,
       startDate: event.startDate.toISOString(),
       endDate: event.endDate.toISOString(),
-      location: event.location,
-      sessions: event.sessions.map(transformToSessionSummary)
+      venue: venueDto,
+      eventSessions: event.eventSessions.map(transformToEventSessionSummary),
     };
 
     return NextResponse.json(response, { status: 200 });
   } catch (err) {
     console.error("[GET /api/events/:eventId] error:", err);
     return NextResponse.json(
-      { error: "internal server error" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
