@@ -1,34 +1,34 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { api, GetEventSessionsParams } from "@/lib/api";
-import type { SessionSummaryDto, SessionDetailDto } from "@/types/dto";
+import type { EventSessionSummaryDto, EventSessionDetailDto } from "@/types/dto";
 
-export const sessionKeys = {
-  all: ["sessions"] as const,
+export const eventSessionKeys = {
+  all: ["eventSessions"] as const,
   eventSessions: (eventId: string, params?: GetEventSessionsParams) =>
-    [...sessionKeys.all, "event", eventId, params] as const,
-  detail: (id: string) => [...sessionKeys.all, "detail", id] as const,
+    [...eventSessionKeys.all, "event", eventId, params] as const,
+  detail: (id: string) => [...eventSessionKeys.all, "detail", id] as const,
 };
 
 export function useGetEventSessions(
   eventId: string,
   params?: GetEventSessionsParams,
-  options?: Omit<UseQueryOptions<{ data: SessionSummaryDto[] }>, "queryKey" | "queryFn">
+  options?: Omit<UseQueryOptions<{ data: EventSessionSummaryDto[] }>, "queryKey" | "queryFn">
 ) {
   return useQuery({
-    queryKey: sessionKeys.eventSessions(eventId, params),
+    queryKey: eventSessionKeys.eventSessions(eventId, params),
     queryFn: () => api.getEventSessions(eventId, params),
     enabled: !!eventId,
     ...options,
   });
 }
 
-export function useGetSession(
+export function useGetEventSession(
   sessionId: string,
-  options?: Omit<UseQueryOptions<SessionDetailDto>, "queryKey" | "queryFn">
+  options?: Omit<UseQueryOptions<EventSessionDetailDto>, "queryKey" | "queryFn">
 ) {
   return useQuery({
-    queryKey: sessionKeys.detail(sessionId),
-    queryFn: () => api.getSession(sessionId),
+    queryKey: eventSessionKeys.detail(sessionId),
+    queryFn: () => api.getEventSession(sessionId),
     enabled: !!sessionId,
     ...options,
   });
