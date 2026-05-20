@@ -15,23 +15,33 @@ export function SessionCard({ session, compact = false }: SessionCardProps) {
   const isPast = end < now;
   const isUpcoming = start > now;
 
+  const isNow = session.isLive;
+
   return (
     <Link
       href={`/sessions/${session.id}`}
-      className={`group block transition-all duration-300 hover:shadow-md ${
-        compact ? "p-3" : "p-4"
-      }`}
+      className={`group block transition-all duration-300 ${
+        isNow ? "hover:shadow-md ring-2 ring-yellow" : "hover:shadow-md"
+      } ${compact ? "p-3" : "p-4"}`}
       style={{
-        background: "#FEFCF7",
+        background: isNow ? "#FEFAE6" : "#FEFCF7",
         border: "1px solid rgba(40,40,40,0.1)",
-        borderLeft: `3px solid ${session.isLive ? "#7B8B6F" : isPast ? "#ccc" : "#EAE151"}`,
+        borderLeft: `3px solid ${session.isLive ? "#EAE151" : isPast ? "#ccc" : "#EAE151"}`,
       }}
     >
       <div className="flex items-center gap-2 mb-1.5">
+        {isNow && (
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[0.6rem] font-bold bg-yellow text-charcoal">
+            <span className="w-1 h-1 bg-charcoal animate-pulse" />
+            NOW
+          </span>
+        )}
         <span
           className={compact ? "text-[0.6rem] font-mono" : "text-xs font-mono"}
           style={{ color: "rgba(40,40,40,0.5)" }}
         >
+          {start.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+          {" · "}
           {start.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
           {!compact && ` – ${end.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`}
         </span>

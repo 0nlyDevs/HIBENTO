@@ -30,8 +30,7 @@ export function EventCard({ event, index }: EventCardProps) {
         <div className="flex items-center gap-2 mb-3">
           {isLive && (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[0.6rem] font-bold tracking-wider bg-nori text-cream">
-              <span className="w-1.5 h-1.5 bg-cream animate-pulse" />
-              LIVE
+              ONGOING
             </span>
           )}
           {isEnded && (

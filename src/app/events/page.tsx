@@ -4,8 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useGetEvents } from "@/lib/hooks/useEvents";
-import { EventCard } from "@/components/events/EventCard";
 import type { EventSummaryDto } from "@/types/dto";
+import { EventCard } from "@/components/events/EventCard";
 
 type EventStatus = "all" | "live" | "upcoming" | "ended";
 
@@ -27,7 +27,7 @@ export default function EventsPage() {
 
   const statusFilters: { value: EventStatus; label: string }[] = [
     { value: "all", label: "ALL" },
-    { value: "live", label: "LIVE" },
+    { value: "live", label: "ONGOING" },
     { value: "upcoming", label: "UPCOMING" },
     { value: "ended", label: "ENDED" },
   ];
@@ -112,9 +112,18 @@ export default function EventsPage() {
                 },
                 {}
               );
+              const cityOrder = ["ONLINE", "Antananarivo"];
+              const sorted = Object.entries(grouped).sort(([a], [b]) => {
+                const ia = cityOrder.indexOf(a);
+                const ib = cityOrder.indexOf(b);
+                if (ia !== -1 && ib !== -1) return ia - ib;
+                if (ia !== -1) return -1;
+                if (ib !== -1) return 1;
+                return a.localeCompare(b);
+              });
               return (
                 <div className="space-y-10">
-                  {Object.entries(grouped).map(([city, cityEvents]) => (
+                  {sorted.map(([city, cityEvents]) => (
                     <div key={city}>
                       <div className="flex items-center gap-4 mb-5">
                         <div className="w-2 h-2 bg-charcoal" />

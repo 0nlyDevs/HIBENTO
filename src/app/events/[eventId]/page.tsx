@@ -95,8 +95,7 @@ export default function EventDetailPage() {
           <div className="flex items-center gap-3 mb-4">
             {isLive && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[0.6rem] font-bold bg-nori text-cream">
-                <span className="w-1 h-1 bg-cream animate-pulse" />
-                LIVE
+                ONGOING
               </span>
             )}
             {event.isOnline && (
