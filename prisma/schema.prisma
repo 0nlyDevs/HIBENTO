@@ -22,28 +22,49 @@ model Event {
   description String?
   startDate   DateTime @map("start_date")
   endDate     DateTime @map("end_date")
-  location    String?  @db.VarChar(255)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  rooms    Room[]
-  sessions Session[]
+  eventSessions EventSession[]
 
   @@map("event")
 }
 
 model Room {
   id        String   @id @default(uuid()) @db.Uuid
-  eventId   String   @db.Uuid
   name      String   @db.VarChar(100)
+  location  String?  @db.VarChar(255)
   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  event    Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  sessions Session[]
+  eventSessions EventSession[]
 
-  @@unique([eventId, name])
-  @@index([eventId])
+  @@unique([name])
   @@map("room")
+}
+
+model EventSession {
+  id          String   @id @default(uuid()) @db.Uuid
+  eventId     String   @db.Uuid
+  roomId      String   @db.Uuid
+  title       String   @db.VarChar(255)
+  description String?
+  startTime   DateTime @map("start_time")
+  endTime     DateTime @map("end_time")
+  capacity    Int?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  event     Event            @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  room      Room             @relation(fields: [roomId], references: [id])
+  speakers  EventSessionSpeaker[]
+  questions Question[]
+
+  @@index([eventId])
+  @@index([startTime])
+  @@index([roomId])
+  @@unique([roomId, startTime]) // Prevent overlapping sessions in same room
+  @@map("event_session")
 }
 
 model Speaker {
@@ -55,7 +76,7 @@ model Speaker {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   links    SpeakerExternalLink[]
-  sessions SessionSpeaker[]
+  sessions EventSessionSpeaker[]
 
   @@map("speaker")
 }
@@ -72,39 +93,16 @@ model SpeakerExternalLink {
   @@map("speaker_external_link")
 }
 
-model Session {
-  id          String   @id @default(uuid()) @db.Uuid
-  eventId     String   @db.Uuid
-  roomId      String   @db.Uuid
-  title       String   @db.VarChar(255)
-  description String?
-  startTime   DateTime @map("start_time")
-  endTime     DateTime @map("end_time")
-  capacity    Int?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
-  event     Event            @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  room      Room             @relation(fields: [roomId], references: [id])
-  speakers  SessionSpeaker[]
-  questions Question[]
-
-  @@index([eventId])
-  @@index([startTime])
-  @@index([roomId])
-  @@map("session")
-}
-
-model SessionSpeaker {
+model EventSessionSpeaker {
   sessionId String   @db.Uuid
   speakerId String   @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  speaker Speaker @relation(fields: [speakerId], references: [id], onDelete: Cascade)
+  session EventSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  speaker Speaker      @relation(fields: [speakerId], references: [id], onDelete: Cascade)
 
   @@id([sessionId, speakerId])
-  @@map("session_speaker")
+  @@map("event_session_speaker")
 }
 
 model Question {
@@ -115,7 +113,7 @@ model Question {
   upvotes    Int      @default(0)
   createdAt  DateTime @default(now()) @map("created_at")
 
-  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  session EventSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   @@index([sessionId])
   @@index([upvotes])
