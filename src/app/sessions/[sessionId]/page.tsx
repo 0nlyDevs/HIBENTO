@@ -86,24 +86,6 @@ export default function SessionDetailPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-charcoal/10">
-        <div className="max-w-full mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.svg" alt="HiBento" width={28} height={28} />
-            <span className="font-bold text-xl tracking-tighter text-charcoal">HIBENTO</span>
-          </Link>
-          <div className="flex items-center gap-6">
-            <Link href="/events" className="text-sm font-bold text-charcoal border-b-2 border-charcoal">
-              EVENTS
-            </Link>
-            <Link href="/speakers" className="text-sm text-charcoal/60 hover:text-charcoal">
-              SPEAKERS
-            </Link>
-          </div>
-        </div>
-      </nav>
-
       <div className="max-w-4xl mx-auto px-6 py-10">
         {/* Back link */}
         <Link

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { SpeakerCard } from "@/components/speakers/SpeakerCard";
@@ -21,24 +20,6 @@ export default function SpeakersPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-charcoal/10">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.svg" alt="HiBento" width={28} height={28} />
-            <span className="font-bold text-xl tracking-tighter text-charcoal">HIBENTO</span>
-          </Link>
-          <div className="flex items-center gap-6">
-            <Link href="/events" className="text-sm text-charcoal/60 hover:text-charcoal">
-              EVENTS
-            </Link>
-            <Link href="/speakers" className="text-sm font-bold text-charcoal border-b-2 border-charcoal">
-              SPEAKERS
-            </Link>
-          </div>
-        </div>
-      </nav>
-
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-8">

@@ -37,20 +37,13 @@ export default function SpeakerProfilePage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-charcoal/10">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.svg" alt="HiBento" width={28} height={28} />
-            <span className="font-bold text-xl tracking-tighter text-charcoal">HIBENTO</span>
-          </Link>
-          <Link href="/speakers" className="text-sm text-charcoal/60 hover:text-charcoal">
-            ← ALL SPEAKERS
-          </Link>
-        </div>
-      </nav>
-
       <div className="max-w-4xl mx-auto px-6 py-8">
+        <Link href="/speakers" className="inline-flex items-center gap-2 text-xs tracking-wider text-charcoal/40 hover:text-charcoal mb-8">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M7 3L4 6L7 9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+          </svg>
+          ALL SPEAKERS
+        </Link>
         <div className="grid md:grid-cols-3 gap-8">
           {/* Left Column - Avatar & Links */}
           <div className="md:col-span-1">

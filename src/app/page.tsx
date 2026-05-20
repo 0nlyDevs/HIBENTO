@@ -1,29 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 
 export default function Home() {
   return (
     <div className="min-h-screen relative bg-cream">
-      {/* Nav */}
-      <nav className="border-b border-charcoal/10 bg-cream/95 backdrop-blur sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.svg" alt="HiBento" width={28} height={28} />
-            <span className="font-bold text-xl tracking-tighter text-charcoal">HIBENTO</span>
-          </Link>
-          <div className="flex items-center gap-6">
-            <Link href="/events" className="text-sm font-medium text-charcoal/70 hover:text-charcoal">
-              EVENTS
-            </Link>
-            <Link href="/speakers" className="text-sm font-medium text-charcoal/70 hover:text-charcoal">
-              SPEAKERS
-            </Link>
-          </div>
-        </div>
-      </nav>
-
       {/* Hero */}
       <section className="max-w-7xl mx-auto px-6 py-24">
         <div className="max-w-2xl">

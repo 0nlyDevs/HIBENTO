@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import { Nav } from "@/components/Nav";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +28,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${notoSansJP.variable}`}>
       <body className="min-h-screen bg-cream font-sans antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          <Nav />
+          {children}
+        </Providers>
       </body>
     </html>
   );
