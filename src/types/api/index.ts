@@ -98,10 +98,4 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
-
-  upvoteQuestion: (questionId: string) =>
-    fetchApi<{ success: boolean; upvotes: number }>(
-      `/questions/${questionId}/upvote`,
-      { method: "POST" }
-    ),
 };

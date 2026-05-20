@@ -12,66 +12,54 @@ export default function SpeakerProfilePage() {
   const { data: speaker, isLoading } = useQuery({
     queryKey: ["speaker", speakerId],
     queryFn: () => api.getSpeaker(speakerId),
-    enabled: !!speakerId
+    enabled: !!speakerId,
   });
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid pointer-events-none"></div>
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-charcoal border-t-yellow animate-spin mx-auto mb-4"></div>
-          <p className="text-sm tracking-wider text-charcoal/60">LOADING</p>
-        </div>
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-charcoal border-t-yellow animate-spin" />
       </div>
     );
   }
 
   if (!speaker) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid pointer-events-none"></div>
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-charcoal mb-4">SPEAKER NOT FOUND</h1>
-          <Link href="/speakers" className="btn-primary">BACK TO SPEAKERS</Link>
-        </div>
+      <div className="min-h-screen bg-cream flex flex-col items-center justify-center gap-4">
+        <h1 className="text-2xl font-bold text-charcoal">SPEAKER NOT FOUND</h1>
+        <Link href="/speakers" className="text-sm text-charcoal/60 hover:text-charcoal underline">
+          Back to speakers
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-cream relative overflow-hidden">
-      <div className="absolute inset-0 bg-grid pointer-events-none"></div>
-      <nav className="border-b border-charcoal/10 bg-cream/95 backdrop-blur sticky top-0 z-50">
+    <div className="min-h-screen bg-cream">
+      {/* Navigation */}
+      <nav className="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-charcoal/10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
-            <Image
-              src="/logo.svg"
-              alt="HIBENTO"
-              width={28}
-              height={28}
-              className="group-hover:scale-110 transition-transform"
-            />
-            <span className="font-bold text-xl tracking-tighter text-charcoal">
-              HIBENTO
-            </span>
+          <Link href="/" className="flex items-center gap-3">
+            <Image src="/logo.svg" alt="HiBento" width={28} height={28} />
+            <span className="font-bold text-xl tracking-tighter text-charcoal">HIBENTO</span>
           </Link>
-          <Link href="/speakers" className="btn-outline text-xs py-2 px-4">
-            {'\u2190'} ALL SPEAKERS
+          <Link href="/speakers" className="text-sm text-charcoal/60 hover:text-charcoal">
+            ← ALL SPEAKERS
           </Link>
         </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        <div className="grid md:grid-cols-3 gap-8">
+          {/* Left Column - Avatar & Links */}
           <div className="md:col-span-1">
-            <div className="w-full aspect-square bg-charcoal/5 flex items-center justify-center mb-6">
+            <div className="w-full aspect-square bg-charcoal/5 mb-6 flex items-center justify-center overflow-hidden">
               {speaker.avatar ? (
                 <Image
                   src={speaker.avatar}
                   alt={speaker.name}
-                  width={200}
-                  height={200}
+                  width={300}
+                  height={300}
                   className="object-cover w-full h-full"
                 />
               ) : (
@@ -83,16 +71,14 @@ export default function SpeakerProfilePage() {
 
             {speaker.externalLinks && speaker.externalLinks.length > 0 && (
               <div className="space-y-2">
-                <div className="text-xs tracking-wider text-charcoal/40 mb-3">
-                  CONNECT
-                </div>
+                <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-3">CONNECT</div>
                 {speaker.externalLinks.map((link, idx) => (
                   <a
                     key={idx}
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block tag-pill w-full text-center hover:bg-yellow/30 transition-colors"
+                    className="block w-full px-4 py-2 text-center text-xs tracking-wider border border-charcoal/20 hover:bg-yellow/10 transition-colors"
                   >
                     {link.type.toUpperCase()}
                   </a>
@@ -101,54 +87,60 @@ export default function SpeakerProfilePage() {
             )}
           </div>
 
+          {/* Right Column - Info & Sessions */}
           <div className="md:col-span-2">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-px bg-charcoal/30"></div>
-              <span className="text-xs tracking-[0.3em] text-charcoal/60">
-                SPEAKER PROFILE
-              </span>
+            <div className="mb-6">
+              <h1 className="text-3xl font-black tracking-tighter text-charcoal mb-4">
+                {speaker.name}
+              </h1>
+              <p className="text-base text-charcoal/60 leading-relaxed">
+                {speaker.bio || "No bio available"}
+              </p>
             </div>
 
-            <h1 className="text-4xl font-black tracking-tighter text-charcoal mb-4">
-              {speaker.name}
-            </h1>
+            {speaker.eventSessions && speaker.eventSessions.length > 0 && (
+              <div className="border-t border-charcoal/10 pt-8">
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="w-1.5 h-1.5 bg-yellow" />
+                  <h2 className="text-sm font-bold tracking-wider text-charcoal">SESSIONS</h2>
+                  <span className="text-[0.6rem] text-charcoal/40 ml-auto">
+                    {speaker.eventSessions.length} TOTAL
+                  </span>
+                </div>
 
-            <p className="text-lg text-charcoal/60 leading-relaxed mb-8">
-              {speaker.bio}
-            </p>
-
-            <div className="border-t border-charcoal/10 pt-8">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-2 h-2 bg-yellow"></div>
-                <h2 className="text-lg font-bold tracking-wider text-charcoal">
-                  UPCOMING SESSIONS
-                </h2>
-              </div>
-
-              <div className="space-y-4">
-                {speaker.eventSessions.map((s) => (
-                  <Link
-                    key={s.id}
-                    href={`/sessions/${s.id}`}
-                    className="block bento-card hover:bg-yellow/10 transition-all"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-bold text-charcoal mb-1">
-                          {s.title}
-                        </h3>
-                        <div className="flex gap-4 text-xs text-charcoal/50">
-                          <span>{s.eventName}</span>
-                          <span>{new Date(s.startTime).toLocaleDateString()}</span>
-                          <span>{s.room}</span>
+                <div className="space-y-3">
+                  {speaker.eventSessions.map((session) => (
+                    <Link
+                      key={session.id}
+                      href={`/sessions/${session.id}`}
+                      className="block p-4 border border-charcoal/10 hover:bg-yellow/5 transition-all group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-bold text-charcoal group-hover:text-yellow-dark transition-colors mb-1">
+                            {session.title}
+                          </h3>
+                          <div className="flex flex-wrap gap-2 text-xs text-charcoal/40">
+                            <span>{session.eventName}</span>
+                            <span>•</span>
+                            <span>{new Date(session.startTime).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })}</span>
+                            <span>•</span>
+                            <span>{session.room}</span>
+                          </div>
                         </div>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-charcoal/20 group-hover:text-charcoal transition-colors shrink-0 ml-4">
+                          <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
                       </div>
-                      <div className="text-charcoal/30 text-xl shrink-0">{'\u2192'}</div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
