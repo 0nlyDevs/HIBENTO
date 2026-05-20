@@ -1,11 +1,15 @@
 import type {
   EventSummaryDto,
   EventDetailDto,
-  SessionSummaryDto,
-  SessionDetailDto,
+  EventSessionSummaryDto,
+  EventSessionDetailDto,
   RoomDto,
   SpeakerSummaryDto,
   SpeakerProfileDto,
+  VenueDto,
+  VenueDetailDto,
+  QuestionDto,
+  UpvoteResponseDto,
 } from "@/types/dto";
 import { API_BASE_URL } from "./constants";
 
@@ -35,7 +39,6 @@ export interface GetEventSessionsParams {
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 
-// src/lib/api.ts - Update the http function
 async function http<T>(
   path: string,
   init?: RequestInit & { timeout?: number },
@@ -82,26 +85,27 @@ async function http<T>(
     clearTimeout(timer);
   }
 }
+
 // ============= API surface =============
 
 export const api = {
+  // Venues
+  getVenues: () => http<{ data: VenueDto[] }>("/api/venues"),
+  getVenue: (venueId: string) => http<VenueDetailDto>(`/api/venues/${venueId}`),
+
   // Speakers
-// src/lib/api.ts - Update the getSpeakers function
-getSpeakers: (params?: { page?: number; limit?: number }) => {
-  const searchParams = new URLSearchParams();
-  if (params?.page) searchParams.set("page", params.page.toString());
-  if (params?.limit) searchParams.set("limit", params.limit.toString());
-
-  const query = searchParams.toString();
-  return http<{ data: SpeakerSummaryDto[] }>(
-    `/api/speakers${query ? `?${query}` : ""}`
-  );
-},
-
+  getSpeakers: (params?: { page?: number; limit?: number }) => {
+    const searchParams = new URLSearchParams();
+    if (params?.page) searchParams.set("page", params.page.toString());
+    if (params?.limit) searchParams.set("limit", params.limit.toString());
+    const query = searchParams.toString();
+    return http<{ data: SpeakerSummaryDto[] }>(
+      `/api/speakers${query ? `?${query}` : ""}`
+    );
+  },
   getSpeaker: (speakerId: string) => 
     http<SpeakerProfileDto>(`/api/speakers/${speakerId}`),
 
-  // Events
   // Events
   getEvents: (params?: GetEventsParams) => {
     const searchParams = new URLSearchParams();
@@ -115,10 +119,9 @@ getSpeakers: (params?: { page?: number; limit?: number }) => {
       `/api/events${query ? `?${query}` : ""}`,
     );
   },
-
   getEvent: (eventId: string) => http<EventDetailDto>(`/api/events/${eventId}`),
 
-  // Sessions
+  // Event Sessions
   getEventSessions: (eventId: string, params?: GetEventSessionsParams) => {
     const searchParams = new URLSearchParams();
     if (params?.room) searchParams.set("room", params.room);
@@ -126,22 +129,29 @@ getSpeakers: (params?: { page?: number; limit?: number }) => {
       searchParams.set("liveOnly", params.liveOnly.toString());
 
     const query = searchParams.toString();
-    return http<{ data: SessionSummaryDto[] }>(
+    return http<{ data: EventSessionSummaryDto[] }>(
       `/api/events/${eventId}/sessions${query ? `?${query}` : ""}`,
     );
   },
-
-  getSession: (sessionId: string) =>
-    http<SessionDetailDto>(`/api/sessions/${sessionId}`),
+  getEventSession: (sessionId: string) =>
+    http<EventSessionDetailDto>(`/api/event-sessions/${sessionId}`),
 
   // Rooms
   getEventRooms: (eventId: string) =>
     http<{ data: RoomDto[] }>(`/api/events/${eventId}/rooms`),
 
-  getRoomSessions: (eventId: string, roomName: string) =>
-    http<{ data: SessionSummaryDto[] }>(
-      `/api/events/${eventId}/rooms/${encodeURIComponent(roomName)}/sessions`,
-    ),
+  // Questions
+  getQuestions: (eventSessionId: string) =>
+    http<{ data: QuestionDto[] }>(`/api/event-sessions/${eventSessionId}/questions`),
+  createQuestion: (eventSessionId: string, content: string, authorName?: string) =>
+    http<QuestionDto>(`/api/event-sessions/${eventSessionId}/questions`, {
+      method: "POST",
+      body: JSON.stringify({ content, authorName }),
+    }),
+  upvoteQuestion: (questionId: string) =>
+    http<UpvoteResponseDto>(`/api/questions/${questionId}/upvote`, {
+      method: "POST",
+    }),
 };
 
 // ============= Helpers =============
@@ -152,6 +162,14 @@ export function isEventLive(event: {
 }): boolean {
   const now = new Date();
   return now >= new Date(event.startDate) && now <= new Date(event.endDate);
+}
+
+export function isEventSessionLive(session: {
+  startTime: string;
+  endTime: string;
+}): boolean {
+  const now = new Date();
+  return now >= new Date(session.startTime) && now <= new Date(session.endTime);
 }
 
 export function formatEventDate(dateString: string): string {
@@ -167,4 +185,8 @@ export function formatSessionTime(dateString: string): string {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+export function getVenueDisplayName(venue: VenueDto): string {
+  return `${venue.neighborhood}, ${venue.city} - ${venue.name}`;
 }
