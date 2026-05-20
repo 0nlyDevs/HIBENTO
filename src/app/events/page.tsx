@@ -103,16 +103,58 @@ export default function EventsPage() {
             ))}
           </div>
         ) : events.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {events.map((event, idx) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                index={idx}
-                onSelect={setSlideOverEvent}
-              />
-            ))}
-          </div>
+          selectedCity === "all" ? (
+            (() => {
+              const grouped = events.reduce<Record<string, EventSummaryDto[]>>(
+                (acc, e) => {
+                  const city = e.venue.city;
+                  if (!acc[city]) acc[city] = [];
+                  acc[city].push(e);
+                  return acc;
+                },
+                {}
+              );
+              return (
+                <div className="space-y-10">
+                  {Object.entries(grouped).map(([city, cityEvents]) => (
+                    <div key={city}>
+                      <div className="flex items-center gap-4 mb-5">
+                        <div className="w-2 h-2 bg-charcoal" />
+                        <h2 className="text-sm font-bold tracking-widest text-charcoal">
+                          {city.toUpperCase()}
+                        </h2>
+                        <div className="flex-1 h-px bg-charcoal/10" />
+                        <span className="text-[0.6rem] tracking-wider text-charcoal/30">
+                          {cityEvents.length} {cityEvents.length === 1 ? "EVENT" : "EVENTS"}
+                        </span>
+                      </div>
+                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {cityEvents.map((event, idx) => (
+                          <EventCard
+                            key={event.id}
+                            event={event}
+                            index={idx}
+                            onSelect={setSlideOverEvent}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {events.map((event, idx) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  index={idx}
+                  onSelect={setSlideOverEvent}
+                />
+              ))}
+            </div>
+          )
         ) : (
           <div className="text-center py-16 border border-dashed border-charcoal/20">
             <p className="text-charcoal/40 text-sm tracking-wider">NO EVENTS FOUND</p>
