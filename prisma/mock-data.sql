@@ -1,4 +1,4 @@
--- ==================== CLEAN EXISTING DATA ====================
+-- Clean existing data
 TRUNCATE TABLE question CASCADE;
 TRUNCATE TABLE event_session_speaker CASCADE;
 TRUNCATE TABLE event_session CASCADE;
@@ -10,131 +10,154 @@ TRUNCATE TABLE venue CASCADE;
 
 -- ==================== VENUES ====================
 INSERT INTO venue (id, name, city, neighborhood, total_rooms, created_at, updated_at) VALUES
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'HEI', 'Antananarivo', 'Ivandry', 0, NOW(), NOW()),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'Anjanahary Convention Center', 'Antananarivo', 'Anjanahary', 0, NOW(), NOW()),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', 'Digital Lab', 'Antananarivo', 'Analakely', 0, NOW(), NOW()),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4', 'CC Esca', 'Antananarivo', 'Antanimena', 0, NOW(), NOW()),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5', 'Iavoloha Palace', 'Antananarivo', 'Iavoloha', 0, NOW(), NOW()),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6', 'University of Fianarantsoa', 'Fianarantsoa', 'Tanambao', 0, NOW(), NOW()),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa7', 'Nosy Be Conference Hall', 'Nosy Be', 'Hell-Ville', 0, NOW(), NOW()),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa8', 'Colbert Hotel', 'Antsiranana', 'Antsiranana Urban', 0, NOW(), NOW());
+('550e8400-e29b-41d4-a716-446655440001', 'HEI', 'Antananarivo', 'Ivandry', 4, NOW(), NOW()),
+('550e8400-e29b-41d4-a716-446655440002', 'Convention Center', 'Antananarivo', 'Anjanahary', 3, NOW(), NOW()),
+('550e8400-e29b-41d4-a716-446655440003', 'Digital Lab', 'Antsirabe', 'Centre', 2, NOW(), NOW()),
+('550e8400-e29b-41d4-a716-446655440004', 'University Center', 'Fianarantsoa', 'Tanambao', 3, NOW(), NOW()),
+('550e8400-e29b-41d4-a716-446655440005', 'Tech Hub', 'Toamasina', 'Port', 2, NOW(), NOW());
 
 -- ==================== EVENTS ====================
+-- Past event (ended)
 INSERT INTO event (id, title, description, "venueId", start_date, end_date, created_at, updated_at) VALUES
-('11111111-1111-1111-1111-111111111111', 'DevConf Madagascar 2025', 'La plus grande conférence des développeurs à Madagascar. Découvrez les dernières technologies web, cloud et IA.', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', '2025-09-15 09:00:00+00', '2025-09-17 18:00:00+00', NOW(), NOW()),
-('22222222-2222-2222-2222-222222222222', 'Tech Summit Antananarivo', 'Rassemblement des innovateurs tech malgaches pour façonner l''avenir numérique du pays.', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '2025-10-05 10:00:00+00', '2025-10-06 17:00:00+00', NOW(), NOW()),
-('33333333-3333-3333-3333-333333333333', 'Atelier IA Madagascar', 'Plongée approfondie dans l''intelligence artificielle et le machine learning avec des experts locaux.', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', '2025-11-20 09:00:00+00', '2025-11-20 18:00:00+00', NOW(), NOW()),
-('44444444-4444-4444-4444-444444444444', 'Startup Weekend Fianar', 'Weekend de création d''entreprises innovantes dans la région de Fianarantsoa.', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6', '2025-12-10 08:00:00+00', '2025-12-12 20:00:00+00', NOW(), NOW()),
-('55555555-5555-5555-5555-555555555555', 'Nosy Be Tech Forum', 'Forum technologique sur l''innovation numérique et le tourisme à Nosy Be.', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa7', '2026-01-20 09:00:00+00', '2026-01-22 18:00:00+00', NOW(), NOW());
+('660e8400-e29b-41d4-a716-446655440001', 'DevFest Antananarivo 2024', 'Annual developer festival with workshops and talks about web, mobile, and cloud technologies.', '550e8400-e29b-41d4-a716-446655440001', '2024-11-15 08:00:00+00', '2024-11-16 18:00:00+00', NOW(), NOW()),
+
+-- Currently live event
+('660e8400-e29b-41d4-a716-446655440002', 'Tech Innovation Summit 2026', 'Ongoing summit about AI, blockchain, and digital transformation in Madagascar.', '550e8400-e29b-41d4-a716-446655440002', '2026-05-19 09:00:00+00', '2026-05-22 17:00:00+00', NOW(), NOW()),
+
+-- Upcoming events
+('660e8400-e29b-41d4-a716-446655440003', 'Startup Weekend Antsirabe', '54-hour weekend event to pitch ideas, form teams, and launch startups.', '550e8400-e29b-41d4-a716-446655440003', '2026-07-10 18:00:00+00', '2026-07-12 20:00:00+00', NOW(), NOW()),
+
+('660e8400-e29b-41d4-a716-446655440004', 'AI Conference Fianarantsoa', 'Exploring artificial intelligence applications in education and healthcare.', '550e8400-e29b-41d4-a716-446655440004', '2026-08-20 09:00:00+00', '2026-08-21 18:00:00+00', NOW(), NOW()),
+
+('660e8400-e29b-41d4-a716-446655440005', 'Mobile Dev Workshop Toamasina', 'Hands-on workshop for Flutter and React Native development.', '550e8400-e29b-41d4-a716-446655440005', '2026-09-05 10:00:00+00', '2026-09-05 17:00:00+00', NOW(), NOW()),
+
+('660e8400-e29b-41d4-a716-446655440006', 'Cloud & DevOps Day', 'Full day dedicated to cloud infrastructure and DevOps practices.', '550e8400-e29b-41d4-a716-446655440001', '2026-10-15 09:00:00+00', '2026-10-15 18:00:00+00', NOW(), NOW());
 
 -- ==================== ROOMS ====================
--- Rooms for HEI (Ivandry)
 INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab01', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'Grand Amphithéâtre', 300, NOW(), NOW()),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab02', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'Salle NP', 80, NOW(), NOW()),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab03', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'Salle B', 80, NOW(), NOW()),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab04', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'Labo Informatique 1', 40, NOW(), NOW()),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab05', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'Labo Informatique 2', 40, NOW(), NOW()),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab06', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'Salle Pi', 50, NOW(), NOW());
+-- HEI (v001)
+('770e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440001', 'Grand Amphithéâtre', 300, NOW(), NOW()),
+('770e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440001', 'Salle NP', 80, NOW(), NOW()),
+('770e8400-e29b-41d4-a716-446655440003', '550e8400-e29b-41d4-a716-446655440001', 'Labo Informatique', 40, NOW(), NOW()),
+('770e8400-e29b-41d4-a716-446655440004', '550e8400-e29b-41d4-a716-446655440001', 'Salle Pi', 50, NOW(), NOW()),
 
--- Rooms for Anjanahary Convention Center
-INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbb01', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'Grand Hall Anjanahary', 800, NOW(), NOW()),
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbb02', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'Salle Ravinala', 200, NOW(), NOW()),
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbb03', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'Salle Orchidée', 150, NOW(), NOW()),
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbb04', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'Espace Workshop', 100, NOW(), NOW()),
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbb05', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'Salle de Réunion A', 50, NOW(), NOW()),
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbb06', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'Salle de Réunion B', 50, NOW(), NOW());
+-- Convention Center (v002)
+('770e8400-e29b-41d4-a716-446655440005', '550e8400-e29b-41d4-a716-446655440002', 'Grand Hall', 500, NOW(), NOW()),
+('770e8400-e29b-41d4-a716-446655440006', '550e8400-e29b-41d4-a716-446655440002', 'Salle Ravinala', 150, NOW(), NOW()),
+('770e8400-e29b-41d4-a716-446655440007', '550e8400-e29b-41d4-a716-446655440002', 'Espace Workshop', 60, NOW(), NOW()),
 
--- Rooms for Digital Lab
-INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
-('cccccccc-cccc-cccc-cccc-cccccccccc01', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', 'Main Lab', 60, NOW(), NOW()),
-('cccccccc-cccc-cccc-cccc-cccccccccc02', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', 'Salle de Formation', 35, NOW(), NOW()),
-('cccccccc-cccc-cccc-cccc-cccccccccc03', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', 'Espace Coworking', 45, NOW(), NOW());
+-- Digital Lab (v003)
+('770e8400-e29b-41d4-a716-446655440008', '550e8400-e29b-41d4-a716-446655440003', 'Main Room', 100, NOW(), NOW()),
+('770e8400-e29b-41d4-a716-446655440009', '550e8400-e29b-41d4-a716-446655440003', 'Training Room', 30, NOW(), NOW()),
 
--- Rooms for CC ESCA
-INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
-('dddddddd-dddd-dddd-dddd-dddddddddd01', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4', 'Grande Salle', 400, NOW(), NOW()),
-('dddddddd-dddd-dddd-dddd-dddddddddd02', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4', 'Salle Moyenne', 120, NOW(), NOW());
+-- University Center (v004)
+('770e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440004', 'Amphi Principal', 250, NOW(), NOW()),
+('770e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440004', 'Salle 101', 60, NOW(), NOW()),
+('770e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440004', 'Salle 102', 60, NOW(), NOW()),
 
--- Rooms for Iavoloha Palace
-INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
-('eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5', 'Salle d''Honneur', 500, NOW(), NOW()),
-('eeeeeeee-eeee-eeee-eeee-eeeeeeeeee02', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5', 'Salle des Conférences', 200, NOW(), NOW());
-
--- Rooms for University of Fianarantsoa
-INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
-('ffffffff-ffff-ffff-ffff-ffffffffff01', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6', 'Grand Amphithéâtre', 250, NOW(), NOW()),
-('ffffffff-ffff-ffff-ffff-ffffffffff02', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6', 'Salle 101', 60, NOW(), NOW()),
-('ffffffff-ffff-ffff-ffff-ffffffffff03', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6', 'Salle 102', 60, NOW(), NOW());
-
--- Rooms for Nosy Be Conference Hall
-INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
-('11111111-1111-1111-1111-111111111101', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa7', 'Palais des Congrès', 600, NOW(), NOW()),
-('11111111-1111-1111-1111-111111111102', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa7', 'Salle Vanille', 100, NOW(), NOW()),
-('11111111-1111-1111-1111-111111111103', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa7', 'Salle Ylang', 100, NOW(), NOW());
+-- Tech Hub (v005)
+('770e8400-e29b-41d4-a716-446655440013', '550e8400-e29b-41d4-a716-446655440005', 'Salle Principale', 120, NOW(), NOW()),
+('770e8400-e29b-41d4-a716-446655440014', '550e8400-e29b-41d4-a716-446655440005', 'Co-working Space', 40, NOW(), NOW());
 
 -- ==================== SPEAKERS ====================
 INSERT INTO speaker (id, name, avatar_url, bio, created_at, updated_at) VALUES
-('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Rija Rakoto', 'https://randomuser.me/api/portraits/men/1.jpg', 'Rija est un développeur full-stack malgache avec 12 ans d''expérience. Spécialiste en React et Next.js, il a fondé la communauté des devs à Madagascar.', NOW(), NOW()),
-('b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 'Miora Rasoanaivo', 'https://randomuser.me/api/portraits/women/2.jpg', 'Architecte cloud chez NovaTech, Miora aide les entreprises malgaches à migrer vers le cloud. Passionnée par le DevOps et Kubernetes.', NOW(), NOW()),
-('c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 'Lova Andrian', 'https://randomuser.me/api/portraits/men/3.jpg', 'Chercheur en IA et data scientist. Lova travaille sur des solutions d''IA appliquées à l''agriculture malgache.', NOW(), NOW()),
-('d3eebc99-9c0b-4ef8-bb6d-6bb9bd380a14', 'Nantenaina Razafy', 'https://randomuser.me/api/portraits/women/4.jpg', 'Expert en cybersécurité et fondateur de SecureMG. Nantenaina forme les entreprises malgaches aux bonnes pratiques de sécurité.', NOW(), NOW()),
-('e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a15', 'Haja Rasolofo', 'https://randomuser.me/api/portraits/men/5.jpg', 'Tech lead chez DigitalLab et créateur de contenu tech. Haja est une figure importante de la communauté dev Malagasy.', NOW(), NOW()),
-('f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', 'Tiana Randria', 'https://randomuser.me/api/portraits/women/6.jpg', 'Product manager et entrepreneur. Tiana a lancé plusieurs startups technologiques à Madagascar.', NOW(), NOW());
+('880e8400-e29b-41d4-a716-446655440001', 'Rija Rakoto', 'https://i.pravatar.cc/300?u=rija', 'Full-stack developer with 12 years experience. React and Node.js expert. Founder of MadaJS community.', NOW(), NOW()),
+('880e8400-e29b-41d4-a716-446655440002', 'Miora Rasoanaivo', 'https://i.pravatar.cc/300?u=miora', 'Cloud architect at NovaTech. AWS certified. Passionate about DevOps and Kubernetes.', NOW(), NOW()),
+('880e8400-e29b-41d4-a716-446655440003', 'Lova Andrian', 'https://i.pravatar.cc/300?u=lova', 'AI researcher focusing on agricultural applications. PhD in Machine Learning.', NOW(), NOW()),
+('880e8400-e29b-41d4-a716-446655440004', 'Tiana Randria', 'https://i.pravatar.cc/300?u=tiana', 'Serial entrepreneur. Launched 3 tech startups. Product management expert.', NOW(), NOW()),
+('880e8400-e29b-41d4-a716-446655440005', 'Haja Rasolofo', 'https://i.pravatar.cc/300?u=haja', 'Tech lead and content creator. YouTube channel with 50K+ subscribers.', NOW(), NOW());
 
--- ==================== SPEAKER EXTERNAL LINKS ====================
+-- ==================== SPEAKER LINKS ====================
 INSERT INTO speaker_external_link (id, "speakerId", link_type, url, created_at) VALUES
-('f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a17', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'TWITTER', 'https://twitter.com/rijarakoto', NOW()),
-('f6eebc99-9c0b-4ef8-bb6d-6bb9bd380a18', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'GITHUB', 'https://github.com/rijarakoto', NOW()),
-('f7eebc99-9c0b-4ef8-bb6d-6bb9bd380a19', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'WEBSITE', 'https://rijarakoto.dev', NOW()),
-('f8eebc99-9c0b-4ef8-bb6d-6bb9bd380a20', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 'LINKEDIN', 'https://linkedin.com/in/miorarasoanaivo', NOW()),
-('f9eebc99-9c0b-4ef8-bb6d-6bb9bd380a21', 'c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 'TWITTER', 'https://twitter.com/lovaai', NOW());
+('990e8400-e29b-41d4-a716-446655440001', '880e8400-e29b-41d4-a716-446655440001', 'TWITTER', 'https://twitter.com/rijarakoto', NOW()),
+('990e8400-e29b-41d4-a716-446655440002', '880e8400-e29b-41d4-a716-446655440001', 'GITHUB', 'https://github.com/rijarakoto', NOW()),
+('990e8400-e29b-41d4-a716-446655440003', '880e8400-e29b-41d4-a716-446655440002', 'LINKEDIN', 'https://linkedin.com/in/miora', NOW()),
+('990e8400-e29b-41d4-a716-446655440004', '880e8400-e29b-41d4-a716-446655440003', 'TWITTER', 'https://twitter.com/lovaai', NOW()),
+('990e8400-e29b-41d4-a716-446655440005', '880e8400-e29b-41d4-a716-446655440004', 'LINKEDIN', 'https://linkedin.com/in/tiana', NOW()),
+('990e8400-e29b-41d4-a716-446655440006', '880e8400-e29b-41d4-a716-446655440005', 'OTHER', 'https://youtube.com/@hajatech', NOW());
 
--- ==================== EVENT SESSIONS ====================
--- DevConf Madagascar 2025 Sessions
+-- ==================== SESSIONS ====================
+
+-- DevFest Antananarivo 2024 (Past - Ended)
 INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
-('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'Keynote: L''Avenir du Web à Madagascar', 'Découvrez les perspectives du développement web à Madagascar et les opportunités pour les jeunes devs.', '2025-09-15 09:00:00+00', '2025-09-15 10:30:00+00', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab01', 300, '11111111-1111-1111-1111-111111111111', NOW(), NOW()),
-('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', 'Workshop: Rust pour Débutants', 'Apprenez les bases de Rust avec John. Atelier pratique avec des exercices concrets.', '2025-09-15 11:00:00+00', '2025-09-15 13:00:00+00', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab04', 40, '11111111-1111-1111-1111-111111111111', NOW(), NOW()),
-('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a03', 'Live Coding: Application Temps Réel', 'Regardez Alice construire une application temps réel avec Next.js et WebSockets.', '2025-09-15 14:00:00+00', '2025-09-15 15:30:00+00', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab02', 80, '11111111-1111-1111-1111-111111111111', NOW(), NOW()),
-('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a04', 'Cloud Computing avec Miora', 'Introduction au cloud computing et déploiement d''applications sur AWS.', '2025-09-16 10:00:00+00', '2025-09-16 12:00:00+00', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab02', 80, '11111111-1111-1111-1111-111111111111', NOW(), NOW()),
-('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a05', 'Sécurité Web avec Nantenaina', 'Les bonnes pratiques de sécurité pour les applications web modernes.', '2025-09-16 14:00:00+00', '2025-09-16 16:00:00+00', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab06', 50, '11111111-1111-1111-1111-111111111111', NOW(), NOW());
+('aa0e8400-e29b-41d4-a716-446655440001', 'Keynote: Web Development Trends', 'Overview of the latest trends in web development for 2024.', '2024-11-15 09:00:00+00', '2024-11-15 10:30:00+00', '770e8400-e29b-41d4-a716-446655440001', 300, '660e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440002', 'Workshop: React Hooks Deep Dive', 'Advanced React patterns with hooks.', '2024-11-15 11:00:00+00', '2024-11-15 13:00:00+00', '770e8400-e29b-41d4-a716-446655440003', 40, '660e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440003', 'Cloud Migration Strategies', 'How to migrate legacy apps to the cloud.', '2024-11-15 14:00:00+00', '2024-11-15 15:30:00+00', '770e8400-e29b-41d4-a716-446655440002', 80, '660e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440004', 'Networking Session', 'Meet fellow developers and share experiences.', '2024-11-15 16:00:00+00', '2024-11-15 18:00:00+00', '770e8400-e29b-41d4-a716-446655440004', 50, '660e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440005', 'AI for Beginners', 'Introduction to AI concepts and tools.', '2024-11-16 09:00:00+00', '2024-11-16 12:00:00+00', '770e8400-e29b-41d4-a716-446655440001', 300, '660e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440006', 'Closing Panel', 'Discussion on the future of tech in Madagascar.', '2024-11-16 14:00:00+00', '2024-11-16 17:00:00+00', '770e8400-e29b-41d4-a716-446655440001', 300, '660e8400-e29b-41d4-a716-446655440001', NOW(), NOW());
 
--- Tech Summit Antananarivo Sessions
+-- Tech Innovation Summit 2026 (Live - some sessions ongoing)
 INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
-('f1eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'Opening: Innovation Made in Madagascar', 'Cérémonie d''ouverture avec les leaders tech malgaches.', '2025-10-05 10:00:00+00', '2025-10-05 11:30:00+00', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbb02', 200, '22222222-2222-2222-2222-222222222222', NOW(), NOW()),
-('f1eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', 'Panel: IA et Agriculture', 'Comment l''IA peut aider l''agriculture malgache.', '2025-10-05 13:00:00+00', '2025-10-05 15:00:00+00', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbb03', 150, '22222222-2222-2222-2222-222222222222', NOW(), NOW()),
-('f1eebc99-9c0b-4ef8-bb6d-6bb9bd380a03', 'Fintech et Inclusion Financière', 'Solutions fintech pour les populations non bancarisées.', '2025-10-06 10:00:00+00', '2025-10-06 12:00:00+00', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbb04', 100, '22222222-2222-2222-2222-222222222222', NOW(), NOW());
+('aa0e8400-e29b-41d4-a716-446655440007', 'Opening Ceremony', 'Welcome and introduction to the summit.', '2026-05-19 09:00:00+00', '2026-05-19 10:00:00+00', '770e8400-e29b-41d4-a716-446655440005', 500, '660e8400-e29b-41d4-a716-446655440002', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440008', 'AI in Healthcare', 'How AI is transforming healthcare in Africa.', '2026-05-19 10:30:00+00', '2026-05-19 12:00:00+00', '770e8400-e29b-41d4-a716-446655440005', 500, '660e8400-e29b-41d4-a716-446655440002', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440009', 'Blockchain Workshop', 'Hands-on blockchain development.', '2026-05-19 14:00:00+00', '2026-05-19 17:00:00+00', '770e8400-e29b-41d4-a716-446655440007', 60, '660e8400-e29b-41d4-a716-446655440002', NOW(), NOW()),
+-- Current live session (happening now)
+('aa0e8400-e29b-41d4-a716-446655440010', 'Digital Transformation Panel', 'Panel discussion on digital transformation strategies.', '2026-05-20 09:00:00+00', '2026-05-20 11:00:00+00', '770e8400-e29b-41d4-a716-446655440005', 500, '660e8400-e29b-41d4-a716-446655440002', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440011', 'Startup Pitch Competition', 'Local startups pitch their ideas.', '2026-05-20 11:30:00+00', '2026-05-20 13:30:00+00', '770e8400-e29b-41d4-a716-446655440006', 150, '660e8400-e29b-41d4-a716-446655440002', NOW(), NOW()),
+-- Upcoming sessions for the summit
+('aa0e8400-e29b-41d4-a716-446655440012', 'Cybersecurity Essentials', 'Protecting your digital assets.', '2026-05-21 09:00:00+00', '2026-05-21 11:00:00+00', '770e8400-e29b-41d4-a716-446655440005', 500, '660e8400-e29b-41d4-a716-446655440002', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440013', 'Closing & Awards', 'Summit closing ceremony and awards.', '2026-05-22 15:00:00+00', '2026-05-22 17:00:00+00', '770e8400-e29b-41d4-a716-446655440005', 500, '660e8400-e29b-41d4-a716-446655440002', NOW(), NOW());
 
--- Atelier IA Madagascar Sessions
+-- Startup Weekend Antsirabe (Upcoming)
 INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
-('f2eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'Introduction au Machine Learning', 'Les bases du ML avec des exemples pratiques.', '2025-11-20 09:00:00+00', '2025-11-20 12:00:00+00', 'cccccccc-cccc-cccc-cccc-cccccccccc01', 60, '33333333-3333-3333-3333-333333333333', NOW(), NOW()),
-('f2eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', 'Deep Learning pour la Vision', 'Réseaux de neurones convolutifs et applications.', '2025-11-20 13:00:00+00', '2025-11-20 16:00:00+00', 'cccccccc-cccc-cccc-cccc-cccccccccc01', 60, '33333333-3333-3333-3333-333333333333', NOW(), NOW());
+('aa0e8400-e29b-41d4-a716-446655440014', 'Pitch Workshop', 'Learn how to pitch your startup idea.', '2026-07-10 18:00:00+00', '2026-07-10 20:00:00+00', '770e8400-e29b-41d4-a716-446655440008', 100, '660e8400-e29b-41d4-a716-446655440003', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440015', 'Team Formation', 'Form teams and start brainstorming.', '2026-07-10 20:00:00+00', '2026-07-10 22:00:00+00', '770e8400-e29b-41d4-a716-446655440008', 100, '660e8400-e29b-41d4-a716-446655440003', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440016', 'Mentoring Sessions', 'Get advice from experienced mentors.', '2026-07-11 09:00:00+00', '2026-07-11 18:00:00+00', '770e8400-e29b-41d4-a716-446655440009', 30, '660e8400-e29b-41d4-a716-446655440003', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440017', 'Final Presentations', 'Teams present their projects.', '2026-07-12 14:00:00+00', '2026-07-12 18:00:00+00', '770e8400-e29b-41d4-a716-446655440008', 100, '660e8400-e29b-41d4-a716-446655440003', NOW(), NOW());
 
--- ==================== EVENT SESSION SPEAKERS ====================
+-- AI Conference Fianarantsoa (Upcoming)
+INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
+('aa0e8400-e29b-41d4-a716-446655440018', 'Machine Learning Fundamentals', 'Introduction to ML algorithms and tools.', '2026-08-20 09:00:00+00', '2026-08-20 12:00:00+00', '770e8400-e29b-41d4-a716-446655440010', 250, '660e8400-e29b-41d4-a716-446655440004', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440019', 'Deep Learning Workshop', 'Practical deep learning with TensorFlow.', '2026-08-20 14:00:00+00', '2026-08-20 17:00:00+00', '770e8400-e29b-41d4-a716-446655440011', 60, '660e8400-e29b-41d4-a716-446655440004', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440020', 'AI Ethics Panel', 'Discussion on ethical AI development.', '2026-08-21 09:00:00+00', '2026-08-21 11:00:00+00', '770e8400-e29b-41d4-a716-446655440010', 250, '660e8400-e29b-41d4-a716-446655440004', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440021', 'NLP Applications', 'Natural Language Processing use cases.', '2026-08-21 14:00:00+00', '2026-08-21 17:00:00+00', '770e8400-e29b-41d4-a716-446655440012', 60, '660e8400-e29b-41d4-a716-446655440004', NOW(), NOW());
+
+-- Mobile Dev Workshop Toamasina (Upcoming)
+INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
+('aa0e8400-e29b-41d4-a716-446655440022', 'Flutter Basics', 'Getting started with Flutter development.', '2026-09-05 10:00:00+00', '2026-09-05 13:00:00+00', '770e8400-e29b-41d4-a716-446655440013', 120, '660e8400-e29b-41d4-a716-446655440005', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440023', 'React Native Advanced', 'Advanced patterns in React Native.', '2026-09-05 14:00:00+00', '2026-09-05 17:00:00+00', '770e8400-e29b-41d4-a716-446655440014', 40, '660e8400-e29b-41d4-a716-446655440005', NOW(), NOW());
+
+-- Cloud & DevOps Day (Upcoming)
+INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
+('aa0e8400-e29b-41d4-a716-446655440024', 'Docker & Kubernetes 101', 'Container orchestration fundamentals.', '2026-10-15 09:00:00+00', '2026-10-15 12:00:00+00', '770e8400-e29b-41d4-a716-446655440003', 40, '660e8400-e29b-41d4-a716-446655440006', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440025', 'CI/CD Pipeline Workshop', 'Build automated deployment pipelines.', '2026-10-15 14:00:00+00', '2026-10-15 17:00:00+00', '770e8400-e29b-41d4-a716-446655440003', 40, '660e8400-e29b-41d4-a716-446655440006', NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440026', 'AWS Best Practices', 'Optimize your cloud infrastructure.', '2026-10-15 14:00:00+00', '2026-10-15 16:00:00+00', '770e8400-e29b-41d4-a716-446655440001', 300, '660e8400-e29b-41d4-a716-446655440006', NOW(), NOW());
+
+-- ==================== SESSION SPEAKERS ====================
 INSERT INTO event_session_speaker ("eventSessionId", "speakerId", created_at) VALUES
-('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', NOW()),
-('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', NOW()),
-('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', NOW()),
-('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a03', 'c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', NOW()),
-('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a04', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', NOW()),
-('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a05', 'd3eebc99-9c0b-4ef8-bb6d-6bb9bd380a14', NOW()),
-('f1eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a15', NOW()),
-('f1eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', NOW()),
-('f1eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', 'c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', NOW()),
-('f1eebc99-9c0b-4ef8-bb6d-6bb9bd380a03', 'f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', NOW()),
-('f2eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', NOW()),
-('f2eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', 'c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', NOW());
+-- DevFest
+('aa0e8400-e29b-41d4-a716-446655440001', '880e8400-e29b-41d4-a716-446655440001', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440002', '880e8400-e29b-41d4-a716-446655440001', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440003', '880e8400-e29b-41d4-a716-446655440002', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440005', '880e8400-e29b-41d4-a716-446655440003', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440006', '880e8400-e29b-41d4-a716-446655440004', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440006', '880e8400-e29b-41d4-a716-446655440005', NOW()),
+-- Tech Summit
+('aa0e8400-e29b-41d4-a716-446655440007', '880e8400-e29b-41d4-a716-446655440004', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440008', '880e8400-e29b-41d4-a716-446655440003', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440009', '880e8400-e29b-41d4-a716-446655440005', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440010', '880e8400-e29b-41d4-a716-446655440002', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440011', '880e8400-e29b-41d4-a716-446655440004', NOW()),
+-- Startup Weekend
+('aa0e8400-e29b-41d4-a716-446655440014', '880e8400-e29b-41d4-a716-446655440004', NOW()),
+-- AI Conference
+('aa0e8400-e29b-41d4-a716-446655440018', '880e8400-e29b-41d4-a716-446655440003', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440019', '880e8400-e29b-41d4-a716-446655440003', NOW()),
+-- Cloud Day
+('aa0e8400-e29b-41d4-a716-446655440024', '880e8400-e29b-41d4-a716-446655440002', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440025', '880e8400-e29b-41d4-a716-446655440002', NOW()),
+('aa0e8400-e29b-41d4-a716-446655440026', '880e8400-e29b-41d4-a716-446655440002', NOW());
 
 -- ==================== QUESTIONS ====================
 INSERT INTO question (id, content, author_name, upvotes, "eventSessionId", created_at) VALUES
-('f6eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'Est-ce que la keynote sera disponible en replay ?', 'Développeur Web', 25, 'f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', NOW()),
-('f6eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', 'Faut-il avoir une expérience préalable en Rust ?', 'Étudiant', 12, 'f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', NOW()),
-('f6eebc99-9c0b-4ef8-bb6d-6bb9bd380a03', 'Le workshop est-il gratuit ?', 'Débutant', 8, 'f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', NOW()),
-('f6eebc99-9c0b-4ef8-bb6d-6bb9bd380a04', 'Quels sont les prérequis techniques ?', 'Dev Fullstack', 18, 'f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a03', NOW()),
-('f6eebc99-9c0b-4ef8-bb6d-6bb9bd380a05', 'Y aura-t-il des certifications ?', 'Architecte Cloud', 7, 'f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a04', NOW()),
-('f6eebc99-9c0b-4ef8-bb6d-6bb9bd380a06', 'Comment l''IA peut aider l''agriculture à Madagascar ?', 'Étudiant en IA', 32, 'f1eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', NOW()),
-('f6eebc99-9c0b-4ef8-bb6d-6bb9bd380a07', 'Est-ce que les sessions sont enregistrées ?', 'Participant', 5, 'f2eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', NOW());
+('bb0e8400-e29b-41d4-a716-446655440001', 'What are the prerequisites for the React workshop?', 'Alice', 12, 'aa0e8400-e29b-41d4-a716-446655440002', NOW()),
+('bb0e8400-e29b-41d4-a716-446655440002', 'Will the slides be available after the keynote?', 'Bob', 8, 'aa0e8400-e29b-41d4-a716-446655440001', NOW()),
+('bb0e8400-e29b-41d4-a716-446655440003', 'Can you recommend resources for learning AI?', 'Charlie', 15, 'aa0e8400-e29b-41d4-a716-446655440005', NOW()),
+('bb0e8400-e29b-41d4-a716-446655440004', 'How does blockchain apply to Madagascar?', 'Diana', 5, 'aa0e8400-e29b-41d4-a716-446655440009', NOW()),
+('bb0e8400-e29b-41d4-a716-446655440005', 'What tools do you use for digital transformation?', 'Anonymous', 3, 'aa0e8400-e29b-41d4-a716-446655440010', NOW()),
+('bb0e8400-e29b-41d4-a716-446655440006', 'Is there funding available for startups?', 'Eric', 10, 'aa0e8400-e29b-41d4-a716-446655440011', NOW()),
+('bb0e8400-e29b-41d4-a716-446655440007', 'Can we access the workshop materials online?', 'Faly', 7, 'aa0e8400-e29b-41d4-a716-446655440024', NOW());
 
--- ==================== UPDATE TOTAL ROOMS COUNT FOR VENUES ====================
+-- Update venue room counts
 UPDATE venue SET total_rooms = (SELECT COUNT(*) FROM room WHERE room."venueId" = venue.id);
