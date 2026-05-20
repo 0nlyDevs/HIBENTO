@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { useGetSession } from "@/lib/hooks/useSessions";
+import { useGetEventSessions } from "@/lib/hooks/useSessions";
 import { useToast } from "@/components/Toast";
 import { VideoPlayer } from "@/components/VideoPlayer";
 
@@ -261,7 +261,7 @@ function LiveChatSidebar({
 
 export default function SessionDetailPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
-  const { data: session, isLoading } = useGetSession(sessionId);
+  const { data: session, isLoading } = useGetEventSessions(sessionId);
 
   if (isLoading) {
     return (
