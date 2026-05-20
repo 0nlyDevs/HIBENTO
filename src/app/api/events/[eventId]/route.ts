@@ -25,6 +25,8 @@ type EventSessionWithRelations = {
     speaker: {
       id: string;
       name: string;
+      avatarUrl: string | null;
+      bio: string | null;
     };
   }>;
   _count: {
@@ -70,6 +72,8 @@ function transformToEventSessionSummary(
       (sessionSpeaker): SpeakerRefDto => ({
         id: sessionSpeaker.speaker.id,
         name: sessionSpeaker.speaker.name,
+        avatar: sessionSpeaker.speaker.avatarUrl,
+        bio: sessionSpeaker.speaker.bio,
       })
     ),
     questionCount: session._count.questions,

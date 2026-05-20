@@ -19,6 +19,8 @@ type EventSessionWithSpeakers = {
     speaker: {
       id: string;
       name: string;
+      avatarUrl: string | null;
+      bio: string | null;
     };
   }>;
 };
@@ -104,6 +106,8 @@ export async function GET(
         speakers: session.speakers.map((sessionSpeaker) => ({
           id: sessionSpeaker.speaker.id,
           name: sessionSpeaker.speaker.name,
+          avatar: sessionSpeaker.speaker.avatarUrl,
+          bio: sessionSpeaker.speaker.bio,
         })),
         questionCount: 0,
       };

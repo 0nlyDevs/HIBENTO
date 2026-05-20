@@ -1,16 +1,14 @@
-"use client";
-
+import Link from "next/link";
 import type { EventSummaryDto } from "@/types/dto";
 
 interface EventCardProps {
   event: EventSummaryDto;
   index: number;
-  onSelect: (event: EventSummaryDto) => void;
 }
 
 const COLORS = ["#EAE151", "#C4D7B2", "#D4C5E2", "#B8D4E3", "#E8D5B7", "#F2E0DE"];
 
-export function EventCard({ event, index, onSelect }: EventCardProps) {
+export function EventCard({ event, index }: EventCardProps) {
   const now = new Date();
   const start = new Date(event.startDate);
   const end = new Date(event.endDate);
@@ -19,9 +17,9 @@ export function EventCard({ event, index, onSelect }: EventCardProps) {
   const color = COLORS[index % COLORS.length];
 
   return (
-    <button
-      onClick={() => onSelect(event)}
-      className="w-full text-left group relative overflow-hidden transition-all duration-300 hover:shadow-lg"
+    <Link
+      href={`/events/${event.id}`}
+      className="block group relative overflow-hidden transition-all duration-300 hover:shadow-lg"
       style={{
         background: "#FEFCF7",
         border: "1px solid rgba(40,40,40,0.1)",
@@ -78,6 +76,6 @@ export function EventCard({ event, index, onSelect }: EventCardProps) {
           <path d="M3 7H11M11 7L7 3M11 7L7 11" stroke="#282828" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
-    </button>
+    </Link>
   );
 }

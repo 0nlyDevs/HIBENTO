@@ -20,6 +20,8 @@ export interface RoomDto {
 export interface SpeakerRefDto {
   id: string;
   name: string;
+  avatar: string | null;
+  bio: string | null;
 }
 
 export interface SpeakerDetailDto {

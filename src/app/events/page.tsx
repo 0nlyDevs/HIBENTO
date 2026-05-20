@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useGetEvents } from "@/lib/hooks/useEvents";
 import { EventCard } from "@/components/events/EventCard";
-import { EventSlideOver } from "@/components/events/EventSlideOver";
 import type { EventSummaryDto } from "@/types/dto";
 
 type EventStatus = "all" | "live" | "upcoming" | "ended";
@@ -13,7 +12,6 @@ type EventStatus = "all" | "live" | "upcoming" | "ended";
 export default function EventsPage() {
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<EventStatus>("all");
-  const [slideOverEvent, setSlideOverEvent] = useState<EventSummaryDto | null>(null);
 
   const { data: eventsData, isLoading } = useGetEvents({
     page: 1,
@@ -134,7 +132,6 @@ export default function EventsPage() {
                             key={event.id}
                             event={event}
                             index={idx}
-                            onSelect={setSlideOverEvent}
                           />
                         ))}
                       </div>
@@ -150,7 +147,6 @@ export default function EventsPage() {
                   key={event.id}
                   event={event}
                   index={idx}
-                  onSelect={setSlideOverEvent}
                 />
               ))}
             </div>
@@ -163,13 +159,6 @@ export default function EventsPage() {
         )}
       </div>
 
-      {/* Slide Over */}
-      {slideOverEvent && (
-        <EventSlideOver
-          event={slideOverEvent}
-          onClose={() => setSlideOverEvent(null)}
-        />
-      )}
     </div>
   );
 }

@@ -58,6 +58,8 @@ export async function GET(
         speakers: session.speakers.map((s) => ({
           id: s.speaker.id,
           name: s.speaker.name,
+          avatar: s.speaker.avatarUrl,
+          bio: s.speaker.bio,
         })),
         questionCount: session._count.questions,
       };
