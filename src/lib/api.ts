@@ -10,6 +10,8 @@ import type {
   VenueDetailDto,
   QuestionDto,
   UpvoteResponseDto,
+  SessionRegistrationRequestDto,
+  SessionRegistrationResponseDto,
 } from "@/types/dto";
 import { API_BASE_URL } from "./constants";
 
@@ -156,6 +158,13 @@ export const api = {
     http<{ data: RoomDto[] }>(`/api/events/${eventId}/rooms`),
   getRoomSessions: (eventId: string, roomId: string) =>
     http<{ data: EventSessionSummaryDto[] }>(`/api/events/${eventId}/rooms/${roomId}/sessions`),
+
+  // Registrations
+  registerForSession: (sessionId: string, data: SessionRegistrationRequestDto) =>
+    http<SessionRegistrationResponseDto>(`/api/event-sessions/${sessionId}/registrations`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 
   // Questions
   getQuestions: (eventSessionId: string) =>

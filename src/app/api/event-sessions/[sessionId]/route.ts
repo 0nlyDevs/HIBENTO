@@ -49,6 +49,9 @@ type EventSessionWithDetails = {
     upvotes: number;
     createdAt: Date;
   }>;
+  _count: {
+    registrations: number;
+  };
 };
 
 export async function GET(
@@ -85,6 +88,9 @@ export async function GET(
           orderBy: {
             upvotes: "desc",
           },
+        },
+        _count: {
+          select: { registrations: true },
         },
       },
     })) as EventSessionWithDetails | null;
@@ -129,6 +135,7 @@ export async function GET(
       capacity: session.capacity,
       isOnline: isOnline,
       isLive: isLive,
+      registrationCount: session._count.registrations,
       speakers: session.speakers.map(
         (sessionSpeaker): SpeakerDetailDto => ({
           id: sessionSpeaker.speaker.id,

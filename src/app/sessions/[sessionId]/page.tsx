@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useGetEventSession } from "@/lib/hooks/useSessions";
+import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
 
 const tabs = [
@@ -20,6 +21,11 @@ export default function SessionDetailPage() {
   const { toast } = useToast();
 
   const [activeTab, setActiveTab] = useState<"info" | "speakers" | "location">("info");
+
+  const [showSignupForm, setShowSignupForm] = useState(false);
+  const [signupName, setSignupName] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [isSigningUp, setIsSigningUp] = useState(false);
 
   if (isLoading) {
     return (
@@ -52,6 +58,31 @@ export default function SessionDetailPage() {
     toast("You are now inside the session!", "success");
     router.push(`/sessions/${sessionId}/live`);
   };
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!signupName.trim() || !signupEmail.trim()) return;
+
+    setIsSigningUp(true);
+    try {
+      await api.registerForSession(sessionId, {
+        name: signupName.trim(),
+        email: signupEmail.trim(),
+      });
+      setSignupName("");
+      setSignupEmail("");
+      setShowSignupForm(false);
+      toast("Check your email for confirmation!", "success");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Registration failed";
+      toast(message, "error");
+    } finally {
+      setIsSigningUp(false);
+    }
+  };
+
+  const spotsLeft = session.capacity ? session.capacity - session.registrationCount : null;
+  const isFull = spotsLeft !== null && spotsLeft <= 0;
 
   return (
     <div className="min-h-screen bg-cream">
@@ -175,7 +206,14 @@ export default function SessionDetailPage() {
               <div className="bg-paper p-5">
                 <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-1">CAPACITY</div>
                 <div className="text-sm font-bold text-charcoal">
-                  {session.capacity ? `${session.capacity} people` : "N/A"}</div>
+                  {session.capacity ? `${session.capacity} people` : "N/A"}
+                </div>
+                {!isOnline && session.capacity && (
+                  <div className="text-[0.6rem] text-charcoal/40 mt-1">
+                    {session.registrationCount} signed up
+                    {session.registrationCount >= session.capacity && " — FULL"}
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -314,18 +352,38 @@ export default function SessionDetailPage() {
         {/* Action Area */}
         <div className="mt-10 pt-8 border-t border-charcoal/10">
           {isLive || isUpcoming ? (
-            <button onClick={handleEnterSession} className="btn-primary">
-              {isLive ? "ENTER SESSION" : "JOIN SESSION"}
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M6 4L10 8L6 12"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
+            <div className="flex flex-wrap items-center gap-4">
+              <button onClick={handleEnterSession} className="btn-primary">
+                {isLive ? "ENTER SESSION" : "JOIN SESSION"}
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path
+                    d="M6 4L10 8L6 12"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+
+              {!isOnline && (
+                <button
+                  onClick={() => setShowSignupForm(true)}
+                  disabled={isFull}
+                  className={`btn-yellow btn-sm ${isFull ? "opacity-40 cursor-not-allowed" : ""}`}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                  {isFull
+                    ? "ONSITE FULL"
+                    : spotsLeft !== null
+                      ? `SIGN UP FOR ONSITE (${spotsLeft} LEFT)`
+                      : "SIGN UP FOR ONSITE"}
+                </button>
+              )}
+            </div>
           ) : (
             <div className="flex items-center gap-2 text-sm text-charcoal/40">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -336,6 +394,95 @@ export default function SessionDetailPage() {
             </div>
           )}
         </div>
+
+        {/* Signup Modal */}
+        {showSignupForm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/40" onClick={() => { setShowSignupForm(false); setSignupName(""); setSignupEmail(""); }} />
+            <div className="relative bg-cream border border-charcoal/10 w-full max-w-md animate-slide-up">
+              <div className="p-8">
+                {/* Close */}
+                <button
+                  onClick={() => { setShowSignupForm(false); setSignupName(""); setSignupEmail(""); }}
+                  className="absolute top-4 right-4 text-charcoal/30 hover:text-charcoal"
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                  </svg>
+                </button>
+
+                {/* Header */}
+                <div className="mb-6">
+                  <div className="w-10 h-10 bg-yellow flex items-center justify-center mb-4">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  </div>
+                  <h2 className="text-xl font-black tracking-tighter text-charcoal">Onsite Registration</h2>
+                  <p className="text-xs text-charcoal/50 mt-1">{session.title}</p>
+
+                  {/* Spots indicator */}
+                  {session.capacity && (
+                    <div className="mt-4 flex items-center gap-2">
+                      <div className="flex-1 h-1.5 bg-charcoal/10">
+                        <div
+                          className="h-full bg-yellow transition-all"
+                          style={{ width: `${Math.min(100, (session.registrationCount / session.capacity) * 100)}%` }}
+                        />
+                      </div>
+                      <span className="text-[0.6rem] font-bold tracking-wider text-charcoal/50 whitespace-nowrap">
+                        {spotsLeft !== null ? `${spotsLeft} of ${session.capacity} left` : `${session.registrationCount} signed up`}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Form */}
+                <form onSubmit={handleSignup} className="space-y-4">
+                  <div>
+                    <label className="block text-[0.6rem] tracking-widest text-charcoal/50 mb-1.5">NAME</label>
+                    <input
+                      type="text"
+                      value={signupName}
+                      onChange={(e) => setSignupName(e.target.value)}
+                      placeholder="Your full name"
+                      className="input-field text-sm"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[0.6rem] tracking-widest text-charcoal/50 mb-1.5">EMAIL</label>
+                    <input
+                      type="email"
+                      value={signupEmail}
+                      onChange={(e) => setSignupEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      className="input-field text-sm"
+                      required
+                    />
+                  </div>
+                  <div className="flex items-center gap-3 pt-2">
+                    <button
+                      type="submit"
+                      disabled={isSigningUp || !signupName.trim() || !signupEmail.trim()}
+                      className="btn-primary flex-1 justify-center text-sm"
+                    >
+                      {isSigningUp ? "REGISTERING..." : "REGISTER"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setShowSignupForm(false); setSignupName(""); setSignupEmail(""); }}
+                      className="btn-ghost text-sm"
+                    >
+                      CANCEL
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
