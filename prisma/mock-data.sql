@@ -20,24 +20,25 @@ INSERT INTO venue (id, name, city, neighborhood, total_rooms, created_at, update
 ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa8', 'Colbert Hotel', 'Antsiranana', 'Antsiranana Urban', 0, NOW(), NOW());
 
 -- ==================== EVENTS ====================
-INSERT INTO event (id, title, description, venueId, start_date, end_date, created_at, updated_at) VALUES
+INSERT INTO event (id, title, description, "venueId", start_date, end_date, created_at, updated_at) VALUES
 ('11111111-1111-1111-1111-111111111111', 'DevConf Madagascar 2025', 'La plus grande conférence des développeurs à Madagascar. Découvrez les dernières technologies web, cloud et IA.', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', '2025-09-15 09:00:00+00', '2025-09-17 18:00:00+00', NOW(), NOW()),
 ('22222222-2222-2222-2222-222222222222', 'Tech Summit Antananarivo', 'Rassemblement des innovateurs tech malgaches pour façonner l''avenir numérique du pays.', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '2025-10-05 10:00:00+00', '2025-10-06 17:00:00+00', NOW(), NOW()),
 ('33333333-3333-3333-3333-333333333333', 'Atelier IA Madagascar', 'Plongée approfondie dans l''intelligence artificielle et le machine learning avec des experts locaux.', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', '2025-11-20 09:00:00+00', '2025-11-20 18:00:00+00', NOW(), NOW()),
 ('44444444-4444-4444-4444-444444444444', 'Startup Weekend Fianar', 'Weekend de création d''entreprises innovantes dans la région de Fianarantsoa.', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6', '2025-12-10 08:00:00+00', '2025-12-12 20:00:00+00', NOW(), NOW()),
 ('55555555-5555-5555-5555-555555555555', 'Nosy Be Tech Forum', 'Forum technologique sur l''innovation numérique et le tourisme à Nosy Be.', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa7', '2026-01-20 09:00:00+00', '2026-01-22 18:00:00+00', NOW(), NOW());
 
--- ==================== ROOMS FOR HEI (Ivandry) ====================
-INSERT INTO room (id, venueId, name, capacity, created_at, updated_at) VALUES
+-- ==================== ROOMS ====================
+-- Rooms for HEI (Ivandry)
+INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
 ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab01', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'Grand Amphithéâtre', 300, NOW(), NOW()),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab02', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'Salle A', 80, NOW(), NOW()),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab02', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'Salle NP', 80, NOW(), NOW()),
 ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab03', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'Salle B', 80, NOW(), NOW()),
 ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab04', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'Labo Informatique 1', 40, NOW(), NOW()),
 ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab05', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'Labo Informatique 2', 40, NOW(), NOW()),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab06', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'Salle de Conférence', 50, NOW(), NOW());
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaab06', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'Salle Pi', 50, NOW(), NOW());
 
--- ==================== ROOMS FOR ANJANAHARY CONVENTION CENTER ====================
-INSERT INTO room (id, venueId, name, capacity, created_at, updated_at) VALUES
+-- Rooms for Anjanahary Convention Center
+INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
 ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbb01', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'Grand Hall Anjanahary', 800, NOW(), NOW()),
 ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbb02', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'Salle Ravinala', 200, NOW(), NOW()),
 ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbb03', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'Salle Orchidée', 150, NOW(), NOW()),
@@ -45,35 +46,35 @@ INSERT INTO room (id, venueId, name, capacity, created_at, updated_at) VALUES
 ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbb05', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'Salle de Réunion A', 50, NOW(), NOW()),
 ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbb06', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'Salle de Réunion B', 50, NOW(), NOW());
 
--- ==================== ROOMS FOR DIGITAL LAB (Analakely) ====================
-INSERT INTO room (id, venueId, name, capacity, created_at, updated_at) VALUES
+-- Rooms for Digital Lab
+INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
 ('cccccccc-cccc-cccc-cccc-cccccccccc01', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', 'Main Lab', 60, NOW(), NOW()),
 ('cccccccc-cccc-cccc-cccc-cccccccccc02', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', 'Salle de Formation', 35, NOW(), NOW()),
 ('cccccccc-cccc-cccc-cccc-cccccccccc03', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', 'Espace Coworking', 45, NOW(), NOW());
 
--- ==================== ROOMS FOR CC ESCA (Antanimena) ====================
-INSERT INTO room (id, venueId, name, capacity, created_at, updated_at) VALUES
+-- Rooms for CC ESCA
+INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
 ('dddddddd-dddd-dddd-dddd-dddddddddd01', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4', 'Grande Salle', 400, NOW(), NOW()),
 ('dddddddd-dddd-dddd-dddd-dddddddddd02', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4', 'Salle Moyenne', 120, NOW(), NOW());
 
--- ==================== ROOMS FOR IAVOLOHA PALACE ====================
-INSERT INTO room (id, venueId, name, capacity, created_at, updated_at) VALUES
+-- Rooms for Iavoloha Palace
+INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
 ('eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5', 'Salle d''Honneur', 500, NOW(), NOW()),
 ('eeeeeeee-eeee-eeee-eeee-eeeeeeeeee02', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5', 'Salle des Conférences', 200, NOW(), NOW());
 
--- ==================== ROOMS FOR UNIVERSITY OF FIANARANTSOA ====================
-INSERT INTO room (id, venueId, name, capacity, created_at, updated_at) VALUES
+-- Rooms for University of Fianarantsoa
+INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
 ('ffffffff-ffff-ffff-ffff-ffffffffff01', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6', 'Grand Amphithéâtre', 250, NOW(), NOW()),
 ('ffffffff-ffff-ffff-ffff-ffffffffff02', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6', 'Salle 101', 60, NOW(), NOW()),
 ('ffffffff-ffff-ffff-ffff-ffffffffff03', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6', 'Salle 102', 60, NOW(), NOW());
 
--- ==================== ROOMS FOR NOSY BE CONFERENCE HALL ====================
-INSERT INTO room (id, venueId, name, capacity, created_at, updated_at) VALUES
+-- Rooms for Nosy Be Conference Hall
+INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
 ('11111111-1111-1111-1111-111111111101', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa7', 'Palais des Congrès', 600, NOW(), NOW()),
 ('11111111-1111-1111-1111-111111111102', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa7', 'Salle Vanille', 100, NOW(), NOW()),
 ('11111111-1111-1111-1111-111111111103', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa7', 'Salle Ylang', 100, NOW(), NOW());
 
--- ==================== SPEAKERS (Malagasy and International) ====================
+-- ==================== SPEAKERS ====================
 INSERT INTO speaker (id, name, avatar_url, bio, created_at, updated_at) VALUES
 ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Rija Rakoto', 'https://randomuser.me/api/portraits/men/1.jpg', 'Rija est un développeur full-stack malgache avec 12 ans d''expérience. Spécialiste en React et Next.js, il a fondé la communauté des devs à Madagascar.', NOW(), NOW()),
 ('b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 'Miora Rasoanaivo', 'https://randomuser.me/api/portraits/women/2.jpg', 'Architecte cloud chez NovaTech, Miora aide les entreprises malgaches à migrer vers le cloud. Passionnée par le DevOps et Kubernetes.', NOW(), NOW()),
@@ -112,29 +113,16 @@ INSERT INTO event_session (id, title, description, start_time, end_time, "roomId
 
 -- ==================== EVENT SESSION SPEAKERS ====================
 INSERT INTO event_session_speaker ("eventSessionId", "speakerId", created_at) VALUES
--- Keynote speakers
 ('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', NOW()),
 ('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', NOW()),
-
--- Rust Workshop
 ('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', NOW()),
-
--- Live Coding
 ('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a03', 'c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', NOW()),
-
--- Cloud Computing
 ('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a04', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', NOW()),
-
--- Security
 ('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a05', 'd3eebc99-9c0b-4ef8-bb6d-6bb9bd380a14', NOW()),
-
--- Tech Summit sessions
 ('f1eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a15', NOW()),
 ('f1eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', NOW()),
 ('f1eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', 'c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', NOW()),
 ('f1eebc99-9c0b-4ef8-bb6d-6bb9bd380a03', 'f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', NOW()),
-
--- AI Workshop sessions
 ('f2eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', NOW()),
 ('f2eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', 'c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', NOW());
 
