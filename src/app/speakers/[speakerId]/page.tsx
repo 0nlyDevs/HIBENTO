@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
@@ -9,6 +9,7 @@ import { formatDate } from "@/lib/utils/dates";
 
 export default function SpeakerProfilePage() {
   const { speakerId } = useParams<{ speakerId: string }>();
+  const router = useRouter();
 
   const { data: speaker, isLoading } = useQuery({
     queryKey: ["speaker", speakerId],
@@ -166,9 +167,12 @@ export default function SpeakerProfilePage() {
                                 <span>With</span>
                                 {session.speakers.map((s, i) => (
                                   <span key={s.id}>
-                                    <Link href={`/speakers/${s.id}`} className="text-charcoal/60 hover:text-yellow-dark underline underline-offset-2">
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); router.push(`/speakers/${s.id}`); }}
+                                      className="text-charcoal/60 hover:text-yellow-dark underline underline-offset-2 cursor-pointer bg-transparent border-none p-0 text-xs"
+                                    >
                                       {s.name}
-                                    </Link>
+                                    </button>
                                     {i < session.speakers.length - 1 && ","}
                                   </span>
                                 ))}
