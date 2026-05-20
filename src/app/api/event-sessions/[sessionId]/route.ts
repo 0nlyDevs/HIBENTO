@@ -5,6 +5,7 @@ import type {
   SpeakerDetailDto,
   QuestionDto,
   RoomDto,
+  VenueDto,
 } from "@/types/dto";
 import { isValidUUID } from "@/lib/utils/validation";
 import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
@@ -21,6 +22,13 @@ type EventSessionWithDetails = {
     name: string;
     capacity: number | null;
     venueId: string;
+    venue: {
+      id: string;
+      name: string;
+      city: string;
+      neighborhood: string;
+      totalRooms: number;
+    } | null;
   };
   speakers: Array<{
     speaker: {
@@ -56,7 +64,11 @@ export async function GET(
     const session = (await prisma.eventSession.findUnique({
       where: { id: sessionId },
       include: {
-        room: true,
+        room: {
+          include: {
+            venue: true,
+          },
+        },
         speakers: {
           include: {
             speaker: true,
@@ -86,6 +98,16 @@ export async function GET(
       venueId: session.room.venueId,
     };
 
+    const venueDto: VenueDto | null = session.room.venue
+      ? {
+          id: session.room.venue.id,
+          name: session.room.venue.name,
+          city: session.room.venue.city,
+          neighborhood: session.room.venue.neighborhood,
+          totalRooms: session.room.venue.totalRooms,
+        }
+      : null;
+
     const response: EventSessionDetailDto = {
       id: session.id,
       title: session.title,
@@ -93,6 +115,7 @@ export async function GET(
       startTime: session.startTime.toISOString(),
       endTime: session.endTime.toISOString(),
       room: roomDto,
+      venue: venueDto,
       capacity: session.capacity,
       isLive: isLive,
       speakers: session.speakers.map(

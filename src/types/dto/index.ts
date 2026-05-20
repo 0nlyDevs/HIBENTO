@@ -102,6 +102,7 @@ export interface EventSessionDetailDto {
   startTime: string;
   endTime: string;
   room: RoomDto;
+  venue: VenueDto | null;
   capacity: number | null;
   isLive: boolean;
   speakers: SpeakerDetailDto[];
