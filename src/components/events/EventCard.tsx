@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { EventSummaryDto } from "@/types/dto";
+import { formatDateRange } from "@/lib/utils/dates";
 
 interface EventCardProps {
   event: EventSummaryDto;
@@ -68,9 +69,7 @@ export function EventCard({ event, index }: EventCardProps) {
 
         <div className="flex flex-wrap gap-x-3 gap-y-1 text-[0.6rem] tracking-wider text-charcoal/40">
           <span>
-            {start.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-            {" – "}
-            {end.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+            {formatDateRange(start, end)}
           </span>
           {event.venue ? <span>{event.venue.name}</span> : <span className="text-nori font-bold">ONLINE</span>}
           <span>{event.eventSessionCount} SESSIONS</span>

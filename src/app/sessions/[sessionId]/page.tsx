@@ -7,11 +7,11 @@ import Image from "next/image";
 import { useGetEventSession } from "@/lib/hooks/useSessions";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
+import { formatDate } from "@/lib/utils/dates";
 
-const tabs = [
+const baseTabs = [
   { id: "info" as const, label: "INFO" },
   { id: "speakers" as const, label: "SPEAKERS" },
-  { id: "location" as const, label: "LOCATION" },
 ];
 
 export default function SessionDetailPage() {
@@ -148,11 +148,21 @@ export default function SessionDetailPage() {
           {session.description && (
             <p className="text-base text-charcoal/60 leading-relaxed">{session.description}</p>
           )}
+          {!isOnline && (
+            <p className="text-xs text-charcoal/40 mt-3 flex items-center gap-2">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <path d="M8 21H16" strokeLinecap="round" />
+                <path d="M12 17V21" strokeLinecap="round" />
+              </svg>
+              This session is <strong>onsite</strong> — you can watch online or attend in person.
+            </p>
+          )}
         </div>
 
         {/* Tabs */}
         <div className="flex border-b border-charcoal/10 mb-8">
-          {tabs.map((tab) => (
+          {[...baseTabs, ...(!isOnline ? [{ id: "location" as const, label: "LOCATION" }] : [])].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -176,11 +186,7 @@ export default function SessionDetailPage() {
               <div className="bg-paper p-5">
                 <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-1">DATE</div>
                 <div className="text-sm font-bold text-charcoal">
-                  {startTime.toLocaleDateString("en-US", {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  {formatDate(startTime, "long")}
                 </div>
               </div>
               <div className="bg-paper p-5">
@@ -200,8 +206,13 @@ export default function SessionDetailPage() {
               <div className="bg-paper p-5">
                 <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-1">ROOM</div>
                 <div className="text-sm font-bold text-charcoal">
-                  {session.room?.name ?? (isOnline ? "Online session" : "TBD")}
+                  {isOnline ? "Online — Watch anywhere" : session.room?.name ?? "TBD"}
                 </div>
+                {!isOnline && session.venue && (
+                  <div className="text-[0.6rem] text-charcoal/40 mt-1">
+                    {session.venue.name}
+                  </div>
+                )}
               </div>
               <div className="bg-paper p-5">
                 <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-1">CAPACITY</div>
@@ -352,36 +363,44 @@ export default function SessionDetailPage() {
         {/* Action Area */}
         <div className="mt-10 pt-8 border-t border-charcoal/10">
           {isLive || isUpcoming ? (
-            <div className="flex flex-wrap items-center gap-4">
-              <button onClick={handleEnterSession} className="btn-primary">
-                {isLive ? "ENTER SESSION" : "JOIN SESSION"}
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M6 4L10 8L6 12"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-
-              {!isOnline && (
-                <button
-                  onClick={() => setShowSignupForm(true)}
-                  disabled={isFull}
-                  className={`btn-yellow btn-sm ${isFull ? "opacity-40 cursor-not-allowed" : ""}`}
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
+            <div className="flex flex-wrap items-start gap-6">
+              {/* Watch Online — primary action for all sessions */}
+              <div>
+                <button onClick={handleEnterSession} className="btn-primary">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <polygon points="5 3 19 12 5 21 5 3" />
                   </svg>
-                  {isFull
-                    ? "ONSITE FULL"
-                    : spotsLeft !== null
-                      ? `SIGN UP FOR ONSITE (${spotsLeft} LEFT)`
-                      : "SIGN UP FOR ONSITE"}
+                  {isLive ? "WATCH LIVE" : "WATCH ONLINE"}
                 </button>
+                <p className="text-[0.6rem] text-charcoal/40 mt-2 tracking-wider">
+                  {isLive 
+                    ? "Session is live — join the stream now"
+                    : "No registration needed — just join and watch"}
+                </p>
+              </div>
+
+              {/* Attend In Person — only for upcoming onsite sessions */}
+              {!isOnline && isUpcoming && (
+                <div>
+                  <button
+                    onClick={() => setShowSignupForm(true)}
+                    disabled={isFull}
+                    className={`btn-outline btn-sm ${isFull ? "opacity-40 cursor-not-allowed" : ""}`}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    {isFull
+                      ? "ONSITE FULL"
+                      : spotsLeft !== null
+                        ? `ATTEND IN PERSON (${spotsLeft} LEFT)`
+                        : "ATTEND IN PERSON"}
+                  </button>
+                  <p className="text-[0.6rem] text-charcoal/40 mt-2 tracking-wider">
+                    {session.room?.name} · {session.venue?.name ?? ""}
+                  </p>
+                </div>
               )}
             </div>
           ) : (
@@ -415,11 +434,11 @@ export default function SessionDetailPage() {
                 <div className="mb-6">
                   <div className="w-10 h-10 bg-yellow flex items-center justify-center mb-4">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                      <circle cx="12" cy="7" r="4" />
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
                     </svg>
                   </div>
-                  <h2 className="text-xl font-black tracking-tighter text-charcoal">Onsite Registration</h2>
+                  <h2 className="text-xl font-black tracking-tighter text-charcoal">Attend In Person</h2>
                   <p className="text-xs text-charcoal/50 mt-1">{session.title}</p>
 
                   {/* Spots indicator */}

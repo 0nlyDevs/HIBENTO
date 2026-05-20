@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useGetEvent } from "@/lib/hooks/useEvents";
 import { SessionCard } from "@/components/sessions/SessionCard";
+import { formatDate, formatDateRange } from "@/lib/utils/dates";
 
 export default function EventDetailPage() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -123,9 +124,7 @@ export default function EventDetailPage() {
             <div>
               <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-1">DATES</div>
               <div className="text-xs font-bold text-charcoal">
-                {start.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                {" – "}
-                {end.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                {formatDateRange(start, end)}
               </div>
             </div>
             <div>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { formatDate } from "@/lib/utils/dates";
 
 export default function SpeakerProfilePage() {
   const { speakerId } = useParams<{ speakerId: string }>();
@@ -141,7 +142,7 @@ export default function SpeakerProfilePage() {
                                 <span className="text-[0.6rem] tracking-wider font-bold text-charcoal/30">ENDED</span>
                               )}
                               <span className="text-xs font-mono text-charcoal/40">
-                                {start.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                                {formatDate(start)}
                                 {" · "}
                                 {start.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
                                 {" – "}

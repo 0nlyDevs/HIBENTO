@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { EventSummaryDto } from "@/types/dto";
 import { useGetEventRooms, useGetRoomSessions } from "@/lib/hooks/useRooms";
 import { SessionCard } from "@/components/sessions/SessionCard";
+import { formatDateRange } from "@/lib/utils/dates";
 
 interface EventSlideOverProps {
   event: EventSummaryDto;
@@ -49,9 +50,7 @@ export function EventSlideOver({ event, onClose }: EventSlideOverProps) {
             <div>
               <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-1">DATES</div>
               <div className="text-xs font-bold text-charcoal">
-                {start.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                {" – "}
-                {end.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                {formatDateRange(start, end)}
               </div>
             </div>
             <div>

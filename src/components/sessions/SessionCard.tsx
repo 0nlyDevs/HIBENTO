@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { EventSessionSummaryDto } from "@/types/dto";
+import { formatDate } from "@/lib/utils/dates";
 
 interface SessionCardProps {
   session: EventSessionSummaryDto;
@@ -40,7 +41,7 @@ export function SessionCard({ session, compact = false }: SessionCardProps) {
           className={compact ? "text-[0.6rem] font-mono" : "text-xs font-mono"}
           style={{ color: "rgba(40,40,40,0.5)" }}
         >
-          {start.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+          {formatDate(start)}
           {" · "}
           {start.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
           {!compact && ` – ${end.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`}
