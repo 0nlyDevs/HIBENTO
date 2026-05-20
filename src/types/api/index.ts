@@ -2,8 +2,6 @@ import type {
   PaginationDto,
   EventSummaryDto,
   EventDetailDto,
-  SessionSummaryDto,
-  SessionDetailDto,
   RoomDto,
   SpeakerSummaryDto,
   SpeakerProfileDto,
@@ -11,6 +9,8 @@ import type {
   QuestionCreateRequestDto,
   UpvoteResponseDto,
   FavoriteResponseDto,
+  EventSessionSummaryDto,
+  EventSessionDetailDto,
 } from "@/types/dto";
 
 // ==================== COMMON RESPONSES ====================
@@ -44,14 +44,14 @@ export interface GetSessionsQuery {
 }
 
 export interface GetSessionsResponse {
-  data: SessionSummaryDto[];
+  data: EventSessionSummaryDto[];
 }
 
 export interface GetSessionParams {
   sessionId: string;
 }
 
-export type GetSessionResponse = SessionDetailDto;
+export type GetSessionResponse = EventSessionDetailDto;
 
 export interface GetEventSessionsParams {
   eventId: string;
