@@ -47,9 +47,14 @@ export interface SpeakerProfileDto extends SpeakerDetailDto {
 export interface SpeakerEventSessionDto {
   id: string;
   title: string;
+  description: string | null;
   eventName: string;
   startTime: string;
+  endTime: string;
   room: string;
+  neighborhood: string | null;
+  isLive: boolean;
+  speakers: { id: string; name: string }[];
 }
 
 export interface ExternalLinkDto {

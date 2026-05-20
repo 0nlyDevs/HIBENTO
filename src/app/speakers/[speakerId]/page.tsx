@@ -109,35 +109,85 @@ export default function SpeakerProfilePage() {
                 </div>
 
                 <div className="space-y-3">
-                  {speaker.eventSessions.map((session) => (
-                    <Link
-                      key={session.id}
-                      href={`/sessions/${session.id}`}
-                      className="block p-4 border border-charcoal/10 hover:bg-yellow/5 transition-all group"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="font-bold text-charcoal group-hover:text-yellow-dark transition-colors mb-1">
-                            {session.title}
-                          </h3>
-                          <div className="flex flex-wrap gap-2 text-xs text-charcoal/40">
-                            <span>{session.eventName}</span>
-                            <span>•</span>
-                            <span>{new Date(session.startTime).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}</span>
-                            <span>•</span>
-                            <span>{session.room}</span>
+                  {speaker.eventSessions.map((session) => {
+                    const start = new Date(session.startTime);
+                    const end = new Date(session.endTime);
+                    const now = new Date();
+                    const isPast = end < now;
+                    const isUpcoming = start > now;
+                    return (
+                      <Link
+                        key={session.id}
+                        href={`/sessions/${session.id}`}
+                        className={`block p-4 border transition-all group ${
+                          session.isLive
+                            ? "border-yellow bg-yellow/5 hover:bg-yellow/10 ring-1 ring-yellow"
+                            : "border-charcoal/10 hover:bg-yellow/5"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 mb-1.5">
+                              {session.isLive && (
+                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[0.6rem] font-bold bg-nori text-cream">
+                                  <span className="w-1 h-1 bg-cream animate-pulse" />
+                                  LIVE
+                                </span>
+                              )}
+                              {isUpcoming && !session.isLive && (
+                                <span className="text-[0.6rem] tracking-wider font-bold text-matcha">UPCOMING</span>
+                              )}
+                              {isPast && !session.isLive && (
+                                <span className="text-[0.6rem] tracking-wider font-bold text-charcoal/30">ENDED</span>
+                              )}
+                              <span className="text-xs font-mono text-charcoal/40">
+                                {start.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                                {" · "}
+                                {start.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
+                                {" – "}
+                                {end.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
+                              </span>
+                            </div>
+                            <h3 className="font-bold text-charcoal group-hover:text-yellow-dark transition-colors mb-1">
+                              {session.title}
+                            </h3>
+                            {session.description && (
+                              <p className="text-xs text-charcoal/50 line-clamp-2 mb-2">
+                                {session.description}
+                              </p>
+                            )}
+                            <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-charcoal/40">
+                              <span className="font-medium text-charcoal/60">{session.eventName}</span>
+                              <span>·</span>
+                              <span>{session.room}</span>
+                              {session.neighborhood && (
+                                <>
+                                  <span>·</span>
+                                  <span>{session.neighborhood}</span>
+                                </>
+                              )}
+                            </div>
+                            {session.speakers.length > 0 && (
+                              <div className="flex items-center gap-1.5 mt-2 text-xs text-charcoal/40">
+                                <span>With</span>
+                                {session.speakers.map((s, i) => (
+                                  <span key={s.id}>
+                                    <Link href={`/speakers/${s.id}`} className="text-charcoal/60 hover:text-yellow-dark underline underline-offset-2">
+                                      {s.name}
+                                    </Link>
+                                    {i < session.speakers.length - 1 && ","}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                           </div>
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-charcoal/20 group-hover:text-charcoal transition-colors shrink-0 mt-1">
+                            <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
                         </div>
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-charcoal/20 group-hover:text-charcoal transition-colors shrink-0 ml-4">
-                          <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             )}

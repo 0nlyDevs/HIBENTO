@@ -2,6 +2,7 @@ import prisma from "@/lib/db/prisma";
 import type { SpeakerProfileDto } from "@/types/dto";
 import { NextResponse } from "next/server";
 import { isValidUUID } from "@/lib/utils/validation";
+import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
 export async function GET(
   _: Request,
@@ -26,7 +27,10 @@ export async function GET(
             eventSession: {
               include: {
                 event: { select: { title: true } },
-                room: { select: { name: true } },
+                room: { include: { venue: { select: { neighborhood: true } } } },
+                speakers: {
+                  include: { speaker: { select: { id: true, name: true } } },
+                },
               },
             },
           },
@@ -53,9 +57,16 @@ export async function GET(
       eventSessions: speaker.sessions.map((s) => ({
         id: s.eventSession.id,
         title: s.eventSession.title,
+        description: s.eventSession.description,
         eventName: s.eventSession.event.title,
         startTime: s.eventSession.startTime.toISOString(),
+        endTime: s.eventSession.endTime.toISOString(),
         room: s.eventSession.room.name,
+        neighborhood: s.eventSession.room.venue?.neighborhood ?? null,
+        isLive: getEventSessionStatus(s.eventSession) === "live",
+        speakers: s.eventSession.speakers
+          .filter((es) => es.speaker.id !== speakerId)
+          .map((es) => ({ id: es.speaker.id, name: es.speaker.name })),
       })),
     };
 
