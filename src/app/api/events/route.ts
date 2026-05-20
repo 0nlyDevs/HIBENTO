@@ -10,12 +10,28 @@ export async function GET(
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20")));
     const upcoming = searchParams.get("upcoming") === "true";
+    const status = searchParams.get("status");
+    const city = searchParams.get("city");
 
     const skip = (page - 1) * limit;
 
     const where: Record<string, unknown> = {};
     if (upcoming) {
       where.startDate = { gte: new Date() };
+    }
+    if (status) {
+      const now = new Date();
+      if (status === "live") {
+        where.startDate = { lte: now };
+        where.endDate = { gte: now };
+      } else if (status === "upcoming") {
+        where.startDate = { gt: now };
+      } else if (status === "ended") {
+        where.endDate = { lt: now };
+      }
+    }
+    if (city) {
+      where.venue = { city };
     }
 
     const events = await prisma.event.findMany({

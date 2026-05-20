@@ -41,10 +41,10 @@ type EventSessionWithDetails = {
 
 export async function GET(
   request: Request,
-  context: RouteContext<"/api/event-sessions/[sessionId]">
+  { params }: { params: Promise<{ sessionId: string }> }
 ): Promise<NextResponse<EventSessionDetailDto | { error: string }>> {
   try {
-    const { sessionId } = await context.params;
+    const { sessionId } = await params;
 
     if (!isValidUUID(sessionId)) {
       return NextResponse.json(

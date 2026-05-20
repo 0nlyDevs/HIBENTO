@@ -6,6 +6,10 @@ export interface VenueDto {
   totalRooms: number;
 }
 
+export interface VenueDetailDto extends VenueDto {
+  rooms: RoomDto[];
+}
+
 export interface RoomDto {
   id: string;
   name: string;

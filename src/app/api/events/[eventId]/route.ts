@@ -77,10 +77,10 @@ function transformToEventSessionSummary(
 
 export async function GET(
   req: Request,
-  context: RouteContext<"/api/events/[eventId]">
+  { params }: { params: Promise<{ eventId: string }> }
 ): Promise<NextResponse<EventDetailDto | { error: string }>> {
   try {
-    const { eventId } = await context.params;
+    const { eventId } = await params;
 
     if (!isValidUUID(eventId)) {
       return NextResponse.json(

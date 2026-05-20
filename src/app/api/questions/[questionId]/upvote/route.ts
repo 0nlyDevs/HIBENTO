@@ -5,10 +5,10 @@ import { NextResponse } from "next/server";
 
 export async function POST(
   _: Request,
-  context: RouteContext<"/api/questions/[questionId]/upvote">
+  { params }: { params: Promise<{ questionId: string }> }
 ): Promise<NextResponse<UpvoteResponseDto | { error: string }>> {
   try {
-    const { questionId } = await context.params;
+    const { questionId } = await params;
 
     const question = await prisma.question.findUnique({
       where: { id: questionId },

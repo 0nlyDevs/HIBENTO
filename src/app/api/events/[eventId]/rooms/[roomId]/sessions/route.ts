@@ -1,15 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import type { EventSessionSummaryDto, RoomDto } from "@/types/dto";
 import { isValidUUID } from "@/lib/utils/validation";
 import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { eventId: string; roomId: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ eventId: string; roomId: string }> }
 ): Promise<NextResponse<{ data: EventSessionSummaryDto[] } | { error: string }>> {
   try {
-    const { eventId, roomId } = params;
+    const { eventId, roomId } = await params;
 
     if (!isValidUUID(eventId) || !isValidUUID(roomId)) {
       return NextResponse.json({ error: "Invalid ID format" }, { status: 400 });

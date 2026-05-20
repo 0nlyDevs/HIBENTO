@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import type { EventSessionSummaryDto, RoomDto } from "@/types/dto";
 import { isValidUUID } from "@/lib/utils/validation";
@@ -24,11 +24,11 @@ type EventSessionWithSpeakers = {
 };
 
 export async function GET(
-  request: Request,
-  context: RouteContext<"/api/events/[eventId]/sessions">
+  request: NextRequest,
+  { params }: { params: Promise<{ eventId: string }> }
 ): Promise<NextResponse<{ data: EventSessionSummaryDto[] } | { error: string }>> {
   try {
-    const { eventId } = await context.params;
+    const { eventId } = await params;
     const url = new URL(request.url);
     const roomFilter = url.searchParams.get("room");
     const liveOnly = url.searchParams.get("liveOnly") === "true";

@@ -28,6 +28,8 @@ export interface GetEventsParams {
   page?: number;
   limit?: number;
   upcoming?: boolean;
+  status?: "all" | "live" | "upcoming" | "ended";
+  city?: string;
 }
 
 export interface GetEventSessionsParams {
@@ -99,7 +101,7 @@ export const api = {
     if (params?.page) searchParams.set("page", params.page.toString());
     if (params?.limit) searchParams.set("limit", params.limit.toString());
     const query = searchParams.toString();
-    return http<{ data: SpeakerSummaryDto[] }>(
+    return http<{ data: SpeakerSummaryDto[]; pagination: { page: number; limit: number; total: number } }>(
       `/api/speakers${query ? `?${query}` : ""}`
     );
   },
@@ -113,6 +115,10 @@ export const api = {
     if (params?.limit) searchParams.set("limit", params.limit.toString());
     if (params?.upcoming !== undefined)
       searchParams.set("upcoming", params.upcoming.toString());
+    if (params?.status && params.status !== "all")
+      searchParams.set("status", params.status);
+    if (params?.city)
+      searchParams.set("city", params.city);
 
     const query = searchParams.toString();
     return http<PaginatedResponse<EventSummaryDto>>(
@@ -139,6 +145,8 @@ export const api = {
   // Rooms
   getEventRooms: (eventId: string) =>
     http<{ data: RoomDto[] }>(`/api/events/${eventId}/rooms`),
+  getRoomSessions: (eventId: string, roomId: string) =>
+    http<{ data: EventSessionSummaryDto[] }>(`/api/events/${eventId}/rooms/${roomId}/sessions`),
 
   // Questions
   getQuestions: (eventSessionId: string) =>

@@ -5,10 +5,10 @@ import { isValidUUID } from "@/lib/utils/validation";
 
 export async function GET(
   request: Request,
-  context: RouteContext<"/api/venues/[venueId]">
+  { params }: { params: Promise<{ venueId: string }> }
 ): Promise<NextResponse<VenueDetailDto | { error: string }>> {
   try {
-    const { venueId } = await context.params;
+    const { venueId } = await params;
 
     if (!isValidUUID(venueId)) {
       return NextResponse.json(

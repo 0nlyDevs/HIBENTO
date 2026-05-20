@@ -6,10 +6,10 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   _: Request,
-  context: RouteContext<"/api/event-sessions/[sessionId]/questions">
+  { params }: { params: Promise<{ sessionId: string }> }
 ): Promise<NextResponse<{ data: QuestionDto[] } | { error: string }>> {
   try {
-    const { sessionId } = await context.params;
+    const { sessionId } = await params;
     if (!isValidUUID(sessionId)) {
       return NextResponse.json(
         { error: "Invalid session ID" },
@@ -53,10 +53,10 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  context: RouteContext<"/api/event-sessions/[sessionId]/questions">
+  { params }: { params: Promise<{ sessionId: string }> }
 ): Promise<NextResponse<QuestionDto | { error: string }>> {
   try {
-    const { sessionId } = await context.params;
+    const { sessionId } = await params;
     const { content, authorName }: { content: string; authorName: string } =
       await request.json();
 
