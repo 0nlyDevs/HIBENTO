@@ -17,6 +17,10 @@ type EventSessionWithDetails = {
   startTime: Date;
   endTime: Date;
   capacity: number | null;
+  roomId: string | null;
+  event: {
+    isOnline: boolean;
+  };
   room: {
     id: string;
     name: string;
@@ -29,7 +33,7 @@ type EventSessionWithDetails = {
       neighborhood: string;
       totalRooms: number;
     } | null;
-  };
+  } | null;
   speakers: Array<{
     speaker: {
       id: string;
@@ -64,6 +68,9 @@ export async function GET(
     const session = (await prisma.eventSession.findUnique({
       where: { id: sessionId },
       include: {
+        event: {
+          select: { isOnline: true },
+        },
         room: {
           include: {
             venue: true,
@@ -90,15 +97,18 @@ export async function GET(
     }
 
     const isLive = getEventSessionStatus(session) === "live";
+    const isOnline = session.event.isOnline;
 
-    const roomDto: RoomDto = {
-      id: session.room.id,
-      name: session.room.name,
-      capacity: session.room.capacity,
-      venueId: session.room.venueId,
-    };
+    const roomDto: RoomDto | null = session.room
+      ? {
+          id: session.room.id,
+          name: session.room.name,
+          capacity: session.room.capacity,
+          venueId: session.room.venueId,
+        }
+      : null;
 
-    const venueDto: VenueDto | null = session.room.venue
+    const venueDto: VenueDto | null = session.room?.venue
       ? {
           id: session.room.venue.id,
           name: session.room.venue.name,
@@ -117,6 +127,7 @@ export async function GET(
       room: roomDto,
       venue: venueDto,
       capacity: session.capacity,
+      isOnline: isOnline,
       isLive: isLive,
       speakers: session.speakers.map(
         (sessionSpeaker): SpeakerDetailDto => ({

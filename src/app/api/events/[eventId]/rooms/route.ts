@@ -45,12 +45,15 @@ export async function GET(
       distinct: ["roomId"],
     });
 
-    const data: RoomDto[] = sessionsWithRooms.map((session) => ({
-      id: session.room.id,
-      name: session.room.name,
-      capacity: session.room.capacity,
-      venueId: session.room.venueId,
-    }));
+    const data: RoomDto[] = sessionsWithRooms.map((session) => {
+      const roomData = session.room!;
+      return {
+        id: roomData.id,
+        name: roomData.name,
+        capacity: roomData.capacity,
+        venueId: roomData.venueId,
+      };
+    });
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (err) {

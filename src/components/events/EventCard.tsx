@@ -28,6 +28,16 @@ export function EventCard({ event, index }: EventCardProps) {
     >
       <div className="p-5">
         <div className="flex items-center gap-2 mb-3">
+          {event.isOnline && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[0.6rem] font-bold tracking-wider bg-charcoal text-cream">
+              ONLINE
+            </span>
+          )}
+          {!event.isOnline && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[0.6rem] font-bold tracking-wider bg-paper text-charcoal border border-charcoal/20">
+              ONSITE
+            </span>
+          )}
           {isLive && (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[0.6rem] font-bold tracking-wider bg-nori text-cream">
               ONGOING

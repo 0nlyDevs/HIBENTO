@@ -61,8 +61,8 @@ export async function GET(
         eventName: s.eventSession.event.title,
         startTime: s.eventSession.startTime.toISOString(),
         endTime: s.eventSession.endTime.toISOString(),
-        room: s.eventSession.room.name,
-        neighborhood: s.eventSession.room.venue?.neighborhood ?? null,
+        room: s.eventSession.room?.name ?? "Online",
+        neighborhood: s.eventSession.room?.venue?.neighborhood ?? null,
         isLive: getEventSessionStatus(s.eventSession) === "live",
         speakers: s.eventSession.speakers
           .filter((es) => es.speaker.id !== speakerId)

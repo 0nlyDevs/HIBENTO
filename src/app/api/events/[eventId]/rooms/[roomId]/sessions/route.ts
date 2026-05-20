@@ -41,11 +41,12 @@ export async function GET(
     }
 
     const data: EventSessionSummaryDto[] = sessions.map((session) => {
+      const roomData = session.room!;
       const roomDto: RoomDto = {
-        id: session.room.id,
-        name: session.room.name,
-        capacity: session.room.capacity,
-        venueId: session.room.venueId,
+        id: roomData.id,
+        name: roomData.name,
+        capacity: roomData.capacity,
+        venueId: roomData.venueId,
       };
 
       return {
@@ -54,6 +55,7 @@ export async function GET(
         startTime: session.startTime.toISOString(),
         endTime: session.endTime.toISOString(),
         room: roomDto,
+        isOnline: false,
         isLive: getEventSessionStatus(session) === "live",
         speakers: session.speakers.map((s) => ({
           id: s.speaker.id,

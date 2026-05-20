@@ -105,12 +105,12 @@ INSERT INTO event_session (id, title, description, start_time, end_time, "roomId
 ('aa0e8400-e29b-41d4-a716-446655440025'::uuid, 'CI/CD Pipeline Workshop', 'Build automated deployment pipelines.', '2026-10-15 14:00:00+00', '2026-10-15 17:00:00+00', '770e8400-e29b-41d4-a716-446655440003'::uuid, 40, '660e8400-e29b-41d4-a716-446655440006'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440026'::uuid, 'AWS Best Practices', 'Optimize your cloud infrastructure.', '2026-10-15 14:00:00+00', '2026-10-15 16:00:00+00', '770e8400-e29b-41d4-a716-446655440001'::uuid, 300, '660e8400-e29b-41d4-a716-446655440006'::uuid, NOW(), NOW()),
 
--- Global Web Development Summit (Online)
-('aa0e8400-e29b-41d4-a716-446655440027'::uuid, 'Keynote: The State of Web 2026', 'Live stream keynote covering the latest web platform features.', '2026-05-20 09:00:00+00', '2026-05-20 10:30:00+00', '770e8400-e29b-41d4-a716-446655440001'::uuid, NULL, '660e8400-e29b-41d4-a716-446655440007'::uuid, NOW(), NOW()),
-('aa0e8400-e29b-41d4-a716-446655440028'::uuid, 'Workshop: Web Components in Production', 'Build reusable components with the native web platform.', '2026-05-20 11:00:00+00', '2026-05-20 13:00:00+00', '770e8400-e29b-41d4-a716-446655440003'::uuid, NULL, '660e8400-e29b-41d4-a716-446655440007'::uuid, NOW(), NOW()),
-('aa0e8400-e29b-41d4-a716-446655440029'::uuid, 'Panel: The Future of JavaScript', 'Experts discuss where JavaScript is heading.', '2026-05-21 09:00:00+00', '2026-05-21 10:30:00+00', '770e8400-e29b-41d4-a716-446655440002'::uuid, NULL, '660e8400-e29b-41d4-a716-446655440007'::uuid, NOW(), NOW()),
-('aa0e8400-e29b-41d4-a716-446655440030'::uuid, 'Building Accessible Web Apps', 'Practical guide to web accessibility.', '2026-05-21 14:00:00+00', '2026-05-21 16:00:00+00', '770e8400-e29b-41d4-a716-446655440004'::uuid, NULL, '660e8400-e29b-41d4-a716-446655440007'::uuid, NOW(), NOW()),
-('aa0e8400-e29b-41d4-a716-446655440031'::uuid, 'Closing: What is Next for the Web', 'Closing keynote and community announcements.', '2026-05-22 16:00:00+00', '2026-05-22 18:00:00+00', '770e8400-e29b-41d4-a716-446655440001'::uuid, NULL, '660e8400-e29b-41d4-a716-446655440007'::uuid, NOW(), NOW());
+-- Global Web Development Summit (Online — no room)
+('aa0e8400-e29b-41d4-a716-446655440027'::uuid, 'Keynote: The State of Web 2026', 'Live stream keynote covering the latest web platform features.', '2026-05-20 09:00:00+00', '2026-05-20 10:30:00+00', NULL, NULL, '660e8400-e29b-41d4-a716-446655440007'::uuid, NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440028'::uuid, 'Workshop: Web Components in Production', 'Build reusable components with the native web platform.', '2026-05-20 11:00:00+00', '2026-05-20 13:00:00+00', NULL, NULL, '660e8400-e29b-41d4-a716-446655440007'::uuid, NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440029'::uuid, 'Panel: The Future of JavaScript', 'Experts discuss where JavaScript is heading.', '2026-05-21 09:00:00+00', '2026-05-21 10:30:00+00', NULL, NULL, '660e8400-e29b-41d4-a716-446655440007'::uuid, NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440030'::uuid, 'Building Accessible Web Apps', 'Practical guide to web accessibility.', '2026-05-21 14:00:00+00', '2026-05-21 16:00:00+00', NULL, NULL, '660e8400-e29b-41d4-a716-446655440007'::uuid, NOW(), NOW()),
+('aa0e8400-e29b-41d4-a716-446655440031'::uuid, 'Closing: What is Next for the Web', 'Closing keynote and community announcements.', '2026-05-22 16:00:00+00', '2026-05-22 18:00:00+00', NULL, NULL, '660e8400-e29b-41d4-a716-446655440007'::uuid, NOW(), NOW());
 
 -- ==================== SESSION SPEAKERS ====================
 INSERT INTO event_session_speaker ("eventSessionId", "speakerId", created_at) VALUES

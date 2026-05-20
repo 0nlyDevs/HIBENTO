@@ -42,10 +42,14 @@ export default function EventDetailPage() {
   const end = new Date(event.endDate);
   const now = new Date();
   const isLive = start <= now && end >= now;
+  const isOnline = event.isOnline;
 
-  const sessionsByRoom = event.eventSessions.reduce<Record<string, typeof event.eventSessions>>(
+  const onlineSessions = event.eventSessions.filter((s) => s.isOnline);
+  const onsiteSessions = event.eventSessions.filter((s) => !s.isOnline);
+
+  const sessionsByRoom = onsiteSessions.reduce<Record<string, typeof onsiteSessions>>(
     (acc, s) => {
-      const name = s.room.name;
+      const name = s.room?.name ?? "Unknown";
       if (!acc[name]) acc[name] = [];
       acc[name].push(s);
       return acc;
@@ -93,14 +97,19 @@ export default function EventDetailPage() {
         {/* Event Header */}
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
+            {isOnline && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[0.6rem] font-bold bg-charcoal text-cream">
+                ONLINE
+              </span>
+            )}
+            {!isOnline && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[0.6rem] font-bold bg-paper text-charcoal border border-charcoal/20">
+                ONSITE
+              </span>
+            )}
             {isLive && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[0.6rem] font-bold bg-nori text-cream">
                 ONGOING
-              </span>
-            )}
-            {event.isOnline && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[0.6rem] font-bold bg-charcoal text-cream">
-                ONLINE
               </span>
             )}
           </div>
@@ -135,7 +144,7 @@ export default function EventDetailPage() {
                   <div className="text-[0.6rem] text-charcoal/40">{event.venue.neighborhood}</div>
                 </>
               ) : (
-                <div className="text-xs font-bold text-nori">ONLINE</div>
+                <div className="text-xs font-bold text-indigo">ONLINE EVENT</div>
               )}
             </div>
             <div>
@@ -150,9 +159,23 @@ export default function EventDetailPage() {
               )}
             </div>
           </div>
+
+          {/* Online attendance note for onsite events */}
+          {!isOnline && (
+            <div className="mt-4 flex items-center gap-2 text-xs text-matcha bg-matcha-light/50 p-3 border border-matcha/20">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <path d="M8 21H16" strokeLinecap="round" />
+                <path d="M12 17V21" strokeLinecap="round" />
+              </svg>
+              <span>
+                This event is <strong>onsite</strong>. You can also attend sessions online via the HiBento app.
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Sessions by Room */}
+        {/* Schedule */}
         <div className="mb-12">
           <div className="flex items-center gap-2 mb-6">
             <div className="w-2 h-2 bg-yellow" />
@@ -163,6 +186,26 @@ export default function EventDetailPage() {
           </div>
 
           <div className="space-y-8">
+            {/* Online sessions */}
+            {onlineSessions.length > 0 && (
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-1.5 h-1.5 bg-indigo" />
+                  <h3 className="text-xs font-bold tracking-wider text-indigo">ONLINE</h3>
+                  <div className="flex-1 h-px bg-charcoal/5" />
+                  <span className="text-[0.6rem] text-charcoal/30">{onlineSessions.length} SESSIONS</span>
+                </div>
+                <div className="space-y-2">
+                  {onlineSessions
+                    .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
+                    .map((session) => (
+                      <SessionCard key={session.id} session={session} />
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {/* Onsite sessions grouped by room */}
             {Object.entries(sessionsByRoom).map(([roomName, sessions]) => (
               <div key={roomName}>
                 <div className="flex items-center gap-3 mb-3">
@@ -180,6 +223,12 @@ export default function EventDetailPage() {
                 </div>
               </div>
             ))}
+
+            {event.eventSessions.length === 0 && (
+              <div className="text-center py-8 border border-dashed border-charcoal/10">
+                <p className="text-xs text-charcoal/40">No sessions scheduled yet</p>
+              </div>
+            )}
           </div>
         </div>
 

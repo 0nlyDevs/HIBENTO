@@ -15,12 +15,13 @@ type EventSessionWithRelations = {
   title: string;
   startTime: Date;
   endTime: Date;
+  roomId: string | null;
   room: {
     id: string;
     name: string;
     capacity: number | null;
     venueId: string;
-  };
+  } | null;
   speakers: Array<{
     speaker: {
       id: string;
@@ -54,12 +55,14 @@ type EventWithRelations = {
 function transformToEventSessionSummary(
   session: EventSessionWithRelations
 ): EventSessionSummaryDto {
-  const roomDto: RoomDto = {
-    id: session.room.id,
-    name: session.room.name,
-    capacity: session.room.capacity,
-    venueId: session.room.venueId,
-  };
+  const roomDto: RoomDto | null = session.room
+    ? {
+        id: session.room.id,
+        name: session.room.name,
+        capacity: session.room.capacity,
+        venueId: session.room.venueId,
+      }
+    : null;
 
   return {
     id: session.id,
@@ -67,6 +70,7 @@ function transformToEventSessionSummary(
     startTime: session.startTime.toISOString(),
     endTime: session.endTime.toISOString(),
     room: roomDto,
+    isOnline: session.room === null,
     isLive: getEventSessionStatus(session) === "live",
     speakers: session.speakers.map(
       (sessionSpeaker): SpeakerRefDto => ({

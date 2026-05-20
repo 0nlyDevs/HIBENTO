@@ -46,6 +46,7 @@ export default function SessionDetailPage() {
   const isUpcoming = now < startTime;
   const isEnded = now > endTime;
   const isLive = session.isLive;
+  const isOnline = session.isOnline;
 
   const handleEnterSession = () => {
     toast("You are now inside the session!", "success");
@@ -103,7 +104,14 @@ export default function SessionDetailPage() {
                 ENDED
               </span>
             )}
-            <span className="text-xs tracking-wider text-charcoal/40">{session.room.name}</span>
+            {isOnline && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[0.6rem] font-bold bg-indigo text-cream">
+                ONLINE
+              </span>
+            )}
+            {!isOnline && session.room && (
+              <span className="text-xs tracking-wider text-charcoal/40">{session.room.name}</span>
+            )}
           </div>
           <h1 className="text-4xl font-black tracking-tighter text-charcoal mb-4">{session.title}</h1>
           {session.description && (
@@ -160,13 +168,14 @@ export default function SessionDetailPage() {
               </div>
               <div className="bg-paper p-5">
                 <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-1">ROOM</div>
-                <div className="text-sm font-bold text-charcoal">{session.room.name}</div>
+                <div className="text-sm font-bold text-charcoal">
+                  {session.room?.name ?? (isOnline ? "Online session" : "TBD")}
+                </div>
               </div>
               <div className="bg-paper p-5">
                 <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-1">CAPACITY</div>
                 <div className="text-sm font-bold text-charcoal">
-                  {session.capacity ? `${session.capacity} people` : "N/A"}
-                </div>
+                  {session.capacity ? `${session.capacity} people` : "N/A"}</div>
               </div>
             </div>
           )}
@@ -231,29 +240,8 @@ export default function SessionDetailPage() {
           {/* Location Tab */}
           {activeTab === "location" && (
             <div className="space-y-4">
-              <div className="border border-charcoal/10 bg-paper p-5">
-                <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-1">ROOM</div>
-                <div className="text-sm font-bold text-charcoal">{session.room.name}</div>
-                {session.room.capacity && (
-                  <div className="text-xs text-charcoal/40 mt-1">
-                    Capacity: {session.room.capacity} people
-                  </div>
-                )}
-              </div>
-
-              {session.venue && (
-                <div className="border border-charcoal/10 bg-paper p-5">
-                  <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-1">VENUE</div>
-                  <div className="text-sm font-bold text-charcoal">{session.venue.name}</div>
-                  <div className="text-xs text-charcoal/50 mt-1">
-                    {session.venue.neighborhood}, {session.venue.city}
-                  </div>
-                </div>
-              )}
-
-              {/* Map Placeholder */}
-              <div className="w-full h-56 bg-paper border border-charcoal/10 flex items-center justify-center">
-                <div className="text-center text-charcoal/40">
+              {isOnline ? (
+                <div className="border border-charcoal/10 bg-paper p-8 flex flex-col items-center justify-center text-center">
                   <svg
                     width="40"
                     height="40"
@@ -261,19 +249,64 @@ export default function SessionDetailPage() {
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="1.5"
-                    className="mx-auto mb-3"
+                    className="text-indigo mb-3"
                   >
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                    <circle cx="12" cy="10" r="3" />
+                    <rect x="2" y="3" width="20" height="14" rx="2" />
+                    <path d="M8 21H16" strokeLinecap="round" />
+                    <path d="M12 17V21" strokeLinecap="round" />
                   </svg>
-                  <p className="text-sm font-medium">Map Placeholder</p>
-                  <p className="text-xs mt-1">
-                    {session.venue
-                      ? `${session.venue.name} – ${session.venue.city}`
-                      : session.room.name}
+                  <p className="text-sm font-bold text-charcoal mb-1">Online Session</p>
+                  <p className="text-xs text-charcoal/50">
+                    This session is held online. No physical location.
                   </p>
                 </div>
-              </div>
+              ) : (
+                <>
+                  <div className="border border-charcoal/10 bg-paper p-5">
+                    <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-1">ROOM</div>
+                    <div className="text-sm font-bold text-charcoal">{session.room?.name ?? "TBD"}</div>
+                    {session.room?.capacity && (
+                      <div className="text-xs text-charcoal/40 mt-1">
+                        Capacity: {session.room.capacity} people
+                      </div>
+                    )}
+                  </div>
+
+                  {session.venue && (
+                    <div className="border border-charcoal/10 bg-paper p-5">
+                      <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-1">VENUE</div>
+                      <div className="text-sm font-bold text-charcoal">{session.venue.name}</div>
+                      <div className="text-xs text-charcoal/50 mt-1">
+                        {session.venue.neighborhood}, {session.venue.city}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Map Placeholder */}
+                  <div className="w-full h-56 bg-paper border border-charcoal/10 flex items-center justify-center">
+                    <div className="text-center text-charcoal/40">
+                      <svg
+                        width="40"
+                        height="40"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        className="mx-auto mb-3"
+                      >
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                      </svg>
+                      <p className="text-sm font-medium">Map Placeholder</p>
+                      <p className="text-xs mt-1">
+                        {session.venue
+                          ? `${session.venue.name} – ${session.venue.city}`
+                          : session.room?.name ?? "Location TBD"}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>

@@ -51,7 +51,10 @@ export function SessionCard({ session, compact = false }: SessionCardProps) {
             LIVE
           </span>
         )}
-        {isUpcoming && !session.isLive && (
+        {session.isOnline && !session.isLive && (
+          <span className="text-[0.6rem] tracking-wider font-bold text-indigo">ONLINE</span>
+        )}
+        {isUpcoming && !session.isLive && !session.isOnline && (
           <span className="text-[0.6rem] tracking-wider font-bold text-matcha">UPCOMING</span>
         )}
         {isPast && !session.isLive && (
@@ -83,7 +86,7 @@ export function SessionCard({ session, compact = false }: SessionCardProps) {
       <div className="flex items-center gap-2 mt-2">
         <div className="w-1.5 h-1.5 rounded-full bg-charcoal/20" />
         <span className="text-[0.6rem] tracking-wider" style={{ color: "rgba(40,40,40,0.4)" }}>
-          {session.room.name}
+          {session.isOnline ? "Online" : session.room?.name ?? "TBD"}
         </span>
       </div>
     </Link>

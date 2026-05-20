@@ -89,7 +89,8 @@ export interface EventSessionSummaryDto {
   title: string;
   startTime: string;
   endTime: string;
-  room: RoomDto;
+  room: RoomDto | null;
+  isOnline: boolean;
   isLive: boolean;
   speakers: SpeakerRefDto[];
   questionCount: number;
@@ -101,9 +102,10 @@ export interface EventSessionDetailDto {
   description: string | null;
   startTime: string;
   endTime: string;
-  room: RoomDto;
+  room: RoomDto | null;
   venue: VenueDto | null;
   capacity: number | null;
+  isOnline: boolean;
   isLive: boolean;
   speakers: SpeakerDetailDto[];
   questions: QuestionDto[];
