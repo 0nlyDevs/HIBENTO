@@ -17,15 +17,16 @@ enum LinkType {
 }
 
 model Venue {
-  id         String   @id @default(uuid()) @db.Uuid
-  name       String   @db.VarChar(255) // e.g. "HEI", "Anjanahary Convention Center"
-  city       String   @db.VarChar(255) // e.g. "Antananarivo"
-  neighborhood     String   @db.VarChar(255) // e.g. "Ivandry", "Anjanahary"
-  totalRooms Int      @default(0) @map("total_rooms")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String   @db.VarChar(255) // e.g. "HEI", "Anjanahary Convention Center"
+  city         String   @db.VarChar(255) // e.g. "Antananarivo"
+  neighborhood String   @db.VarChar(255) // e.g. "Ivandry", "Anjanahary"
+  totalRooms   Int      @default(0) @map("total_rooms")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
-  rooms Room[]
+  rooms  Room[]
+  events Event[]
 
   @@map("venue")
 }
@@ -40,8 +41,8 @@ model Event {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  venue          Venue          @relation(fields: [venueId], references: [id], onDelete: Restrict)
-  eventSessions  EventSession[]
+  venue         Venue          @relation(fields: [venueId], references: [id], onDelete: Restrict)
+  eventSessions EventSession[]
 
   @@index([venueId])
   @@map("event")
@@ -75,15 +76,15 @@ model EventSession {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  event     Event                  @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  room      Room                   @relation(fields: [roomId], references: [id])
+  event     Event                 @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  room      Room                  @relation(fields: [roomId], references: [id])
   speakers  EventSessionSpeaker[]
   questions Question[]
 
+  @@unique([roomId, startTime])
   @@index([eventId])
   @@index([startTime])
   @@index([roomId])
-  @@unique([roomId, startTime])
   @@map("event_session")
 }
 
@@ -126,12 +127,12 @@ model EventSessionSpeaker {
 }
 
 model Question {
-  id              String   @id @default(uuid()) @db.Uuid
-  eventSessionId  String   @db.Uuid
-  content         String
-  authorName      String   @default("Anonymous") @map("author_name") @db.VarChar(100)
-  upvotes         Int      @default(0)
-  createdAt       DateTime @default(now()) @map("created_at")
+  id             String   @id @default(uuid()) @db.Uuid
+  eventSessionId String   @db.Uuid
+  content        String
+  authorName     String   @default("Anonymous") @map("author_name") @db.VarChar(100)
+  upvotes        Int      @default(0)
+  createdAt      DateTime @default(now()) @map("created_at")
 
   eventSession EventSession @relation(fields: [eventSessionId], references: [id], onDelete: Cascade)
 
