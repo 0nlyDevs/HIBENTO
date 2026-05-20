@@ -126,7 +126,7 @@ export default function SpeakerProfilePage() {
               </div>
 
               <div className="space-y-4">
-                {speaker.sessions.map((s) => (
+                {speaker.eventSessions.map((s) => (
                   <Link
                     key={s.id}
                     href={`/sessions/${s.id}`}
