@@ -1,4 +1,4 @@
-import type { Session } from "@prisma/client";
+import { EventSession } from "@prisma/client";
 
 // ==================== PAGINATION UTILITIES ====================
 export interface PaginationOptions {
@@ -21,13 +21,13 @@ export function getPagination(options: PaginationOptions): PaginationResult {
 }
 
 // ==================== SESSION UTILITIES ====================
-export function isSessionLive(session: Pick<Session, "startTime" | "endTime">): boolean {
+export function isSessionLive(session: Pick<EventSession, "startTime" | "endTime">): boolean {
   const now = new Date();
   return now >= session.startTime && now <= session.endTime;
 }
 
 export function getSessionStatus(
-  session: Pick<Session, "startTime" | "endTime">
+  session: Pick<EventSession, "startTime" | "endTime">
 ): "live" | "upcoming" | "ended" {
   const now = new Date();
   if (now < session.startTime) return "upcoming";

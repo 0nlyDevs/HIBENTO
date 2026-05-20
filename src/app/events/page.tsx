@@ -1,268 +1,215 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useGetEvents, useGetEvent, useGetEventRooms, useGetRoomSessions } from "@/lib/hooks";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
+import { useGetEvents } from "@/lib/hooks/useEvents";
+import { api } from "@/lib/api";
+import type { EventSummaryDto } from "@/types/dto";
+import { EventCard } from "@/components/events/EventCard";
 
-const queryClient = new QueryClient();
+type EventStatus = "all" | "live" | "upcoming" | "ended";
 
-function EventsPageContent() {
-  const [selectedEventId, setSelectedEventId] = useState<string>("");
-  const [selectedRoom, setSelectedRoom] = useState<string>("");
+export default function EventsPage() {
+  const [selectedCity, setSelectedCity] = useState<string>("all");
+  const [selectedStatus, setSelectedStatus] = useState<EventStatus>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
-  const { data: events, isLoading: eventsLoading, error: eventsError } = useGetEvents({
-    page: 1,
-    limit: 10,
-    upcoming: false,
+  const { data: venuesData } = useQuery({
+    queryKey: ["venues"],
+    queryFn: () => api.getVenues(),
   });
 
-  const { data: eventDetail } = useGetEvent(selectedEventId);
-  const { data: rooms, isLoading: roomsLoading } = useGetEventRooms(selectedEventId);
-  const { data: roomSessions, isLoading: roomSessionsLoading } = useGetRoomSessions(
-    selectedEventId,
-    selectedRoom
-  );
+  const { data: eventsData, isLoading } = useGetEvents({
+    page: 1,
+    limit: 50,
+    ...(selectedCity !== "all" && { city: selectedCity }),
+    ...(selectedStatus !== "all" && { status: selectedStatus }),
+    ...(searchQuery && { search: searchQuery }),
+    ...(dateFrom && { dateFrom }),
+    ...(dateTo && { dateTo }),
+  });
 
-  useEffect(() => {
-    if (rooms?.data && rooms.data.length > 0 && !selectedRoom) {
-      setSelectedRoom(rooms.data[0].name);
-    }
-  }, [rooms, selectedRoom]);
+  const events = eventsData?.data || [];
 
-  useEffect(() => {
-    setSelectedRoom("");
-  }, [selectedEventId]);
+  const cities = [
+    ...new Set((venuesData?.data || []).map((v) => v.city)),
+  ].sort();
 
-  if (eventsLoading) {
-    return (
-      <div className="min-h-screen bg-[#f5f0e8] flex items-center justify-center font-mono">
-        <div className="text-center">
-          <div className="inline-block w-2 h-2 bg-[#2c1810] animate-pulse mr-1"></div>
-          <div className="inline-block w-2 h-2 bg-[#2c1810] animate-pulse delay-100 mr-1"></div>
-          <div className="inline-block w-2 h-2 bg-[#2c1810] animate-pulse delay-200"></div>
-          <p className="mt-4 text-[#2c1810] text-sm tracking-wider">LOADING DATA...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (eventsError) {
-    return (
-      <div className="min-h-screen bg-[#f5f0e8] flex items-center justify-center font-mono">
-        <div className="text-center border-2 border-[#8b3a3a] p-8 bg-[#f5e6d3]">
-          <p className="text-[#8b3a3a] text-sm tracking-wider mb-2">⚠ ERROR ⚠</p>
-          <p className="text-[#2c1810] text-xs">{eventsError.message}</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="mt-4 px-4 py-1 bg-[#2c1810] text-[#f5f0e8] text-xs tracking-wider hover:bg-[#1a0f0a] transition-colors"
-          >
-            RETRY
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const statusFilters: { value: EventStatus; label: string }[] = [
+    { value: "all", label: "ALL" },
+    { value: "live", label: "ONGOING" },
+    { value: "upcoming", label: "UPCOMING" },
+    { value: "ended", label: "ENDED" },
+  ];
 
   return (
-    <div className="min-h-screen bg-[#f5f0e8] font-mono">
-      {/* header */}
-      <div className="border-b-2 border-[#2c1810] bg-[#e8dccc]">
-        <div className="max-w-6xl mx-auto px-8 py-6">
-          <div className="flex items-center gap-4">
-            <div className="text-2xl">◉</div>
-            <h1 className="text-3xl font-bold tracking-tighter text-[#2c1810]">HIBENTO</h1>
-            <div className="flex-1"></div>
-            <div className="text-xs text-[#2c1810] tracking-wider">
-              {events?.pagination?.total || 0} RECORDS
-            </div>
-          </div>
-          <div className="mt-2 text-xs text-[#4a3020] tracking-wider">
-            {">"} LOADED {events?.data.length || 0} OF {events?.pagination?.total || 0} EVENTS
+    <div className="min-h-screen bg-cream">
+      <nav className="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-charcoal/10">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            <Image src="/logo.svg" alt="HiBento" width={28} height={28} />
+            <span className="font-bold text-xl tracking-tighter text-charcoal">HIBENTO</span>
+          </Link>
+          <div className="flex items-center gap-6">
+            <Link href="/events" className="text-sm font-bold text-charcoal border-b-2 border-charcoal">
+              EVENTS
+            </Link>
+            <Link href="/speakers" className="text-sm text-charcoal/60 hover:text-charcoal">
+              SPEAKERS
+            </Link>
           </div>
         </div>
-      </div>
+      </nav>
 
-      <div className="max-w-6xl mx-auto px-8 py-8">
-        {/* events grid */}
-        <div className="grid gap-3 mb-10">
-          {events?.data.map((event, idx) => (
-            <div
-              key={event.id}
-              onClick={() => setSelectedEventId(event.id)}
-              className={`
-                border border-[#2c1810] bg-[#f5f0e8] cursor-pointer
-                transition-all duration-200 hover:bg-[#e8dccc]
-                ${selectedEventId === event.id ? 'border-l-8 bg-[#e8dccc]' : 'border-l-2'}
-              `}
-            >
-              <div className="p-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs text-[#4a3020] tracking-wider">
-                        [{String(idx + 1).padStart(2, '0')}]
-                      </span>
-                      <h2 className="text-lg font-bold tracking-tight text-[#2c1810]">
-                        {event.title}
-                      </h2>
-                    </div>
-                    <p className="text-sm text-[#4a3020] leading-relaxed mb-2">
-                      {event.description?.substring(0, 120)}...
-                    </p>
-                    <div className="flex gap-4 text-xs text-[#4a3020] tracking-wider">
-                      <span>📅 {new Date(event.startDate).toLocaleDateString()}</span>
-                      <span>📍 {event.location || 'TBD'}</span>
-                      <span>🎤 {event.sessionCount} SESSIONS</span>
-                    </div>
-                  </div>
-                  <div className="text-2xl text-[#2c1810] opacity-50">
-                    {selectedEventId === event.id ? '⌄' : '›'}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="mb-8">
+          <h1 className="text-4xl font-black tracking-tighter text-charcoal mb-2">EVENTS</h1>
+          <p className="text-sm text-charcoal/60">Browse all events across Madagascar</p>
         </div>
 
-        {/* event detail panel */}
-        {selectedEventId && eventDetail && (
-          <div className="mt-8 border-t-2 border-[#2c1810] pt-8">
-            <div className="mb-6 flex items-center justify-between">
-              <h3 className="text-xl font-bold tracking-tight text-[#2c1810]">
-                {">"} EVENT DETAILS
-              </h3>
+        {/* Filters */}
+        <div className="flex flex-wrap items-end gap-3 mb-8">
+          {/* Status Filters */}
+          <div className="flex gap-1 bg-charcoal/5 p-1">
+            {statusFilters.map(({ value, label }) => (
               <button
-                onClick={() => {
-                  setSelectedEventId("");
-                  setSelectedRoom("");
-                }}
-                className="text-xs text-[#4a3020] hover:text-[#2c1810] tracking-wider"
+                key={value}
+                onClick={() => setSelectedStatus(value)}
+                className={`px-4 py-2 text-xs tracking-wider font-medium transition-colors ${
+                  selectedStatus === value
+                    ? "bg-charcoal text-cream"
+                    : "text-charcoal/60 hover:text-charcoal"
+                }`}
               >
-                [CLOSE]
+                {label}
               </button>
-            </div>
+            ))}
+          </div>
 
-            <div className="border border-[#2c1810] bg-[#e8dccc] p-6 mb-8">
-              <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <div>
-                  <div className="text-xs text-[#4a3020] tracking-wider mb-1">TITLE</div>
-                  <div className="text-lg font-bold text-[#2c1810]">{eventDetail.title}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-[#4a3020] tracking-wider mb-1">LOCATION</div>
-                  <div className="text-md text-[#2c1810]">{eventDetail.location || 'NOT SPECIFIED'}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-[#4a3020] tracking-wider mb-1">DATE RANGE</div>
-                  <div className="text-md text-[#2c1810]">
-                    {new Date(eventDetail.startDate).toLocaleDateString()} — {new Date(eventDetail.endDate).toLocaleDateString()}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-[#4a3020] tracking-wider mb-1">DESCRIPTION</div>
-                  <div className="text-sm text-[#2c1810]">{eventDetail.description || 'NO DESCRIPTION'}</div>
-                </div>
-              </div>
+          {/* Search */}
+          <div className="relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search events..."
+              className="w-48 px-3 py-2 text-xs tracking-wider bg-cream border border-charcoal/20 text-charcoal placeholder-charcoal/30 focus:outline-none focus:border-charcoal/40"
+            />
+          </div>
 
-              {/* rooms section */}
-              <div className="border-t border-[#2c1810] pt-6">
-                <h4 className="text-sm font-bold tracking-wider text-[#2c1810] mb-3">
-                  {">"} ROOMS
-                </h4>
-                {roomsLoading ? (
-                  <div className="flex gap-2">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="w-24 h-8 bg-[#d4c8b0] animate-pulse"></div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex gap-2 flex-wrap">
-                    {rooms?.data.map((room) => (
-                      <button
-                        key={room.id}
-                        onClick={() => setSelectedRoom(room.name)}
-                        className={`
-                          px-3 py-1 text-xs tracking-wider border border-[#2c1810]
-                          transition-colors font-mono
-                          ${selectedRoom === room.name ? 'bg-[#2c1810] text-[#f5f0e8]' : 'bg-transparent text-[#2c1810] hover:bg-[#d4c8b0]'}
-                        `}
-                      >
-                        {room.name.toUpperCase()}
-                      </button>
-                    ))}
-                  </div>
-                )}
+          {/* City Filter */}
+          <select
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
+            className="px-3 py-2 text-xs tracking-wider bg-cream border border-charcoal/20 text-charcoal focus:outline-none focus:border-charcoal/40"
+          >
+            <option value="all">ALL CITIES</option>
+            {cities.map((city) => (
+              <option key={city} value={city}>
+                {city.toUpperCase()}
+              </option>
+            ))}
+          </select>
 
-                {/* room sessions */}
-                {selectedRoom && roomSessions && (
-                  <div className="mt-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-2 h-2 bg-[#2c1810]"></div>
-                      <h4 className="text-sm font-bold tracking-wider text-[#2c1810]">
-                        SESSIONS IN {selectedRoom.toUpperCase()}
-                      </h4>
+          {/* Date From */}
+          <div>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="w-40 px-3 py-2 text-xs tracking-wider bg-cream border border-charcoal/20 text-charcoal focus:outline-none focus:border-charcoal/40"
+            />
+          </div>
+
+          {/* Date To */}
+          <div>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="w-40 px-3 py-2 text-xs tracking-wider bg-cream border border-charcoal/20 text-charcoal focus:outline-none focus:border-charcoal/40"
+            />
+          </div>
+        </div>
+
+        {/* Events Grid */}
+        {isLoading ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="h-48 bg-charcoal/5 animate-pulse" />
+            ))}
+          </div>
+        ) : events.length > 0 ? (
+          selectedCity === "all" ? (
+            (() => {
+              const grouped = events.reduce<Record<string, EventSummaryDto[]>>(
+                (acc, e) => {
+                  const city = e.venue?.city ?? "ONLINE";
+                  if (!acc[city]) acc[city] = [];
+                  acc[city].push(e);
+                  return acc;
+                },
+                {}
+              );
+              const cityOrder = ["ONLINE", "Antananarivo"];
+              const sorted = Object.entries(grouped).sort(([a], [b]) => {
+                const ia = cityOrder.indexOf(a);
+                const ib = cityOrder.indexOf(b);
+                if (ia !== -1 && ib !== -1) return ia - ib;
+                if (ia !== -1) return -1;
+                if (ib !== -1) return 1;
+                return a.localeCompare(b);
+              });
+              return (
+                <div className="space-y-10">
+                  {sorted.map(([city, cityEvents]) => (
+                    <div key={city}>
+                      <div className="flex items-center gap-4 mb-5">
+                        <div className="w-2 h-2 bg-charcoal" />
+                        <h2 className="text-sm font-bold tracking-widest text-charcoal">
+                          {city.toUpperCase()}
+                        </h2>
+                        <div className="flex-1 h-px bg-charcoal/10" />
+                        <span className="text-[0.6rem] tracking-wider text-charcoal/30">
+                          {cityEvents.length} {cityEvents.length === 1 ? "EVENT" : "EVENTS"}
+                        </span>
+                      </div>
+                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {cityEvents.map((event, idx) => (
+                          <EventCard
+                            key={event.id}
+                            event={event}
+                            index={idx}
+                          />
+                        ))}
+                      </div>
                     </div>
-                    {roomSessionsLoading ? (
-                      <div className="space-y-2">
-                        {[1, 2, 3].map((i) => (
-                          <div key={i} className="h-16 bg-[#d4c8b0] animate-pulse"></div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        {roomSessions.data.map((session) => (
-                          <div key={session.id} className="border border-[#2c1810] p-3 bg-[#f5f0e8]">
-                            <div className="flex items-start justify-between gap-4">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-xs text-[#4a3020]">
-                                    {new Date(session.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                  </span>
-                                  <span className="text-xs text-[#4a3020]">→</span>
-                                  <span className="text-xs text-[#4a3020]">
-                                    {new Date(session.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                  </span>
-                                  {session.isLive && (
-                                    <span className="text-xs bg-[#2c1810] text-[#f5f0e8] px-2 py-0.5 tracking-wider">
-                                      LIVE
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="font-bold text-[#2c1810] mb-1">{session.title}</p>
-                                <p className="text-xs text-[#4a3020]">
-                                  SPEAKERS: {session.speakers.map((s) => s.name).join(", ")}
-                                </p>
-                              </div>
-                              <div className="text-[#2c1810] opacity-30 text-xl">⌄</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+                  ))}
+                </div>
+              );
+            })()
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {events.map((event, idx) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  index={idx}
+                />
+              ))}
             </div>
+          )
+        ) : (
+          <div className="text-center py-16 border border-dashed border-charcoal/20">
+            <p className="text-charcoal/40 text-sm tracking-wider">NO EVENTS FOUND</p>
+            <p className="text-charcoal/30 text-xs mt-2">Try adjusting your filters</p>
           </div>
         )}
       </div>
-
-      {/* footer */}
-      <div className="border-t-2 border-[#2c1810] bg-[#e8dccc] mt-10">
-        <div className="max-w-6xl mx-auto px-8 py-4">
-          <div className="text-xs text-[#4a3020] tracking-wider text-center">
-            {">"} HIBENTO v1.0 {"<"}
-          </div>
-        </div>
-      </div>
     </div>
-  );
-}
-
-export default function EventsPage() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <EventsPageContent />
-    </QueryClientProvider>
   );
 }

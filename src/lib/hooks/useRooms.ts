@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import type { RoomDto, SessionSummaryDto } from "@/types/dto";
+import type { RoomDto, EventSessionSummaryDto } from "@/types/dto";
 
 export const roomKeys = {
   all: ["rooms"] as const,
@@ -24,7 +24,7 @@ export function useGetEventRooms(
 export function useGetRoomSessions(
   eventId: string,
   roomName: string,
-  options?: Omit<UseQueryOptions<{ data: SessionSummaryDto[] }>, "queryKey" | "queryFn">
+  options?: Omit<UseQueryOptions<{ data: EventSessionSummaryDto[] }>, "queryKey" | "queryFn">
 ) {
   return useQuery({
     queryKey: roomKeys.roomSessions(eventId, roomName),

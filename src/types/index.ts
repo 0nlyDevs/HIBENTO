@@ -1,9 +1,6 @@
 // Enums
 export * from "./enums";
 
-// Entities (Prisma models)
-export * from "./entities";
-
 // DTOs
 export * from "./dto";
 
