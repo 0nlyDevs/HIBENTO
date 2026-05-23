@@ -1,23 +1,24 @@
 import type { Metadata } from "next";
-import { Inter, Noto_Sans_JP } from "next/font/google";
+import { Manrope, Sora } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Nav } from "@/components/Nav";
 
-const inter = Inter({
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-manrope",
+  display: "swap",
 });
 
-const notoSansJP = Noto_Sans_JP({
+const sora = Sora({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-noto",
+  variable: "--font-sora",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "HIBENTO — Event Platform",
-  description: "Real-time event management and engagement platform",
+  title: "HiBento",
+  description: "Events should feel alive.",
 };
 
 export default function RootLayout({
@@ -26,13 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${notoSansJP.variable}`}>
-      <body className="min-h-screen bg-cream font-sans antialiased">
-        <Providers>
-          <Nav />
-          {children}
-        </Providers>
-      </body>
+    <html lang="en" className={`${manrope.variable} ${sora.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }
