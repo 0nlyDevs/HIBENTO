@@ -16,7 +16,7 @@ export const Hero = () => {
     <section
       className="relative min-h-screen flex flex-col justify-end overflow-hidden pt-24 pb-12"
     >
-          <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none">
 
         <div className="absolute top-[24%] right-[7%] text-right label-mono text-foreground/40 hidden md:block">
           {time ? time.toLocaleTimeString("en-GB") : ""}
@@ -26,7 +26,7 @@ export const Hero = () => {
       </div>
 
       <div className="container mx-auto relative z-10 mt-16">
-        <div className="max-w-6xl mx-auto">
+        <div className="mmx-auto">
           <h1 className="text-display text-[clamp(2rem,10vw,9rem)] text-foreground">
              {heroContent.heading}
              <br />
@@ -51,7 +51,7 @@ export const Hero = () => {
           </div>
         </div>
 
-        <div className="mt-16 pt-6 border-t border-border flex flex-wrap items-center justify-between label-mono text-foreground/55 gap-4">
+        <div className="mt-16 pt-6 border-t border-border flex rotate-2 flex-wrap items-center justify-between label-mono text-foreground/55 gap-4">
           <span>{heroContent.bottomStrip.categories}</span>
           <span className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-accent blink-dot" />
