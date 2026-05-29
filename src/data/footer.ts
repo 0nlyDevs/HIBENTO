@@ -16,7 +16,7 @@ export interface FooterConfig {
 }
 
 export const footerConfig: FooterConfig = {
-  brandDescription: "The live screen for any event. Stream, ask, vote — no PDFs, no logins.",
+  brandDescription: "The live screen for any event. Stream, ask, vote. No PDFs, no logins.",
   sections: [
     {
       title: "PRODUCT",
@@ -36,6 +36,6 @@ export const footerConfig: FooterConfig = {
       ],
     },
   ],
-  copyright: `© ${new Date().getFullYear()} HiBento — All stages reserved.`,
+  copyright: `© ${new Date().getFullYear()} HiBento. All stages reserved.`,
   tagline: "Made for everyone in the room.",
 };
