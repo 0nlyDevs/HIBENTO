@@ -52,6 +52,11 @@ paths:
           maximum: 100
           default: 20
         description: Items per page
+      - name: upcoming
+        in: query
+        schema:
+          type: boolean
+        description: Only show upcoming events
       - name: city
         in: query
         schema:
@@ -65,6 +70,23 @@ paths:
           enum: [ live, upcoming, ended, all ]
           default: all
         description: Filter by event status
+      - name: search
+        in: query
+        schema:
+          type: string
+        description: Search by event title
+      - name: dateFrom
+        in: query
+        schema:
+          type: string
+          format: date
+        description: Filter events ending on or after this date
+      - name: dateTo
+        in: query
+        schema:
+          type: string
+          format: date
+        description: Filter events starting on or before this date
       responses:
         '200':
           description: Paginated event list
@@ -85,6 +107,7 @@ paths:
                     city: "Antananarivo"
                     neighborhood: "Anjanahary"
                     totalRooms: 3
+                  isOnline: false
                   eventSessionCount: 5
                 pagination:
                   page: 1
@@ -109,18 +132,18 @@ paths:
           $ref: '#/components/responses/NotFound'
 
   # ==================== SESSIONS ====================
-  /events/{eventId}/sessions:
+  /events/{eventId}/event-sessions:
     get:
       tags: [ Sessions ]
       summary: List sessions for an event
-      description: Filter sessions by room or live status
+      description: Filter sessions by room name or live status
       parameters:
       - $ref: '#/components/parameters/EventId'
-      - name: roomId
+      - name: room
         in: query
         schema:
           type: string
-        description: Filter by room ID
+        description: Filter by room name
       - name: liveOnly
         in: query
         schema:
@@ -289,6 +312,102 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # ==================== VENUES ====================
+  /venues:
+    get:
+      tags: [ Events ]
+      summary: List all venues
+      responses:
+        '200':
+          description: Venue list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Venue'
+
+  /venues/{venueId}:
+    get:
+      tags: [ Events ]
+      summary: Get venue details with rooms
+      parameters:
+      - $ref: '#/components/parameters/VenueId'
+      responses:
+        '200':
+          description: Venue with rooms
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VenueDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ==================== REGISTRATIONS ====================
+  /event-sessions/{sessionId}/registrations:
+    post:
+      tags: [ Sessions ]
+      summary: Register for a session
+      description: Register with name and email. Online sessions do not require registration.
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionRegistrationRequest'
+      responses:
+        '201':
+          description: Registration created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionRegistrationResponse'
+        '400':
+          description: Online sessions do not require registration
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Duplicate email or session at capacity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  # ==================== UPVOTES ====================
+  /questions/{questionId}/upvote:
+    post:
+      tags: [ Questions ]
+      summary: Upvote a question
+      description: Only allowed for live sessions
+      parameters:
+      - $ref: '#/components/parameters/QuestionId'
+      responses:
+        '200':
+          description: Upvote recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpvoteResponse'
+        '403':
+          $ref: '#/components/responses/SessionNotLive'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
 components:
   parameters:
     EventId:
@@ -317,6 +436,15 @@ components:
         type: string
         format: uuid
       description: Room UUID
+
+    VenueId:
+      name: venueId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Venue UUID
 
     SpeakerId:
       name: speakerId
@@ -461,6 +589,8 @@ components:
           format: date-time
         venue:
           $ref: '#/components/schemas/Venue'
+        isOnline:
+          type: boolean
         eventSessionCount:
           type: integer
 
@@ -482,6 +612,8 @@ components:
           format: date-time
         venue:
           $ref: '#/components/schemas/Venue'
+        isOnline:
+          type: boolean
         eventSessions:
           type: array
           items:
@@ -502,6 +634,8 @@ components:
           format: date-time
         room:
           $ref: '#/components/schemas/Room'
+        isOnline:
+          type: boolean
         isLive:
           type: boolean
         speakers:
@@ -529,11 +663,18 @@ components:
           format: date-time
         room:
           $ref: '#/components/schemas/Room'
+        venue:
+          $ref: '#/components/schemas/Venue'
+          nullable: true
         capacity:
           type: integer
           nullable: true
+        isOnline:
+          type: boolean
         isLive:
           type: boolean
+        registrationCount:
+          type: integer
         speakers:
           type: array
           items:
@@ -557,6 +698,47 @@ components:
         createdAt:
           type: string
           format: date-time
+
+    VenueDetail:
+      allOf:
+      - $ref: '#/components/schemas/Venue'
+      - type: object
+        properties:
+          rooms:
+            type: array
+            items:
+              $ref: '#/components/schemas/Room'
+
+    SessionRegistrationRequest:
+      type: object
+      required: [ name, email ]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+
+    SessionRegistrationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    UpvoteResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        upvotes:
+          type: integer
 
     PaginatedEventsResponse:
       type: object
