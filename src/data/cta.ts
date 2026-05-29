@@ -14,15 +14,15 @@ export interface CTAConfig {
 }
 
 export const ctaConfig: CTAConfig = {
-  tagline: "§ 06 — Get in",
+  tagline: "§ 06 Get in",
   heading: "Your next event,",
   subheading: "already live.",
   description: "HiBento is invite-only while we onboard our first cohort of organisers. Drop your email and we'll set you up with a private demo.",
   buttonText: "Request access →",
   doneText: "✓ On the list",
   items: [
-    { n: "04", l: "Roles supported" },
-    { n: "∞",  l: "Parallel tracks" },
-    { n: "0",  l: "Attendee logins" },
+    { n: "3",  l: "Roles (organiser, speaker, attendee)" },
+    { n: "∞",  l: "Parallel tracks & rooms" },
+    { n: "0",  l: "Attendee logins required" },
   ],
 };
