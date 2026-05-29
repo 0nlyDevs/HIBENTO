@@ -1,8 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { ThumbsUp } from "lucide-react";
+import Image from "next/image";
+import { useRef, useState } from "react";
 import { useReveal } from "@/hooks/useReveal";
 import { Question, initialQuestions } from "@/data/questions";
+import SwipeLettersButton from "@/components/ui/SwipeLetterButton";
+import { TypingAnimation } from "@/components/ui/typing-animation";
+
+const MAX_CHARS = 280;
 
 interface LiveQAProps {
   initialQuestions?: Question[];
@@ -10,113 +16,217 @@ interface LiveQAProps {
 
 export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
   const ref = useReveal<HTMLDivElement>();
+  const listRef = useRef<HTMLUListElement>(null);
   const [questions, setQuestions] = useState(propQuestions || initialQuestions);
   const [draft, setDraft] = useState("");
   const [name, setName] = useState("");
+  const [flashId, setFlashId] = useState<string | null>(null);
 
   const upvote = (id: string) => {
     setQuestions((qs) =>
       [...qs]
-        .map((q) => (q.id === id ? { ...q, votes: q.voted ? q.votes - 1 : q.votes + 1, voted: !q.voted } : q))
-        .sort((a, b) => b.votes - a.votes)
+        .map((q) => (q.id === id ? { ...q, upvotes: q.voted ? q.upvotes - 1 : q.upvotes + 1, voted: !q.voted } : q))
+        .sort((a, b) => b.upvotes - a.upvotes)
     );
   };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!draft.trim()) return;
+    const trimmed = draft.trim();
+    if (!trimmed) return;
+    const newId = String(Date.now());
     setQuestions((qs) =>
       [
         ...qs,
-        { id: String(Date.now()), text: draft.trim(), author: name.trim() || "Anonymous", votes: 1, voted: true, emoji: "" },
-      ].sort((a, b) => b.votes - a.votes)
+        { id: newId, content: trimmed, authorName: name.trim() || "Anonymous", upvotes: 1, voted: true, isNew: true },
+      ].sort((a, b) => b.upvotes - a.upvotes)
     );
     setDraft("");
     setName("");
+    setFlashId(newId);
+    setTimeout(() => setFlashId(null), 1800);
+    setTimeout(() => {
+      listRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    }, 50);
   };
+
+  const remaining = MAX_CHARS - draft.length;
+  const canSubmit = draft.trim().length > 0 && draft.length <= MAX_CHARS;
 
   return (
     <section id="qa" className="relative py-28 md:py-40 overflow-hidden">
       <div className="container mx-auto relative">
-        <div className="grid lg:grid-cols-12 gap-12">
-          <div className="lg:col-span-5">
-            <p className="label-mono text-accent mb-6">§ 02 — Live Q&A</p>
+        <div className="grid lg:grid-cols-12 gap-12 items-end">
+
+          {/* Left — copy card, tilted right, pushed up */}
+          <div className="lg:col-span-5 md:rotate-2 md:-translate-y-20 card-glass squircle-lg p-8 lift">
+            <p className="label-mono text-accent mb-6">§ 02 Live Q&A</p>
             <h2 className="text-display text-[clamp(2.5rem,6vw,5rem)] text-foreground">
               The room
               <br />
               <span className="text-accent">talks back.</span>
             </h2>
             <p className="mt-6 text-foreground/70 max-w-md leading-relaxed text-lg">
-              Anyone can drop a question — anonymously or not. The crowd upvotes the ones that
+              Anyone can drop a question, anonymously or not. The crowd upvotes the ones that
               matter. No moderation queue, no friction, no awkward microphones.
             </p>
-            <ul className="mt-8 space-y-2 text-foreground/65">
-              <li>→ Auto-detects when a session is live</li>
-              <li>→ Anonymous mode for shy rooms</li>
-              <li>→ Sorted by upvotes, in real time</li>
-              <li>→ Works on any phone, no app to install</li>
+            <ul className="mt-8 space-y-3 text-foreground/65">
+              {[
+                "Auto-detects when a session is live",
+                "Anonymous mode for shy rooms",
+                "Sorted by upvotes, in real time",
+                "Works on any phone, no app to install",
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
+                  {item}
+                </li>
+              ))}
             </ul>
           </div>
 
-          <div ref={ref} className="reveal-up lg:col-span-7">
-            <div className="squircle-lg card-glass overflow-hidden shadow-deep">
-              <div className="flex items-center justify-between px-6 py-5 border-b border-border">
-                <div>
-                  <p className="label-mono text-foreground/50">STAGE A · 14:30 — 15:15</p>
-                  <p className="font-display font-bold text-2xl mt-1">Designing for live attention</p>
-                </div>
-                <span className="label-mono pill flex items-center gap-2 px-3 py-1.5 glow-chip">
-                  <span className="w-1.5 h-1.5 rounded-full bg-glass blink-dot" />
-                  LIVE
-                </span>
-              </div>
+          {/* Right — image on top + interactive card below, tilted left */}
+          <div className="lg:col-span-7 md:-rotate-1 flex flex-col gap-4">
 
-              <form onSubmit={submit} className="px-6 py-5 border-b border-border bg-glass">
-                <textarea
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  placeholder="Ask a question…"
-                  rows={2}
-                  className="w-full bg-transparent resize-none focus:outline-none text-foreground placeholder:text-foreground/40"
-                />
-                <div className="flex items-center justify-between mt-2">
-                  <input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Name (optional)"
-                    className="bg-transparent label-mono text-foreground/70 placeholder:text-foreground/35 focus:outline-none"
+            {/* Image stylisée */}
+            <div className="relative w-3/4 self-start h-52 squircle-lg overflow-hidden md:-rotate-3 shadow-deep md:-translate-y-16 md:translate-x-4">
+              <Image
+                src="/liveqa.jpg"
+                alt="Live Q&A in action"
+                fill
+                className="object-cover object-center"
+                sizes="(max-width: 768px) 100vw, 40vw"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
+            </div>
+
+            {/* Interactive card */}
+            <div className="squircle-lg card-glass overflow-hidden shadow-deep">
+
+                <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
+                  <div>
+                    <p className="label-mono text-foreground/50">STAGE A · 14:30 to 15:15</p>
+                    <p className="font-display font-bold text-xl mt-0.5 text-foreground">
+                      Designing for live attention
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="label-mono text-foreground/40">{questions.length} questions</span>
+                    <span className="label-mono pill flex items-center gap-2 px-3 py-1.5 glow-chip text-chartreuse-soft font-bold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-charcoal blink-dot" />
+                      LIVE
+                    </span>
+                  </div>
+                </div>
+
+              {/* Form */}
+              <form onSubmit={submit} className="px-6 py-4 border-b border-white/10 bg-white/5">
+                <div className="relative">
+                  <textarea
+                    value={draft}
+                    onChange={(e) => setDraft(e.target.value.slice(0, MAX_CHARS))}
+                    rows={2}
+                    className="w-full bg-transparent resize-none focus:outline-none text-foreground text-sm leading-relaxed relative z-10"
                   />
-                  <button
-                    type="submit"
-                    className="label-mono pill px-5 py-2 bg-accent text-accent-foreground hover:opacity-90 transition disabled:opacity-30 lift squish"
-                    disabled={!draft.trim()}
-                  >
-                    Send →
-                  </button>
+                  {!draft && (
+                    <div className="absolute top-0 left-0 pointer-events-none text-foreground/30 text-sm leading-relaxed">
+                      <TypingAnimation
+                        words={["Ask a question…", "What would you like to know?", "Your question matters…"]}
+                        cursorStyle="underscore"
+                        loop
+                        duration={60}
+                        pauseDelay={2000}
+                        className="text-sm font-normal tracking-normal leading-relaxed"
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center justify-between mt-2 gap-4">
+                  <div className="flex items-center gap-3 flex-1 min-w-0 relative">
+                    <div className="relative flex-1 min-w-0 flex items-center">
+                      <input
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="bg-transparent label-mono text-foreground/60 focus:outline-none w-full relative z-10"
+                      />
+                      {!name && (
+                        <div className="absolute inset-0 flex items-center pointer-events-none">
+                          <TypingAnimation
+                            words={["Your name…", "Anonymous"]}
+                            cursorStyle="underscore"
+                            loop
+                            duration={80}
+                            pauseDelay={2500}
+                            className="label-mono text-foreground/30 font-normal tracking-[0.12em] uppercase"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <span className={`label-mono shrink-0 tabular-nums ${remaining < 40 ? remaining < 10 ? "text-rose-400" : "text-accent" : "text-foreground/25"}`}>
+                      {remaining}
+                    </span>
+                  </div>
+                  <SwipeLettersButton
+                    as="button"
+                    onClick={submit as unknown as () => void}
+                    label="Send →"
+                    fontSize="0.7rem"
+                    fontWeight={500}
+                    direction="top"
+                    textColor="hsl(260 9% 18%)"
+                    hoverTextColor="hsl(260 9% 18%)"
+                    className={`label-mono pill px-5 py-2 bg-accent transition-opacity squish shrink-0${!canSubmit ? " opacity-30 pointer-events-none" : ""}`}
+                  />
                 </div>
               </form>
 
-              <ul className="divide-y divide-border max-h-[420px] overflow-auto">
-                {questions.map((q) => (
-                  <li key={q.id} className="flex gap-4 px-6 py-4 hover:bg-glass">
-                    <button
-                      onClick={() => upvote(q.id)}
-                      className={`squircle squish flex flex-col items-center justify-center min-w-[52px] py-2 border transition-all ${
-                        q.voted
-                          ? "border-accent bg-accent text-accent-foreground"
-                          : "border-border text-foreground/70 hover:border-accent hover:text-accent"
+              {/* Questions list */}
+              {questions.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-foreground/30">
+                  <span className="text-4xl mb-3">💬</span>
+                  <p className="label-mono">No questions yet. Be the first.</p>
+                </div>
+              ) : (
+                <ul ref={listRef} className="divide-y divide-white/10 max-h-96 overflow-auto">
+                  {questions.map((q, idx) => (
+                    <li
+                      key={q.id}
+                      className={`flex items-center gap-4 px-6 py-4 transition-colors duration-300 ${
+                        flashId === q.id ? "bg-accent/10" : "hover:bg-white/5"
                       }`}
                     >
-                      <span className="text-sm leading-none">▲</span>
-                      <span className="font-display font-bold text-lg leading-none mt-1">{q.votes}</span>
-                    </button>
-                    <div className="flex-1">
-                      <p className="text-foreground leading-snug">{q.text}</p>
-                      <p className="label-mono text-foreground/45 mt-1">— {q.author}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <p className={`leading-snug text-sm ${idx === 0 ? "text-foreground font-medium" : "text-foreground/80"}`}>
+                          {q.content}
+                        </p>
+                        <p className="label-mono text-foreground/40 mt-1.5">{q.authorName}</p>
+                      </div>
+
+                      {/* Upvote — pill style */}
+                      <div className="flex flex-col items-center gap-1 shrink-0">
+                        <button
+                          onClick={() => upvote(q.id)}
+                          className={`pill squish cursor-pointer flex items-center justify-center w-14 h-9 transition-all ${
+                            q.voted
+                              ? "bg-accent text-accent-foreground"
+                              : "bg-chartreuse-pale/15 text-foreground/50 hover:bg-chartreuse-pale/30 hover:text-foreground"
+                          }`}
+                        >
+                          <ThumbsUp
+                            size={16}
+                            className={!q.voted ? "animate-nudge-up" : ""}
+                          />
+                        </button>
+                        <span className={`font-display font-bold text-sm leading-none ${q.voted ? "text-accent" : "text-foreground/50"}`}>
+                          {q.upvotes}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
             </div>
           </div>
         </div>
