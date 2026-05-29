@@ -12,14 +12,14 @@ export const FAQ = ({ items: propItems }: { items?: FAQItem[] }) => {
     <section id="faq" className="relative py-28 md:py-40 overflow-hidden">
       <div className="container mx-auto grid lg:grid-cols-12 gap-12">
         <div className="lg:col-span-4">
-          <p className="label-mono text-accent mb-6">§ 05 — FAQ</p>
+          <p className="label-mono text-accent mb-6">§ 05 FAQ</p>
           <h2 className="text-display text-[clamp(2.5rem,5vw,4.5rem)] text-foreground">
             Quick
             <br />
             <span className="text-accent">answers.</span>
           </h2>
         </div>
-        <div ref={ref} className="reveal-up lg:col-span-8">
+        <div className="lg:col-span-8">
           <ul className="space-y-3">
             {displayItems.map((it, i) => {
               const isOpen = open === i;
