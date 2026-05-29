@@ -1,15 +1,15 @@
 export interface Question {
   id: string;
-  text: string;
-  author: string;
-  votes: number;
+  content: string;
+  authorName: string;
+  upvotes: number;
   voted?: boolean;
-  emoji?: string;
+  isNew?: boolean;
 }
 
 export const initialQuestions: Question[] = [
-  { id: "1", text: "How do you handle late submissions in the multi-track schedule?", author: "Anonymous", votes: 42, emoji: "" },
-  { id: "2", text: "Will the upvote system be open-source for self-hosters?", author: "Marie L.", votes: 31, emoji: "" },
-  { id: "3", text: "Can speakers reply to questions directly from their dashboard?", author: "Anonymous", votes: 18, emoji: "" },
-  { id: "4", text: "Is there a way to export questions after the session ends?", author: "Tom R.", votes: 9, emoji: "" },
+  { id: "1", content: "How does HiBento handle last-minute schedule changes without breaking the live view for attendees?", authorName: "Mara C.", upvotes: 47 },
+  { id: "2", content: "Can the Q&A be moderated before questions go public, or is it always open?", authorName: "Aarav S.", upvotes: 34 },
+  { id: "3", content: "Is there a speaker-facing view that's different from what the audience sees?", authorName: "Anonymous", upvotes: 21 },
+  { id: "4", content: "What happens to all the questions and upvotes after the event ends?", authorName: "Iris M.", upvotes: 12 },
 ];
