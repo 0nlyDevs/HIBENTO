@@ -1,31 +1,29 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen relative bg-cream">
-      {/* Hero */}
-      <section className="max-w-7xl mx-auto px-6 py-24">
-        <div className="max-w-2xl">
-          <h1 className="text-6xl font-black tracking-tighter text-charcoal leading-none mb-6">
-            WHERE EVENTS<br />COME ALIVE
-          </h1>
-          <p className="text-lg text-charcoal/60 mb-8">
-            Real-time event platform for Madagascar. Browse sessions, connect with speakers, and interact live.
-          </p>
-          <Link href="/events" className="inline-flex items-center gap-2 px-6 py-3 bg-charcoal text-cream text-sm font-medium tracking-wider">
-            EXPLORE EVENTS
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-          </Link>
-        </div>
+    <div className="flex-1 flex flex-col">
+      <section className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+        <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-charcoal max-w-3xl leading-[1.1]">
+          WHERE EVENTS COME ALIVE
+        </h1>
+        <p className="mt-6 text-lg md:text-xl text-charcoal/60 max-w-xl leading-relaxed">
+          Real-time event management and participant engagement platform for
+          Madagascar&apos;s tech communities.
+        </p>
+        <Link
+          href="/events"
+          className="mt-10 inline-flex items-center gap-2 bg-charcoal text-cream px-8 py-4 rounded-full font-semibold text-sm tracking-widest hover:bg-charcoal/90 transition-colors"
+        >
+          EXPLORE EVENTS
+          <ArrowRight className="w-4 h-4" />
+        </Link>
       </section>
-      <footer className="border-t absolute w-full bottom-0 border-charcoal/10 py-8">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-xs text-charcoal/40">HIBENTO © 2026</p>
-        </div>
+      <footer className="py-6 text-center text-xs tracking-wider text-charcoal/40">
+        HIBENTO &copy; 2026
       </footer>
     </div>
   );

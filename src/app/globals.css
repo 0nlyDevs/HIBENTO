@@ -1,331 +1,289 @@
 @import "tailwindcss";
 
-@theme {
-  --color-cream: #FFFDF7;
-  --color-charcoal: #282828;
-  --color-yellow: #EAE151;
-  --color-yellow-dark: #D4CA3C;
-  --color-paper: #F5F2E9;
-  --color-ink: #1A1814;
-  --color-matcha: #7B8B6F;
-  --color-matcha-light: #E8EDE4;
-  --color-sakura: #F2E0DE;
-  --color-sakura-light: #FDF5F4;
-  --color-nori: #1C2E1A;
-  --color-rice: #FEFEF5;
-  --color-coral: #E8635A;
-  --color-indigo: #4A5A8A;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+/* HiBento — Acid Chartreuse Theme (Énergique, Fluorescent, Social)
+   Fond: Charcoal #2D2A32 · Surface: #3A3740
+   Texte: Near White #FAFDF6 · Primary Accent: Chartreuse #DDD92A
+   Secondary: Soft Chartreuse #EAE151 · Pale: #EEEFA8
+   Destructive: Rose #FF4D6D (preserved from original)
+   No gradients - flat design with glow effects
+*/
+
+@theme inline {
+  /* Acid Chartreuse Palette (7 colors) */
+  --color-charcoal: hsl(260 9% 18%);        /* #2D2A32 — Background */
+  --color-surface: hsl(260 8% 24%);          /* #3A3740 — Cards, Muted */
+  --color-ivory: hsl(84 64% 98%);            /* #FAFDF6 — Foreground */
+  --color-chartreuse: hsl(59 73% 52%);       /* #DDD92A — Primary Accent */
+  --color-chartreuse-soft: hsl(57 79% 62%);  /* #EAE151 — Secondary */
+  --color-chartreuse-pale: hsl(61 69% 80%);  /* #EEEFA8 — Muted Foreground */
+  --color-rose: hsl(348 100% 63%);           /* #FF4D6D — Destructive (preserved) */
+
+  /* Mapped to shadcn/ui tokens */
+  --color-background: var(--color-charcoal);
+  --color-foreground: var(--color-ivory);
+
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-ivory);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-ivory);
+
+  /* Primary Accent: Chartreuse (#DDD92A) */
+  --color-primary: var(--color-chartreuse);
+  --color-primary-foreground: var(--color-charcoal);
+
+  /* Accent (same as primary for HiBento) */
+  --color-accent: var(--color-chartreuse);
+  --color-accent-foreground: var(--color-charcoal);
+
+  /* Secondary: Soft Chartreuse (#EAE151) */
+  --color-secondary: var(--color-chartreuse-soft);
+  --color-secondary-foreground: var(--color-charcoal);
+
+  --color-muted: var(--color-surface);
+  --color-muted-foreground: var(--color-chartreuse-pale);
+
+  /* Destructive: Rose (#FF4D6D — preserved) */
+  --color-destructive: var(--color-rose);
+  --color-destructive-foreground: var(--color-ivory);
+
+  --color-border: hsl(260 8% 22%);           /* ~#34313A */
+  --color-input: var(--color-surface);
+  --color-ring: var(--color-chartreuse);
+
+  --radius: 0.75rem;      /* 12px - Cartes généreuses */
+  --radius-pill: 999px;    /* Pill-shaped buttons */
+  --radius-lg: 1rem;       /* 16px pour casser la rigidité */
+
+  /* HiBento custom tokens (remapped for Acid Chartreuse) */
+  --color-espresso: var(--color-ivory);
+  --color-espresso-soft: var(--color-chartreuse-pale);
+  --color-terracotta: var(--color-chartreuse);
+  --color-terracotta-deep: hsl(59 73% 32%);
+  --color-cream: var(--color-charcoal);
+  --color-cream-soft: var(--color-surface);
+  --color-paper: var(--color-surface);
+
+
+  /* Shadows with Chartreuse glow */
+  --shadow-soft: 0 1px 2px hsl(260 9% 10% / 0.4), 0 8px 24px -8px hsl(260 9% 10% / 0.5);
+  --shadow-deep: 0 30px 60px -20px hsl(var(--color-chartreuse) / 0.25);
+  --shadow-glow: 0 0 60px hsl(var(--color-chartreuse) / 0.45);
+
+  /* Easing curves */
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Animations - v4 pattern: --animate-* auto-generates animate-* utilities */
+  --animate-fade-in: fade-in 0.6s ease-out forwards;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-blink: blink 1.4s ease-in-out infinite;
+  --animate-float-soft: float-soft 6s ease-in-out infinite;
+  --animate-drift: drift 9s ease-in-out infinite;
+
+  /* Fonts - set by next/font variables */
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-serif: var(--font-sora), system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
 }
 
-* { box-sizing: border-box; }
+@utility container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  @media (min-width: 640px) {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Base styles - standard CSS (not @layer) */
+html {
+  scroll-behavior: smooth;
+}
 
 body {
-  background: var(--color-cream);
-  color: var(--color-ink);
+  margin: 0;
+  background-color: hsl(var(--color-background));
+  color: hsl(var(--color-foreground));
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-sans);  /* Manrope via --font-manrope */
+  font-feature-settings: 'ss01', 'cv11';
 }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--color-paper); }
-::-webkit-scrollbar-thumb { background: var(--color-charcoal); border-radius: 0; }
-
-/* ====== Bento Card ====== */
-.bento-card {
-  background: var(--color-rice);
-  border: 1px solid color-mix(in srgb, var(--color-charcoal) 10%, transparent);
-  padding: 1.5rem;
-  transition: all 0.3s;
-}
-.bento-card:hover {
-  border-color: color-mix(in srgb, var(--color-charcoal) 30%, transparent);
-  box-shadow: 4px 4px 0 0 rgba(234, 225, 81, 0.3);
+::selection {
+  background: hsl(var(--color-chartreuse));
+  color: hsl(var(--color-charcoal));
 }
 
-/* ====== Tags ====== */
-.tag-pill {
-  padding: 0.25rem 0.75rem;
-  font-size: 0.75rem;
+/* Custom utility classes - Tailwind v4 @utility syntax */
+
+/* No gradients - flat design */
+
+@utility text-display {
+  font-family: var(--font-serif);  /* Sora via --font-sora */
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+}
+
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   font-weight: 500;
-  border: 1px solid color-mix(in srgb, var(--color-charcoal) 20%, transparent);
-  background: var(--color-paper);
-  color: var(--color-charcoal);
-  letter-spacing: 0.05em;
 }
 
-/* ====== Live Badge ====== */
-.live-badge {
-  background: var(--color-nori);
-  color: var(--color-cream);
-  padding: 0.125rem 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  animation: livePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+@utility grain {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
 }
 
-/* ====== Buttons ====== */
-.btn-primary {
-  background: var(--color-charcoal);
-  color: var(--color-cream);
-  padding: 0.75rem 1.5rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  border: 1px solid var(--color-charcoal);
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.btn-primary:hover { background: var(--color-yellow); color: var(--color-charcoal); }
-
-.btn-outline {
-  background: transparent;
-  color: var(--color-charcoal);
-  padding: 0.75rem 1.5rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  border: 1px solid var(--color-charcoal);
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.btn-outline:hover { background: var(--color-yellow); }
-
-.btn-yellow {
-  background: var(--color-yellow);
-  color: var(--color-charcoal);
-  padding: 0.75rem 1.5rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  border: 1px solid var(--color-yellow-dark);
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.btn-yellow:hover { background: var(--color-yellow-dark); }
-
-.btn-ghost {
-  background: transparent;
-  color: var(--color-charcoal);
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.btn-ghost:hover { background: color-mix(in srgb, var(--color-charcoal) 5%, transparent); }
-
-.btn-sm { padding: 0.5rem 1rem; font-size: 0.75rem; }
-
-/* ====== Inputs ====== */
-.input-field {
-  width: 100%;
-  background: var(--color-cream);
-  border: 1px solid color-mix(in srgb, var(--color-charcoal) 20%, transparent);
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-  color: var(--color-charcoal);
-  transition: all 0.2s;
-}
-.input-field:focus { border-color: var(--color-charcoal); outline: none; }
-.input-field::placeholder { color: color-mix(in srgb, var(--color-charcoal) 40%, transparent); }
-
-/* ====== Chat Components ====== */
-.chat-bubble {
-  padding: 0.875rem 1rem;
-  border-radius: 0;
-  max-width: 85%;
-  position: relative;
-  line-height: 1.5;
-}
-.chat-bubble--attendee {
-  background: var(--color-paper);
-  border: 1px solid color-mix(in srgb, var(--color-charcoal) 10%, transparent);
-  align-self: flex-start;
-}
-.chat-bubble--speaker {
-  background: var(--color-matcha-light);
-  border: 1px solid var(--color-matcha);
-  align-self: flex-start;
-  border-left: 3px solid var(--color-matcha);
-}
-.chat-bubble--self {
-  background: var(--color-charcoal);
-  color: var(--color-cream);
-  align-self: flex-end;
+@utility marquee {
+  animation: var(--animate-marquee);
+  will-change: transform;
 }
 
-.chat-input-bar {
-  background: var(--color-rice);
-  border-top: 1px solid color-mix(in srgb, var(--color-charcoal) 10%, transparent);
-  padding: 1rem 1.5rem;
+@utility reveal-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 1s var(--ease-editorial);
+  will-change: opacity, transform;
 }
 
-/* ====== Toast ====== */
-.toast-container {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+/* Standard CSS for compound selector (not @utility) */
+.reveal-up.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@utility blink-dot {
+  animation: var(--animate-blink);
+}
+
+/* Animations */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(2deg); }
+}
+
+@keyframes draw-line {
+  from { stroke-dashoffset: 1000; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Apply animations via utility classes */
+@utility animate-float-soft {
+  animation: var(--animate-float-soft);
+  will-change: transform;
+}
+
+@utility animate-fade-in {
+  animation: var(--animate-fade-in);
+  will-change: opacity, transform;
+}
+
+/* Performance optimization utilities */
+@utility will-change-transform {
+  will-change: transform;
+}
+
+@utility will-change-opacity {
+  will-change: opacity;
+}
+
+@utility content-auto {
+  content-visibility: auto;
+}
+
+/* font-display is now handled by text-display utility - removed duplicate */
+
+/* Update body to use Manrope */
+body {
+  font-family: var(--font-sans);  /* Manrope via --font-manrope */
+}
+
+@utility squircle {
+  border-radius: var(--radius);
+}
+
+@utility squircle-lg {
+  border-radius: var(--radius-lg);
+}
+
+@utility pill {
+  border-radius: var(--radius-pill);
+}
+
+@utility lift {
+  transition: transform 0.5s var(--ease-spring), box-shadow 0.5s var(--ease-editorial);
+  &:hover {
+    transform: translateY(-3px);
+  }
+}
+
+@utility squish {
+  transition: transform 0.15s var(--ease-spring);
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+@utility drift {
+  animation: var(--animate-drift);
+  will-change: transform;
+}
+
+@utility mood-bg {
+  background: hsl(var(--color-background));
+}
+
+@utility glow-chip {
+  background: hsl(var(--color-chartreuse));
+  color: hsl(var(--color-charcoal));
+  box-shadow: 0 0 0 1px hsl(var(--color-chartreuse) / 0.4),
+              0 8px 30px -8px hsl(var(--color-chartreuse) / 0.6);
+}
+
+@utility blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.55;
   pointer-events: none;
 }
-.toast {
-  background: var(--color-charcoal);
-  color: var(--color-cream);
-  padding: 0.75rem 1.25rem;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  border: 1px solid color-mix(in srgb, var(--color-cream) 15%, transparent);
-  pointer-events: auto;
-  animation: toastIn 0.3s ease-out, toastOut 0.3s ease-in 2.7s forwards;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.toast--success { border-left: 3px solid var(--color-yellow); }
-.toast--error { border-left: 3px solid var(--color-coral); }
 
-/* ====== Shoji Panel (Japanese sliding door animation) ====== */
-.shoji-panel {
-  overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-              opacity 0.4s ease-out,
-              margin 0.3s ease-out;
-}
-.shoji-panel--open {
-  max-height: 2000px;
-  opacity: 1;
-}
-
-/* ====== Timeline ====== */
-.timeline-track {
-  position: relative;
-}
-.timeline-track::before {
-  content: '';
-  position: absolute;
-  left: 0.75rem;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: color-mix(in srgb, var(--color-charcoal) 15%, transparent);
-}
-.timeline-dot {
-  width: 0.625rem;
-  height: 0.625rem;
-  border-radius: 50%;
-  position: absolute;
-  left: 0.4375rem;
-  top: 1.375rem;
-  z-index: 1;
-}
-
-/* ====== Skeleton ====== */
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--color-charcoal) 6%, transparent) 25%,
-    color-mix(in srgb, var(--color-charcoal) 12%, transparent) 50%,
-    color-mix(in srgb, var(--color-charcoal) 6%, transparent) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-/* ====== Geometries ====== */
-.bg-grid {
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--color-charcoal) 4%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--color-charcoal) 4%, transparent) 1px, transparent 1px);
-  background-size: 48px 48px;
-}
-
-.bg-dots {
-  background-image: radial-gradient(circle, color-mix(in srgb, var(--color-charcoal) 8%, transparent) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-.bg-yellow-dots {
-  background-image: radial-gradient(circle, rgba(234, 225, 81, 0.25) 1.5px, transparent 1.5px);
-  background-size: 32px 32px;
-}
-
-/* ====== Animations ====== */
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-slide-up { animation: slideUp 0.4s ease-out; }
-
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-slide-down { animation: slideDown 0.3s ease-out; }
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-.animate-fade-in { animation: fadeIn 0.3s ease-out; }
-
-@keyframes livePulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-@keyframes toastIn {
-  from { opacity: 0; transform: translateX(100%) translateY(10px); }
-  to { opacity: 1; transform: translateX(0) translateY(0); }
-}
-@keyframes toastOut {
-  from { opacity: 1; transform: translateX(0); }
-  to { opacity: 0; transform: translateX(100%); }
-}
-
-@keyframes dotPulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.5); opacity: 0.5; }
-}
-.animate-dot-pulse { animation: dotPulse 1.5s ease-in-out infinite; }
-
-/* ====== Emoji reaction picker ====== */
-.reaction-btn {
-  width: 2rem;
-  height: 2rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid color-mix(in srgb, var(--color-charcoal) 15%, transparent);
-  background: var(--color-cream);
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.reaction-btn:hover {
-  background: var(--color-yellow);
-  border-color: var(--color-yellow-dark);
-  transform: scale(1.15);
-}
-.reaction-btn--active {
-  background: var(--color-yellow);
-  border-color: var(--color-yellow-dark);
+/* Keyframes for drift animation */
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33%      { transform: translate(8px, -14px) rotate(2deg); }
+  66%      { transform: translate(-10px, 6px) rotate(-2deg); }
 }
