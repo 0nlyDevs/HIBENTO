@@ -1,0 +1,58 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.letters {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.slot {
+  position: relative;
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+  line-height: 1;
+}
+
+.stack {
+  display: grid;
+  grid-auto-rows: 1em;
+  will-change: transform;
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.25, 0.75, 0.25, 1);
+}
+
+.char {
+  display: block;
+  color: var(--swipe-color, currentColor);
+  transition: color 0.25s ease;
+}
+
+.from-top .stack    { transform: translateY(-50%); }
+.from-bottom .stack { transform: translateY(0%); }
+
+.root:hover .from-top .stack    { transform: translateY(0%); }
+.root:hover .from-bottom .stack { transform: translateY(-50%); }
+
+.root:hover .char {
+  color: var(--swipe-hover-color, var(--swipe-color, currentColor));
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
