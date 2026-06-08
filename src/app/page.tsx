@@ -1,32 +1,27 @@
-"use client";
-
-import Link from "next/link";
+import { Nav } from "@/components/landing/Nav";
+import { Hero } from "@/components/landing/Hero";
+import { CTA } from "@/components/landing/CTA";
+import { Manifesto } from "@/components/landing/Manifesto";
+import { PlanningShowcase } from "@/components/landing/PlanningShowcase";
+import { Speakers } from "@/components/landing/Speakers";
+import { LiveQA } from "@/components/landing/LiveQA";
+import { Footer } from "@/components/landing/Footer";
+import { FAQ } from "@/components/landing/FAQ";
+import { Marquee } from "@/components/landing/Marquee";
 
 export default function Home() {
   return (
-    <div className="min-h-screen relative bg-cream">
-      {/* Hero */}
-      <section className="max-w-7xl mx-auto px-6 py-24">
-        <div className="max-w-2xl">
-          <h1 className="text-6xl font-black tracking-tighter text-charcoal leading-none mb-6">
-            WHERE EVENTS<br />COME ALIVE
-          </h1>
-          <p className="text-lg text-charcoal/60 mb-8">
-            Real-time event platform for Madagascar. Browse sessions, connect with speakers, and interact live.
-          </p>
-          <Link href="/events" className="inline-flex items-center gap-2 px-6 py-3 bg-charcoal text-cream text-sm font-medium tracking-wider">
-            EXPLORE EVENTS
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-          </Link>
-        </div>
-      </section>
-      <footer className="border-t absolute w-full bottom-0 border-charcoal/10 py-8">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-xs text-charcoal/40">HIBENTO © 2026</p>
-        </div>
-      </footer>
-    </div>
+    <main>
+      <Nav ctaHref="/events" ctaLabel="Browse Events" />
+      <Hero />
+      <Marquee />
+      <Manifesto />
+      <LiveQA />
+      <PlanningShowcase />
+      <Speakers />
+      <FAQ />
+      <CTA />
+      <Footer />
+    </main>
   );
 }
