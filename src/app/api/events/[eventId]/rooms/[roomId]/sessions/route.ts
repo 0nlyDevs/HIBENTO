@@ -52,6 +52,7 @@ export async function GET(
       return {
         id: session.id,
         title: session.title,
+        description: session.description,
         startTime: session.startTime.toISOString(),
         endTime: session.endTime.toISOString(),
         room: roomDto,
