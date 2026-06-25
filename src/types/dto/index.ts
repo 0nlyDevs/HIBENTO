@@ -99,6 +99,7 @@ export interface EventSessionSummaryDto {
 
 export interface EventSessionDetailDto {
   id: string;
+  eventId: string;
   title: string;
   description: string | null;
   startTime: string;
