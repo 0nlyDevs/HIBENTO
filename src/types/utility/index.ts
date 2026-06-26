@@ -1,6 +1,5 @@
 import { EventSession } from "@prisma/client";
 
-// ==================== PAGINATION UTILITIES ====================
 export interface PaginationOptions {
   page?: number;
   limit?: number;
@@ -20,7 +19,6 @@ export function getPagination(options: PaginationOptions): PaginationResult {
   };
 }
 
-// ==================== SESSION UTILITIES ====================
 export function isSessionLive(session: Pick<EventSession, "startTime" | "endTime">): boolean {
   const now = new Date();
   return now >= session.startTime && now <= session.endTime;
@@ -35,7 +33,6 @@ export function getSessionStatus(
   return "live";
 }
 
-// ==================== DATE UTILITIES ====================
 export function toISOString(date: Date): string {
   return date.toISOString();
 }
@@ -44,7 +41,6 @@ export function fromISOString(isoString: string): Date {
   return new Date(isoString);
 }
 
-// ==================== RESPONSE UTILITIES ====================
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
@@ -59,7 +55,6 @@ export function createErrorResponse(error: string): ApiResponse {
   return { success: false, error };
 }
 
-// ==================== TYPE GUARDS ====================
 export function isValidUUID(str: string): boolean {
   const uuidRegex =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
