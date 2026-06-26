@@ -33,7 +33,6 @@ export async function GET(
     });
 
     if (sessions.length === 0) {
-      // Check if room exists
       const room = await prisma.room.findUnique({ where: { id: roomId } });
       if (!room) {
         return NextResponse.json({ error: "Room not found" }, { status: 404 });
