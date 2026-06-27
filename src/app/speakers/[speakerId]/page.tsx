@@ -1,15 +1,21 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { formatDate } from "@/lib/utils/dates";
+import { fromSpeakerEventSession } from "@/lib/utils/sessionMappers";
+import { sortScheduleSessions } from "@/lib/utils/sortSessions";
+import { ScheduleTable } from "@/components/sessions/ScheduleTable";
+import { TablePagination } from "@/components/ui/TablePagination";
+import { PageLoader } from "@/components/ui/Spinner";
+import { MessageCircle, ChevronUp, ExternalLink } from "lucide-react";
+import type { QuestionDto } from "@/types/dto";
 
 export default function SpeakerProfilePage() {
   const { speakerId } = useParams<{ speakerId: string }>();
-  const router = useRouter();
 
   const { data: speaker, isLoading } = useQuery({
     queryKey: ["speaker", speakerId],
@@ -17,180 +23,198 @@ export default function SpeakerProfilePage() {
     enabled: !!speakerId,
   });
 
+  const [sessPage, setSessPage] = useState(1);
+  const [questionPage, setQuestionPage] = useState(1);
+
+  const sessionIds = speaker?.eventSessions.map((s) => s.id) ?? [];
+
+  const sessionNameMap = new Map<string, string>();
+  speaker?.eventSessions.forEach((s) => sessionNameMap.set(s.id, s.title));
+
+  const { data: questionsBySession } = useQuery({
+    queryKey: ["speaker-questions", sessionIds],
+    queryFn: async () => {
+      const results = await Promise.all(
+        sessionIds.map(async (id) => {
+          try {
+            const res = await api.getQuestions(id);
+            return { sessionId: id, sessionTitle: sessionNameMap.get(id) ?? "", questions: res.data as QuestionDto[] };
+          } catch {
+            return { sessionId: id, sessionTitle: sessionNameMap.get(id) ?? "", questions: [] as QuestionDto[] };
+          }
+        })
+      );
+      return results;
+    },
+    enabled: sessionIds.length > 0,
+  });
+
+  const questionsWithSession = (questionsBySession ?? []).flatMap(
+    (q) => q.questions.map((qq) => ({ ...qq, sessionTitle: q.sessionTitle }))
+  ).sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+  const QUESTION_PAGE_SIZE = 5;
+  const totalQuestionPages = Math.max(1, Math.ceil(questionsWithSession.length / QUESTION_PAGE_SIZE));
+  const safeQuestionPage = Math.min(questionPage, totalQuestionPages);
+  const paginatedQuestions = questionsWithSession.slice((safeQuestionPage - 1) * QUESTION_PAGE_SIZE, safeQuestionPage * QUESTION_PAGE_SIZE);
+
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-cream flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-charcoal border-t-yellow animate-spin" />
-      </div>
-    );
+    return <PageLoader />;
   }
 
   if (!speaker) {
     return (
-      <div className="min-h-screen bg-cream flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold text-charcoal">SPEAKER NOT FOUND</h1>
-        <Link href="/speakers" className="text-sm text-charcoal/60 hover:text-charcoal underline">
-          Back to speakers
-        </Link>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <h1 className="text-2xl font-bold text-ivory/80">SPEAKER NOT FOUND</h1>
+        <Link href="/speakers" className="text-sm text-ivory/55 hover:text-ivory underline">Back to speakers</Link>
       </div>
     );
   }
 
+  const sortedSessions = sortScheduleSessions(
+    speaker.eventSessions.map(fromSpeakerEventSession),
+    "asc",
+  );
+  const SESSION_PAGE_SIZE = 5;
+  const totalSessPages = Math.max(1, Math.ceil(sortedSessions.length / SESSION_PAGE_SIZE));
+  const safeSessPage = Math.min(sessPage, totalSessPages);
+  const paginatedSessions = sortedSessions.slice((safeSessPage - 1) * SESSION_PAGE_SIZE, safeSessPage * SESSION_PAGE_SIZE);
+
   return (
-    <div className="min-h-screen bg-cream">
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        <Link href="/speakers" className="inline-flex items-center gap-2 text-xs tracking-wider text-charcoal/40 hover:text-charcoal mb-8">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M7 3L4 6L7 9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    <div className="pt-16 pb-24">
+      <div className="max-w-7xl mx-auto px-6">
+        <Link
+          href="/speakers"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-wider text-ivory/70 hover:text-ivory transition-colors mb-6 group"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="transition-transform group-hover:-translate-x-0.5">
+            <path d="M7 3L4 6L7 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
           ALL SPEAKERS
         </Link>
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Left Column - Avatar & Links */}
-          <div className="md:col-span-1">
-            <div className="w-full aspect-square bg-charcoal/5 mb-6 flex items-center justify-center overflow-hidden">
-              {speaker.avatar ? (
-                <Image
-                  src={speaker.avatar}
-                  alt={speaker.name}
-                  width={300}
-                  height={300}
-                  className="object-cover w-full h-full"
-                />
-              ) : (
-                <span className="text-6xl font-bold text-charcoal/20">
-                  {speaker.name.charAt(0)}
-                </span>
+
+        <div className="grid lg:grid-cols-12 gap-8 mb-12 lg:grid-rows-1">
+          <div className="lg:col-span-4">
+            <div className="card-glass squircle-lg overflow-hidden h-full flex flex-col">
+              <div className="p-6 pb-4 flex flex-col items-center">
+                <div className="w-36 h-36 rounded-full bg-ivory/5 flex items-center justify-center overflow-hidden mb-3" style={{ border: "1px solid rgba(255,255,255,0.12)" }}>
+                  {speaker.avatar ? (
+                    <Image src={speaker.avatar} alt={speaker.name} width={144} height={144} className="object-cover w-full h-full" />
+                  ) : (
+                    <span className="text-5xl font-bold text-ivory/30">{speaker.name.charAt(0)}</span>
+                  )}
+                </div>
+              </div>
+              <div className="px-6 pb-6 text-center">
+                <h1 className="text-display text-[clamp(1.5rem,3vw,2.2rem)] text-ivory leading-tight mb-3">{speaker.name}</h1>
+                <p className="text-sm text-ivory/70 leading-relaxed">{speaker.bio || "No bio available"}</p>
+              </div>
+              {speaker.externalLinks && speaker.externalLinks.length > 0 && (
+                <div className="px-6 pb-6 space-y-2 mt-auto">
+                  <div className="h-px bg-ivory/10 mb-3" />
+                  {speaker.externalLinks.map((link, idx) => (
+                    <a
+                      key={link.url}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between w-full px-4 py-2.5 label-mono text-xs text-ivory/70 rounded-lg transition-all hover:text-ivory"
+                      style={{ background: "rgba(255,255,255,0.05)", border: "1px dashed rgba(255,255,255,0.12)" }}
+                    >
+                      <span>{link.type.toUpperCase()}</span>
+                      <ExternalLink size={11} className="text-ivory/40" />
+                    </a>
+                  ))}
+                </div>
               )}
             </div>
-
-            {speaker.externalLinks && speaker.externalLinks.length > 0 && (
-              <div className="space-y-2">
-                <div className="text-[0.6rem] tracking-wider text-charcoal/40 mb-3">CONNECT</div>
-                {speaker.externalLinks.map((link, idx) => (
-                  <a
-                    key={idx}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full px-4 py-2 text-center text-xs tracking-wider border border-charcoal/20 hover:bg-yellow/10 transition-colors"
-                  >
-                    {link.type.toUpperCase()}
-                  </a>
-                ))}
-              </div>
-            )}
           </div>
 
-          {/* Right Column - Info & Sessions */}
-          <div className="md:col-span-2">
-            <div className="mb-6">
-              <h1 className="text-3xl font-black tracking-tighter text-charcoal mb-4">
-                {speaker.name}
-              </h1>
-              <p className="text-base text-charcoal/60 leading-relaxed">
-                {speaker.bio || "No bio available"}
-              </p>
-            </div>
-
-            {speaker.eventSessions && speaker.eventSessions.length > 0 && (
-              <div className="border-t border-charcoal/10 pt-8">
-                <div className="flex items-center gap-2 mb-6">
-                  <div className="w-1.5 h-1.5 bg-yellow" />
-                  <h2 className="text-sm font-bold tracking-wider text-charcoal">SESSIONS</h2>
-                  <span className="text-[0.6rem] text-charcoal/40 ml-auto">
-                    {speaker.eventSessions.length} TOTAL
-                  </span>
-                </div>
-
-                <div className="space-y-3">
-                  {speaker.eventSessions.map((session) => {
-                    const start = new Date(session.startTime);
-                    const end = new Date(session.endTime);
-                    const now = new Date();
-                    const isPast = end < now;
-                    const isUpcoming = start > now;
-                    return (
-                      <Link
-                        key={session.id}
-                        href={`/sessions/${session.id}`}
-                        className={`block p-4 border transition-all group ${
-                          session.isLive
-                            ? "border-yellow bg-yellow/5 hover:bg-yellow/10 ring-1 ring-yellow"
-                            : "border-charcoal/10 hover:bg-yellow/5"
-                        }`}
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2 mb-1.5">
-                              {session.isLive && (
-                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[0.6rem] font-bold bg-nori text-cream">
-                                  <span className="w-1 h-1 bg-cream animate-pulse" />
-                                  LIVE
-                                </span>
-                              )}
-                              {isUpcoming && !session.isLive && (
-                                <span className="text-[0.6rem] tracking-wider font-bold text-matcha">UPCOMING</span>
-                              )}
-                              {isPast && !session.isLive && (
-                                <span className="text-[0.6rem] tracking-wider font-bold text-charcoal/30">ENDED</span>
-                              )}
-                              <span className="text-xs font-mono text-charcoal/40">
-                                {formatDate(start)}
-                                {" · "}
-                                {start.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
-                                {" – "}
-                                {end.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
-                              </span>
-                            </div>
-                            <h3 className="font-bold text-charcoal group-hover:text-yellow-dark transition-colors mb-1">
-                              {session.title}
-                            </h3>
-                            {session.description && (
-                              <p className="text-xs text-charcoal/50 line-clamp-2 mb-2">
-                                {session.description}
-                              </p>
-                            )}
-                            <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-charcoal/40">
-                              <span className="font-medium text-charcoal/60">{session.eventName}</span>
-                              <span>·</span>
-                              <span>{session.room}</span>
-                              {session.neighborhood && (
-                                <>
-                                  <span>·</span>
-                                  <span>{session.neighborhood}</span>
-                                </>
-                              )}
-                            </div>
-                            {session.speakers.length > 0 && (
-                              <div className="flex items-center gap-1.5 mt-2 text-xs text-charcoal/40">
-                                <span>With</span>
-                                {session.speakers.map((s, i) => (
-                                  <span key={s.id}>
-                                    <button
-                                      onClick={(e) => { e.stopPropagation(); router.push(`/speakers/${s.id}`); }}
-                                      className="text-charcoal/60 hover:text-yellow-dark underline underline-offset-2 cursor-pointer bg-transparent border-none p-0 text-xs"
-                                    >
-                                      {s.name}
-                                    </button>
-                                    {i < session.speakers.length - 1 && ","}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-charcoal/20 group-hover:text-charcoal transition-colors shrink-0 mt-1">
-                            <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
+          <div className="lg:col-span-8">
+            <div className="card-glass squircle-lg p-6 h-full flex flex-col">
+              <div className="flex items-center gap-3 mb-5">
+                <MessageCircle size={16} className="text-chartreuse" />
+                <span className="label-mono text-ivory/85">QUESTIONS FROM THEIR SESSIONS</span>
+                <div className="flex-1 h-px bg-ivory/10" />
+                <span className="label-mono text-ivory/40">{questionsWithSession.length}</span>
               </div>
-            )}
+
+              {questionsWithSession.length > 0 ? (
+                <div className="space-y-3 pr-1 flex-1">
+                  {paginatedQuestions.map((q) => (
+                    <div key={q.id} className="p-4 rounded-lg" style={{ background: "rgba(255,255,255,0.03)", border: "1px dashed rgba(255,255,255,0.08)" }}>
+                      <div className="flex items-start gap-3">
+                        <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
+                          <ChevronUp size={12} className="text-chartreuse/60" />
+                          <span className="text-xs font-bold text-ivory/60">{q.upvotes}</span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm text-ivory/85 leading-relaxed">{q.content}</p>
+                          <p className="text-[11px] text-ivory/40 mt-1.5">
+                            {q.authorName} · in <span className="text-chartreuse/70">{q.sessionTitle}</span> · {new Date(q.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex-1 flex items-center justify-center">
+                  <p className="text-sm text-ivory/40 text-center py-8">No questions yet from their sessions</p>
+                </div>
+              )}
+              {totalQuestionPages > 1 && (
+                <div className="flex items-center justify-center gap-3 pt-4 border-t border-white/10">
+                  <button
+                    onClick={() => setQuestionPage(Math.max(1, questionPage - 1))}
+                    disabled={questionPage === 1}
+                    className="px-4 py-2 label-mono text-ivory/70 rounded-full hover:text-ivory disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer text-[0.6rem]"
+                    style={{ background: "#222222E6", border: "1px dashed rgba(255,255,255,0.18)" }}
+                  >
+                    PREV
+                  </button>
+                  <span className="label-mono text-ivory/50 px-2 text-[0.6rem]">
+                    {String(questionPage).padStart(2, "0")} / {String(totalQuestionPages).padStart(2, "0")}
+                  </span>
+                  <button
+                    onClick={() => setQuestionPage(Math.min(totalQuestionPages, questionPage + 1))}
+                    disabled={questionPage === totalQuestionPages}
+                    className="px-4 py-2 label-mono text-ivory/70 rounded-full hover:text-ivory disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer text-[0.6rem]"
+                    style={{ background: "#222222E6", border: "1px dashed rgba(255,255,255,0.18)" }}
+                  >
+                    NEXT
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+
+        {sortedSessions.length > 0 && (
+          <div>
+            <div className="flex items-center gap-3 mb-5">
+              <svg className="w-4 h-4 text-chartreuse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <path d="M16 2v4M8 2v4M3 10h18" />
+              </svg>
+              <span className="label-mono text-ivory/85">SESSIONS</span>
+              <div className="flex-1 h-px bg-ivory/10" />
+              <span className="label-mono text-ivory/40">{sortedSessions.length} TOTAL</span>
+            </div>
+            <ScheduleTable
+              sessions={paginatedSessions}
+              variant="extended"
+              sort={false}
+              emptyMessage="No sessions found"
+            />
+            <TablePagination
+              page={safeSessPage}
+              totalPages={totalSessPages}
+              onChange={setSessPage}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
