@@ -103,7 +103,7 @@ html {
 body {
   margin: 0;
   background-color: hsl(260 9% 18%);
-  background-image: url("/images/background.webp");
+  background-image: url("/background.webp");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -149,8 +149,6 @@ body {
   opacity: 1;
   transform: translateY(0);
 }
-.input-field:focus { border-color: hsl(59 73% 52% / 0.5); outline: none; }
-.input-field::placeholder { color: hsl(84 64% 98% / 0.3); }
 
 @utility blink-dot {
   animation: var(--animate-blink);
