@@ -7,6 +7,7 @@ import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 type EventSessionWithSpeakers = {
   id: string;
   title: string;
+  description: string | null;
   startTime: Date;
   endTime: Date;
   roomId: string | null;
@@ -43,18 +44,6 @@ export async function GET(
       );
     }
 
-    const eventExists = await prisma.event.findUnique({
-      where: { id: eventId },
-      select: { id: true },
-    });
-
-    if (!eventExists) {
-      return NextResponse.json(
-        { error: "Event not found" },
-        { status: 404 }
-      );
-    }
-
     const where: Record<string, unknown> = {
       eventId: eventId,
     };
@@ -65,7 +54,12 @@ export async function GET(
       };
     }
 
-    const rawSessions = await prisma.eventSession.findMany({
+    const [eventExists, rawSessions] = await Promise.all([
+      prisma.event.findUnique({
+        where: { id: eventId },
+        select: { id: true },
+      }),
+      prisma.eventSession.findMany({
       where,
       include: {
         room: true,
@@ -78,7 +72,15 @@ export async function GET(
       orderBy: {
         startTime: "asc",
       },
-    });
+    }),
+  ]);
+
+    if (!eventExists) {
+      return NextResponse.json(
+        { error: "Event not found" },
+        { status: 404 }
+      );
+    }
 
     const sessions = rawSessions as unknown as EventSessionWithSpeakers[];
 
@@ -102,6 +104,7 @@ export async function GET(
       return {
         id: session.id,
         title: session.title,
+        description: session.description,
         startTime: session.startTime.toISOString(),
         endTime: session.endTime.toISOString(),
         room: roomDto,

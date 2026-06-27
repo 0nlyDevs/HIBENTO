@@ -53,17 +53,16 @@ export async function GET(
 
     const where = conditions.length > 0 ? { AND: conditions } : {};
 
-    const events = await prisma.event.findMany({
-      where,
-      include: {
-        venue: true,
-      },
-      skip,
-      take: limit,
-      orderBy: { startDate: "asc" },
-    });
-
-    const total = await prisma.event.count({ where });
+    const [events, total] = await Promise.all([
+      prisma.event.findMany({
+        where,
+        include: { venue: true },
+        skip,
+        take: limit,
+        orderBy: { startDate: "asc" },
+      }),
+      prisma.event.count({ where }),
+    ]);
 
     const eventSessionCounts = await prisma.eventSession.groupBy({
       by: ["eventId"],

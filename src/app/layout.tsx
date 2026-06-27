@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
-import { Manrope, Sora } from "next/font/google";
+import { Manrope, Sora, Geist } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Providers } from "./providers";
-import { AppNav } from "@/components/AppNav";
+import { NavSelector, MainWrapper } from "@/components/layouts/NavSelector";
+import DotGrid from "@/components/circle-style/DotGrid";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -28,16 +32,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("h-full antialiased", manrope.variable, sora.variable)}>
-      <body className="font-sans min-h-screen bg-charcoal" style={{ 
-        backgroundImage: "url('/background.webp')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed"
-      }}>
+    <html lang="en" className={cn("h-full", "antialiased", manrope.variable, sora.variable, "font-sans", geist.variable)}>
+      <body className="min-h-screen overflow-x-hidden">
+        <Script
+          id="scroll-reset"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `history.scrollRestoration = "manual"; window.scrollTo(0, 0);`,
+          }}
+        />
+        <DotGrid />
+        <NavSelector />
         <Providers>
-          <AppNav />
-          {children}
+          <MainWrapper>{children}</MainWrapper>
         </Providers>
       </body>
     </html>
