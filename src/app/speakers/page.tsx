@@ -1,12 +1,9 @@
-"use client";
-
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import prisma from "@/lib/db/prisma";
 import type { SpeakerSummaryDto } from "@/types/dto";
+import { PaginationBar } from "@/components/ui/PaginationBar";
 
 function SpeakerCard({ speaker }: { speaker: SpeakerSummaryDto }) {
   return (
@@ -50,17 +47,42 @@ function SpeakerCard({ speaker }: { speaker: SpeakerSummaryDto }) {
   );
 }
 
-export default function SpeakersPage() {
-  const [page, setPage] = useState(1);
+const LIMIT = 8;
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["speakers", page],
-    queryFn: () => api.getSpeakers({ page, limit: 8 }),
-  });
+export default async function SpeakersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const resolvedParams = await searchParams;
+  const page = Math.max(1, Number(resolvedParams.page) || 1);
 
-  const speakers = data?.data || [];
-  const total = data?.pagination?.total || 0;
-  const totalPages = Math.ceil(total / 8);
+  const [speakers, total] = await Promise.all([
+    prisma.speaker.findMany({
+      select: {
+        id: true,
+        name: true,
+        avatarUrl: true,
+        bio: true,
+        _count: {
+          select: { sessions: true },
+        },
+      },
+      take: LIMIT,
+      skip: (page - 1) * LIMIT,
+    }),
+    prisma.speaker.count(),
+  ]);
+
+  const mappedSpeakers: SpeakerSummaryDto[] = speakers.map((s) => ({
+    id: s.id,
+    name: s.name,
+    bio: s.bio,
+    avatar: s.avatarUrl ?? null,
+    eventSessionCount: s._count.sessions,
+  }));
+
+  const totalPages = Math.ceil(total / LIMIT);
 
   return (
     <div className="pt-16 pb-24">
@@ -76,54 +98,24 @@ export default function SpeakersPage() {
             </p>
           </div>
           <p className="label-mono text-ivory/40 pt-0.5 shrink-0">
-            {isLoading ? "—" : `${total} ${total === 1 ? "SPEAKER" : "SPEAKERS"}`}
+            {total} {total === 1 ? "SPEAKER" : "SPEAKERS"}
           </p>
         </div>
 
-        {isLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="card-glass squircle-lg overflow-hidden">
-                <div className="aspect-4/3 bg-white/5 animate-pulse" />
-                <div className="p-5 space-y-3">
-                  <div className="h-3 w-20 bg-white/5 rounded animate-pulse" />
-                  <div className="h-5 w-32 bg-white/5 rounded animate-pulse" />
-                  <div className="h-3 w-full bg-white/5 rounded animate-pulse" />
-                  <div className="h-3 w-3/4 bg-white/5 rounded animate-pulse" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : speakers.length > 0 ? (
+        {mappedSpeakers.length > 0 ? (
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {speakers.map((speaker) => (
+              {mappedSpeakers.map((speaker) => (
                 <SpeakerCard key={speaker.id} speaker={speaker} />
               ))}
             </div>
 
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-3 mt-12">
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="px-5 py-2.5 label-mono text-ivory/70 rounded-full hover:text-ivory disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
-                  style={{ background: "#222222E6", border: "1px dashed rgba(255,255,255,0.18)" }}
-                >
-                  PREV
-                </button>
-                <span className="label-mono text-ivory/50 px-3">
-                  {String(page).padStart(2, "0")} / {String(totalPages).padStart(2, "0")}
-                </span>
-                <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="px-5 py-2.5 label-mono text-ivory/70 rounded-full hover:text-ivory disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
-                  style={{ background: "#222222E6", border: "1px dashed rgba(255,255,255,0.18)" }}
-                >
-                  NEXT
-                </button>
-              </div>
+              <PaginationBar
+                page={page}
+                totalPages={totalPages}
+                basePath="/speakers"
+              />
             )}
           </>
         ) : (
