@@ -67,7 +67,7 @@ model Room {
 model EventSession {
   id          String   @id @default(uuid()) @db.Uuid
   eventId     String   @db.Uuid @map("eventId")
-  roomId      String?  @db.Uuid @map("roomId") // null uniquement pour les sessions en ligne (isOnline = true sur l'événement parent)
+  roomId      String?  @db.Uuid @map("roomId")
   title       String   @db.VarChar(255)
   description String?
   startTime   DateTime @map("start_time")
@@ -78,7 +78,6 @@ model EventSession {
 
   event     Event                 @relation(fields: [eventId], references: [id], onDelete: Cascade)
   room      Room?                 @relation(fields: [roomId], references: [id])
-  // Règle métier : une session doit avoir au moins un intervenant (EventSessionSpeaker)
   speakers        EventSessionSpeaker[]
   questions       Question[]
 
