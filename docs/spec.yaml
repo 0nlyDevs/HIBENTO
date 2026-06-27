@@ -529,12 +529,12 @@ components:
             type: array
             items:
               type: object
-      properties:
-        id:
-          type: string
-        eventId:
-          type: string
-        title:
+              properties:
+                id:
+                  type: string
+                eventId:
+                  type: string
+                title:
                   type: string
                 description:
                   type: string
