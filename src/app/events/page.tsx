@@ -1,19 +1,59 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useGetEvents } from "@/lib/hooks/useEvents";
 import { api } from "@/lib/api";
+import { Select } from "@/components/ui/Select";
+import { DateRangePicker } from "@/components/ui/DateRangePicker";
+import { Search, X } from "lucide-react";
 import type { EventSummaryDto } from "@/types/dto";
-import { EventCard } from "@/components/events/EventCard";
+import { BentoGrid } from "@/components/features/EventsList/event-cards";
 
 type EventStatus = "all" | "live" | "upcoming" | "ended";
+type EventFormat = "all" | "onsite" | "online";
+
+const STATUS_OPTIONS = [
+  { value: "all" as const, label: "All statuses" },
+  { value: "live" as const, label: "Live now" },
+  { value: "upcoming" as const, label: "Upcoming" },
+  { value: "ended" as const, label: "Ended" },
+];
+
+const FORMAT_OPTIONS = [
+  { value: "all" as const, label: "All formats" },
+  { value: "onsite" as const, label: "Onsite" },
+  { value: "online" as const, label: "Online" },
+];
+
+function filterEvents(events: EventSummaryDto[], format: EventFormat): EventSummaryDto[] {
+  const now = new Date();
+  let filtered: EventSummaryDto[];
+  if (format === "online") {
+    filtered = events.filter((e) => e.isOnline);
+  } else if (format === "onsite") {
+    filtered = events.filter((e) => !e.isOnline);
+  } else {
+    filtered = events;
+  }
+  const live = filtered.filter((e) => {
+    const s = new Date(e.startDate), en = new Date(e.endDate);
+    return s <= now && en >= now;
+  });
+  const upcoming = filtered
+    .filter((e) => new Date(e.startDate) > now)
+    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+  const ended = filtered
+    .filter((e) => new Date(e.endDate) < now)
+    .sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
+  return [...live, ...upcoming, ...ended];
+}
 
 export default function EventsPage() {
-  const [selectedCity, setSelectedCity] = useState<string>("all");
-  const [selectedStatus, setSelectedStatus] = useState<EventStatus>("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [status, setStatus] = useState<EventStatus>("all");
+  const [format, setFormat] = useState<EventFormat>("all");
+  const [search, setSearch] = useState("");
+  const [city, setCity] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
 
@@ -22,173 +62,106 @@ export default function EventsPage() {
     queryFn: () => api.getVenues(),
   });
 
-  const { data: eventsData, isLoading } = useGetEvents({
-    page: 1,
-    limit: 50,
-    ...(selectedCity !== "all" && { city: selectedCity }),
-    ...(selectedStatus !== "all" && { status: selectedStatus }),
-    ...(searchQuery && { search: searchQuery }),
+  const cityOptions = useMemo(
+    () => [
+      { value: "all", label: "All cities" },
+      ...[...new Set((venuesData?.data || []).map((v) => v.city))].sort().map((c) => ({ value: c, label: c })),
+    ],
+    [venuesData],
+  );
+
+  const queryParams = {
+    page: 1, limit: 50,
+    ...(status !== "all" && { status }),
+    ...(search && { search }),
+    ...(city !== "all" && { city }),
     ...(dateFrom && { dateFrom }),
     ...(dateTo && { dateTo }),
-  });
+  };
 
-  const events = eventsData?.data || [];
+  const { data: eventsData, isLoading } = useGetEvents(queryParams);
 
-  const cities = [
-    ...new Set((venuesData?.data || []).map((v) => v.city)),
-  ].sort();
+  const events = useMemo(
+    () => filterEvents(eventsData?.data || [], format),
+    [eventsData, format],
+  );
 
-  const statusFilters: { value: EventStatus; label: string }[] = [
-    { value: "all", label: "ALL" },
-    { value: "live", label: "ONGOING" },
-    { value: "upcoming", label: "UPCOMING" },
-    { value: "ended", label: "ENDED" },
-  ];
+  const hasActiveFilters = status !== "all" || format !== "all" || city !== "all" || !!search || !!dateFrom || !!dateTo;
+
+  const clearAll = () => {
+    setStatus("all"); setFormat("all"); setCity("all");
+    setSearch(""); setDateFrom(""); setDateTo("");
+  };
 
   return (
-    <div className="min-h-screen bg-cream">
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-black tracking-tighter text-charcoal mb-2">EVENTS</h1>
-          <p className="text-sm text-charcoal/60">Browse all events across Madagascar</p>
+    <div className="pt-20 pb-20">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <p className="label-mono text-chartreuse mb-2">§ EXPLORE</p>
+            <h1 className="text-display text-[clamp(2.2rem,5vw,4rem)] text-ivory leading-none mb-3">
+              Discover our events
+            </h1>
+            <p className="text-sm text-ivory/70 leading-relaxed">
+              Join our upcoming sessions and expand your skills.
+            </p>
+          </div>
+          <p className="label-mono text-ivory/40 pt-0.5 shrink-0">
+            {isLoading ? "—" : `${events.length} ${events.length === 1 ? "EVENT" : "EVENTS"}`}
+          </p>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-wrap items-end gap-3 mb-8">
-          {/* Status Filters */}
-          <div className="flex gap-1 bg-charcoal/5 p-1">
-            {statusFilters.map(({ value, label }) => (
-              <button
-                key={value}
-                onClick={() => setSelectedStatus(value)}
-                className={`px-4 py-2 text-xs tracking-wider font-medium transition-colors ${
-                  selectedStatus === value
-                    ? "bg-charcoal text-cream"
-                    : "text-charcoal/60 hover:text-charcoal"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
-          {/* Search */}
-          <div className="relative">
+        <div
+          className="flex items-center justify-between gap-3 p-3 mb-8 squircle-lg"
+          style={{ background: "#222222E6", border: "1px dashed rgba(255,255,255,0.18)" }}
+        >
+          <div className="relative w-56 shrink-0">
+            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-ivory/40 pointer-events-none" />
             <input
               type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search events..."
-              className="w-48 px-3 py-2 text-xs tracking-wider bg-cream border border-charcoal/20 text-charcoal placeholder-charcoal/30 focus:outline-none focus:border-charcoal/40"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search an event\u2026"
+              className="w-full h-9 pl-8 pr-3 text-sm font-medium text-ivory placeholder-ivory/40 focus:outline-none transition-colors rounded-lg"
+              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}
             />
           </div>
-
-          {/* City Filter */}
-          <select
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
-            className="px-3 py-2 text-xs tracking-wider bg-cream border border-charcoal/20 text-charcoal focus:outline-none focus:border-charcoal/40"
-          >
-            <option value="all">ALL CITIES</option>
-            {cities.map((city) => (
-              <option key={city} value={city}>
-                {city.toUpperCase()}
-              </option>
-            ))}
-          </select>
-
-          {/* Date From */}
-          <div>
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              className="w-40 px-3 py-2 text-xs tracking-wider bg-cream border border-charcoal/20 text-charcoal focus:outline-none focus:border-charcoal/40"
-            />
-          </div>
-
-          {/* Date To */}
-          <div>
-            <input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              className="w-40 px-3 py-2 text-xs tracking-wider bg-cream border border-charcoal/20 text-charcoal focus:outline-none focus:border-charcoal/40"
-            />
+          <div className="flex items-center gap-2 flex-wrap justify-end">
+            <Select value={status} onValueChange={(v) => setStatus(v as EventStatus)} options={STATUS_OPTIONS} placeholder="Status" />
+            <Select value={format} onValueChange={(v) => setFormat(v as EventFormat)} options={FORMAT_OPTIONS} placeholder="Format" />
+            <Select value={city} onValueChange={setCity} options={cityOptions} placeholder="City" />
+            <DateRangePicker from={dateFrom} to={dateTo} onFromChange={setDateFrom} onToChange={setDateTo} />
+            {hasActiveFilters && (
+              <button
+                onClick={clearAll}
+                className="flex items-center gap-1.5 h-9 px-3 text-xs font-semibold text-ivory/60 hover:text-ivory transition-colors rounded-lg whitespace-nowrap"
+                style={{ background: "rgba(255,255,255,0.08)", border: "1px dashed rgba(255,255,255,0.18)" }}
+              >
+                <X size={11} /> Clear all
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Events Grid */}
         {isLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="h-48 bg-charcoal/5 animate-pulse" />
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="col-span-full h-80 animate-pulse squircle-lg" style={{ background: "#222222E6" }} />
+            {[1, 2, 3].map((i) => <div key={i} className="h-48 animate-pulse squircle-lg" style={{ background: "#222222E6" }} />)}
           </div>
         ) : events.length > 0 ? (
-          selectedCity === "all" ? (
-            (() => {
-              const grouped = events.reduce<Record<string, EventSummaryDto[]>>(
-                (acc, e) => {
-                  const city = e.venue?.city ?? "ONLINE";
-                  if (!acc[city]) acc[city] = [];
-                  acc[city].push(e);
-                  return acc;
-                },
-                {}
-              );
-              const cityOrder = ["ONLINE", "Antananarivo"];
-              const sorted = Object.entries(grouped).sort(([a], [b]) => {
-                const ia = cityOrder.indexOf(a);
-                const ib = cityOrder.indexOf(b);
-                if (ia !== -1 && ib !== -1) return ia - ib;
-                if (ia !== -1) return -1;
-                if (ib !== -1) return 1;
-                return a.localeCompare(b);
-              });
-              return (
-                <div className="space-y-10">
-                  {sorted.map(([city, cityEvents]) => (
-                    <div key={city}>
-                      <div className="flex items-center gap-4 mb-5">
-                        <div className="w-2 h-2 bg-charcoal" />
-                        <h2 className="text-sm font-bold tracking-widest text-charcoal">
-                          {city.toUpperCase()}
-                        </h2>
-                        <div className="flex-1 h-px bg-charcoal/10" />
-                        <span className="text-[0.6rem] tracking-wider text-charcoal/30">
-                          {cityEvents.length} {cityEvents.length === 1 ? "EVENT" : "EVENTS"}
-                        </span>
-                      </div>
-                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {cityEvents.map((event, idx) => (
-                          <EventCard
-                            key={event.id}
-                            event={event}
-                            index={idx}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              );
-            })()
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {events.map((event, idx) => (
-                <EventCard
-                  key={event.id}
-                  event={event}
-                  index={idx}
-                />
-              ))}
-            </div>
-          )
+          <BentoGrid events={events} />
         ) : (
-          <div className="text-center py-16 border border-dashed border-charcoal/20">
-            <p className="text-charcoal/40 text-sm tracking-wider">NO EVENTS FOUND</p>
-            <p className="text-charcoal/30 text-xs mt-2">Try adjusting your filters</p>
+          <div className="text-center py-24 squircle-lg"
+            style={{ background: "#222222E6", border: "1px dashed rgba(255,255,255,0.18)" }}>
+            <p className="text-4xl mb-4">🔍</p>
+            <p className="label-mono text-ivory/60 mb-1">NO EVENTS FOUND</p>
+            <p className="text-sm text-ivory/40">Try adjusting your filters</p>
+            {hasActiveFilters && (
+              <button onClick={clearAll} className="mt-6 px-5 py-2 label-mono text-chartreuse rounded-full hover:bg-chartreuse/10 transition-colors"
+                style={{ border: "1px solid rgba(200,210,50,0.3)" }}>
+                Clear all filters
+              </button>
+            )}
           </div>
         )}
       </div>
