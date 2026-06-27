@@ -2,6 +2,7 @@ import prisma from "@/lib/db/prisma";
 import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 import { isValidUUID } from "@/lib/utils/validation";
 import type { QuestionDto } from "@/types/dto";
+import type { Question } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -33,7 +34,7 @@ export async function GET(
       orderBy: { upvotes: "desc" },
     });
 
-    const response: QuestionDto[] = questions.map((q) => ({
+    const response: QuestionDto[] = questions.map((q: Question) => ({
       id: q.id,
       content: q.content,
       authorName: q.authorName,
