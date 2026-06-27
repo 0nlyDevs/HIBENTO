@@ -110,7 +110,7 @@ export const Nav = () => {
 
         <div className="hidden lg:flex items-center h-12 px-6 gap-6 pointer-events-auto" style={GLASS_STYLE}>
           <Link href="/" className="flex items-center pl-1 pr-5 border-r border-dashed border-white/15 shrink-0">
-            <Image src="/images/brand/header-text-white1497x414@3x.png" alt="HiBento" width={140} height={39} className="h-9 w-auto" priority />
+            <Image src="/images/brand/header-white-text.svg" alt="HiBento" width={140} height={28} className="h-7 w-auto" style={{ width: "auto", height: "auto" }} priority />
           </Link>
           <nav className="flex items-center gap-4">
             {navLinks.map((l) => (
