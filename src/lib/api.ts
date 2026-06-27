@@ -161,6 +161,8 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ visitorId }),
     }),
+
+  getLiveSessionCount: () => http<{ count: number }>("/api/live/count"),
 };
 
 export function isEventLive(event: {
