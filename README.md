@@ -17,8 +17,6 @@
   <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white">
   <img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white">
   <img src="https://img.shields.io/badge/shadcn/UI-000000?style=for-the-badge&logo=react&logoColor=white">
-  <img src="https://img.shields.io/badge/Zod-3068B7?style=for-the-badge&logo=zod&logoColor=white">
-  <img src="https://img.shields.io/badge/NextAuth-000000?style=for-the-badge&logo=nextauth&logoColor=white">
   <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white">
 </div>
 
@@ -26,7 +24,7 @@
 
 ## What is HiBento?
 
-HiBento is a modern event platform that brings schedules, speakers, and Q&A into one seamless experience. Like a Japanese bento box, it helps you organize your day with a variety of sessions — each carefully arranged to give you a complete and satisfying experience. Whether you're attending a conference or running a multi-track event, HiBento keeps everything alive and interactive.
+HiBento is a modern event platform that brings schedules, speakers, and Q&A into one seamless experience. Like a Japanese bento box, it helps you organize your day with a variety of sessions.
 
 ## Features
 
@@ -36,8 +34,8 @@ HiBento is a modern event platform that brings schedules, speakers, and Q&A into
 | **Session Schedule** | Multi-track session listings with speaker info, time slots, and live status | Prisma + PostgreSQL      |
 | **Speaker Profiles** | Dedicated speaker pages with bios, external links, and session lists        | Server Components        |
 | **Live Q&A**         | Real-time question submission and upvoting during sessions                  | API Routes               |
-| **Favorites**        | Bookmark events and sessions for quick access                               | Zustand + LocalStorage   |
-| **Video Streaming**  | Embedded video player with live indicator and fullscreen controls           | YouTube IFrame API       |
+| **Favorites**        | Bookmark events and sessions for quick access                               | LocalStorage             |
+| **Video Streaming**  | Embedded video player with live indicator and fullscreen controls           | Tailwind + Framer Motion |
 | **Responsive Nav**   | Adaptive navigation with glassmorphism and mobile burger menu               | Framer Motion + Tailwind |
 
 ## Quick Start
