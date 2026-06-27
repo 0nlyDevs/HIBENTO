@@ -1,7 +1,7 @@
 <div align="center">
 
 <div style="display: flex; flex-direction: row; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-  <img src="/images/brand/logo.svg" alt="HiBento Logo" width="80" height="80"/>
+  <img src="https://raw.githubusercontent.com/0nlyDevs/HIBENTO/main/public/images/brand/logo.svg" alt="HiBento Logo" width="80" height="80"/>
   <div>
     <h1 style="margin: 0;">HiBento</h1>
   </div>
@@ -30,38 +30,42 @@ HiBento is a modern event platform that brings schedules, speakers, and Q&A into
 
 ## Features
 
-| Feature | Description | Technology |
-| :------ | :---------- | :--------- |
-| **Event Management** | Browse and discover live and upcoming events with rich detail pages | Next.js App Router |
-| **Session Schedule** | Multi-track session listings with speaker info, time slots, and live status | Prisma + PostgreSQL |
-| **Speaker Profiles** | Dedicated speaker pages with bios, external links, and session lists | Server Components |
-| **Live Q&A** | Real-time question submission and upvoting during sessions | API Routes |
-| **Favorites** | Bookmark events and sessions for quick access | Zustand + LocalStorage |
-| **Video Streaming** | Embedded video player with live indicator and fullscreen controls | YouTube IFrame API |
-| **Responsive Nav** | Adaptive navigation with glassmorphism and mobile burger menu | Framer Motion + Tailwind |
+| Feature              | Description                                                                 | Technology               |
+| :------------------- | :-------------------------------------------------------------------------- | :----------------------- |
+| **Event Management** | Browse and discover live and upcoming events with rich detail pages         | Next.js App Router       |
+| **Session Schedule** | Multi-track session listings with speaker info, time slots, and live status | Prisma + PostgreSQL      |
+| **Speaker Profiles** | Dedicated speaker pages with bios, external links, and session lists        | Server Components        |
+| **Live Q&A**         | Real-time question submission and upvoting during sessions                  | API Routes               |
+| **Favorites**        | Bookmark events and sessions for quick access                               | Zustand + LocalStorage   |
+| **Video Streaming**  | Embedded video player with live indicator and fullscreen controls           | YouTube IFrame API       |
+| **Responsive Nav**   | Adaptive navigation with glassmorphism and mobile burger menu               | Framer Motion + Tailwind |
 
 ## Quick Start
 
 ### Installation
 
 1. **Clone with love**
+
    ```bash
    git clone https://github.com/yourusername/hibento.git
    cd hibento
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Environment setup**
+
    ```bash
    cp .env.example .env.local
    # Fill in your environment variables
    ```
 
 4. **Generate Prisma client & push schema**
+
    ```bash
    npx prisma generate && npx prisma db push
    ```
@@ -74,11 +78,11 @@ HiBento is a modern event platform that brings schedules, speakers, and Q&A into
 
 ## Scripts Guide
 
-| Script Command | Purpose | When to Use |
-| :--- | :--- | :--- |
-| `npm run dev` | Development server with Prisma generation | Daily development with hot reload |
-| `npm run build` | Production build with Prisma generation | Before deployment to Vercel |
-| `npm run start` | Start production server | After build to run optimized app |
+| Script Command  | Purpose                                   | When to Use                       |
+| :-------------- | :---------------------------------------- | :-------------------------------- |
+| `npm run dev`   | Development server with Prisma generation | Daily development with hot reload |
+| `npm run build` | Production build with Prisma generation   | Before deployment to Vercel       |
+| `npm run start` | Start production server                   | After build to run optimized app  |
 
 ## App Preview
 
