@@ -12,7 +12,7 @@ export const Footer = ({ config: propConfig }: FooterProps) => {
       <div className="container mx-auto px-6 md:px-16 lg:px-20">
         <div className="grid md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
-            <Image src="/images/brand/header-white-text.svg" alt="HiBento" width={140} height={28} className="h-7 w-auto" />
+            <Image src="/images/brand/header-white-text.svg" alt="HiBento" width={140} height={28} className="h-7 w-auto" style={{ width: "auto", height: "auto" }} />
             <p className="mt-4 max-w-sm text-sm leading-relaxed">
               {displayConfig.brandDescription}
             </p>
