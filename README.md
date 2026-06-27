@@ -1,13 +1,13 @@
 <div align="center">
 
 <div style="display: flex; flex-direction: row; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-  <img src="https://i.ibb.co/9HW62gc6/logo.png" alt="HiBento Logo" width="80" height="80"/>
+  <img src="/images/brand/logo.svg" alt="HiBento Logo" width="80" height="80"/>
   <div>
-    <h1 style="margin: 0;">HIBENTO — Events Should Feel Alive</h1>
+    <h1 style="margin: 0;">HiBento</h1>
   </div>
 </div>
 
-<p>A modern event experience platform with real-time sessions, speaker profiles, and interactive Q&A ✨</p>
+<p>A modern event experience platform with real-time sessions, speaker profiles, and interactive Q&A</p>
 
 <div align="center" style="margin-bottom: 1rem; margin-top: 1rem;">
   <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white">
@@ -24,23 +24,23 @@
 
 </div>
 
-## ✨ What is HiBento?
+## What is HiBento?
 
-HiBento is a modern event platform that brings schedules, speakers, and Q&A into one seamless experience. Whether you're attending a conference or running a multi-track event, HiBento keeps everything alive and interactive.
+HiBento is a modern event platform that brings schedules, speakers, and Q&A into one seamless experience. Like a Japanese bento box, it helps you organize your day with a variety of sessions — each carefully arranged to give you a complete and satisfying experience. Whether you're attending a conference or running a multi-track event, HiBento keeps everything alive and interactive.
 
-## 🎀 Features
+## Features
 
 | Feature | Description | Technology |
 | :------ | :---------- | :--------- |
-| **Event Management** 🎪 | Browse and discover live and upcoming events with rich detail pages | Next.js App Router |
-| **Session Schedule** 📅 | Multi-track session listings with speaker info, time slots, and live status | Prisma + PostgreSQL |
-| **Speaker Profiles** 🎤 | Dedicated speaker pages with bios, external links, and session lists | Server Components |
-| **Live Q&A** 💬 | Real-time question submission and upvoting during sessions | API Routes |
-| **Favorites** ⭐ | Bookmark events and sessions for quick access | Zustand + LocalStorage |
-| **Video Streaming** 🎥 | Embedded video player with live indicator and fullscreen controls | YouTube IFrame API |
-| **Responsive Nav** 🧭 | Adaptive navigation with glassmorphism and mobile burger menu | Framer Motion + Tailwind |
+| **Event Management** | Browse and discover live and upcoming events with rich detail pages | Next.js App Router |
+| **Session Schedule** | Multi-track session listings with speaker info, time slots, and live status | Prisma + PostgreSQL |
+| **Speaker Profiles** | Dedicated speaker pages with bios, external links, and session lists | Server Components |
+| **Live Q&A** | Real-time question submission and upvoting during sessions | API Routes |
+| **Favorites** | Bookmark events and sessions for quick access | Zustand + LocalStorage |
+| **Video Streaming** | Embedded video player with live indicator and fullscreen controls | YouTube IFrame API |
+| **Responsive Nav** | Adaptive navigation with glassmorphism and mobile burger menu | Framer Motion + Tailwind |
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 
@@ -58,7 +58,7 @@ HiBento is a modern event platform that brings schedules, speakers, and Q&A into
 3. **Environment setup**
    ```bash
    cp .env.example .env.local
-   # Fill in your environment variables 💫
+   # Fill in your environment variables
    ```
 
 4. **Generate Prisma client & push schema**
@@ -72,7 +72,7 @@ HiBento is a modern event platform that brings schedules, speakers, and Q&A into
    ```
    Open [http://localhost:3000](http://localhost:3000) and watch the magic unfold!
 
-## 📜 Scripts Guide
+## Scripts Guide
 
 | Script Command | Purpose | When to Use |
 | :--- | :--- | :--- |
@@ -80,16 +80,10 @@ HiBento is a modern event platform that brings schedules, speakers, and Q&A into
 | `npm run build` | Production build with Prisma generation | Before deployment to Vercel |
 | `npm run start` | Start production server | After build to run optimized app |
 
-## 🖼️ App Preview
+## App Preview
 
 <div align="center">
 
 ![App Preview](https://i.ibb.co/PZ9Lp5Cp/Screenshot-From-2026-06-27-11-27-56.png)
 
 </div>
-
-## 🛠️ Deployment
-
-Deployed on **Vercel** for the frontend with **PostgreSQL** hosted on the cloud.
-
-Make sure to update API endpoints and environment variables for your production environment.
