@@ -7,6 +7,8 @@ import { Providers } from "./providers";
 import { NavSelector, MainWrapper } from "@/components/layouts/NavSelector";
 import DotGrid from "@/components/circle-style/DotGrid";
 import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from '@vercel/speed-insights/next';
+
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -43,6 +45,7 @@ export default function RootLayout({
             __html: `history.scrollRestoration = "manual"; window.scrollTo(0, 0);`,
           }}
         />
+        <SpeedInsights />
         <Analytics />
         <DotGrid />
         <NavSelector />
