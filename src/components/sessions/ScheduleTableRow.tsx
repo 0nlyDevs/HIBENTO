@@ -191,7 +191,7 @@ export function ScheduleTableRow({
 
             {sIsLive ? (
               <Link
-                href={`/sessions/${session.id}/live`}
+                href={`/sessions/${session.id}`}
                 className="w-9 h-9 rounded-lg flex items-center justify-center glow-chip transition-all hover:brightness-110 cursor-pointer shrink-0"
                 title="Watch live"
               >

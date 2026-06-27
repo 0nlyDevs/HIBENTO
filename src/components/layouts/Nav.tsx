@@ -49,9 +49,8 @@ export function Nav() {
   }, [pathname]);
 
   if (
-    pathname.includes("/live") ||
-    (pathname.startsWith("/sessions/") &&
-      !pathname.startsWith("/sessions/detail/"))
+    pathname.startsWith("/sessions/") &&
+    !pathname.startsWith("/sessions/detail/")
   ) {
     return null;
   }
