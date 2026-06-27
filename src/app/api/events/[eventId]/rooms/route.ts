@@ -17,20 +17,12 @@ export async function GET(
       );
     }
 
-    const eventExists = await prisma.event.findUnique({
-      where: { id: eventId },
-      select: { id: true },
-    });
-
-    if (!eventExists) {
-      return NextResponse.json(
-        { error: "Event not found" },
-        { status: 404 }
-      );
-    }
-
-    // Get unique rooms used by sessions in this event
-    const sessionsWithRooms = await prisma.eventSession.findMany({
+    const [eventExists, sessionsWithRooms] = await Promise.all([
+      prisma.event.findUnique({
+        where: { id: eventId },
+        select: { id: true },
+      }),
+      prisma.eventSession.findMany({
       where: { eventId },
       select: {
         room: {
@@ -43,7 +35,15 @@ export async function GET(
         },
       },
       distinct: ["roomId"],
-    });
+    }),
+  ]);
+
+    if (!eventExists) {
+      return NextResponse.json(
+        { error: "Event not found" },
+        { status: 404 }
+      );
+    }
 
     const data: RoomDto[] = sessionsWithRooms.map((session) => {
       const roomData = session.room!;

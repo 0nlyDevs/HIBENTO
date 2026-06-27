@@ -1,0 +1,48 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: inherit;
+}
+
+.text {
+  border-radius: 9999px;
+  padding: 16px 54px;
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: padding 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.arrow {
+  border-radius: 9999px;
+  width: 4px;
+  height: 51px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition:
+    width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.arrow svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease 0s;
+}
+
+.root:hover .text  { padding: 16px 32px; }
+.root:hover .arrow { width: 51px; height: 51px; }
+.root:hover .arrow svg {
+  opacity: 1;
+  transition: opacity 0.15s ease 0.2s;
+}
