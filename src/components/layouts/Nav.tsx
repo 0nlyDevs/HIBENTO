@@ -61,7 +61,7 @@ export function Nav() {
   const isFavoritesActive = pathname.startsWith("/favorites");
 
   return (
-    <nav className="sticky top-0 z-40 bg-dark-gray/95 backdrop-blur border-b border-white/10">
+    <nav className="sticky top-0 z-40 backdrop-blur border-b border-white/10">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">

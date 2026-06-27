@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import type { SpeakerRefDto } from "@/types/dto";
-import { AVATAR_COLORS } from "./constants";
+import { AVATAR_COLORS } from "@/constants/theme";
 
 function SpeakerAvatar({
   speaker,
