@@ -29,7 +29,7 @@ function MenuItemButton({
       className="cursor-pointer transition-transform duration-300 ease-out hover:translate-x-2 text-left"
     >
       <span
-        className={`inline-block ${isSmall ? "text-dark-gray text-2xl lg:text-3xl" : "font-black text-dark-gray text-4xl lg:text-5xl"} leading-tight`}
+        className={`inline-block ${isSmall ? "text-charcoal text-2xl lg:text-3xl" : "font-black text-charcoal text-4xl lg:text-5xl"} leading-tight`}
         style={{ transform: "scaleY(0.9)" }}
       >
         {item.label}
