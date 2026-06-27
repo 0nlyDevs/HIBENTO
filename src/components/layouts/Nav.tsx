@@ -75,6 +75,7 @@ export function Nav() {
                 alt="HiBento"
                 width={100}
                 height={30}
+                className="h-auto w-auto"
                 priority
               />
             </motion.div>
