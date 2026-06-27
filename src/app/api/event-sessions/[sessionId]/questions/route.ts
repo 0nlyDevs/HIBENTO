@@ -2,6 +2,7 @@ import prisma from "@/lib/db/prisma";
 import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 import { isValidUUID } from "@/lib/utils/validation";
 import type { QuestionDto } from "@/types/dto";
+import type { Question } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -17,9 +18,15 @@ export async function GET(
       );
     }
 
-    const session = await prisma.eventSession.findUnique({
-      where: { id: sessionId },
-    });
+    const [session, questions] = await Promise.all([
+      prisma.eventSession.findUnique({
+        where: { id: sessionId },
+      }),
+      prisma.question.findMany({
+        where: { eventSessionId: sessionId },
+        orderBy: { upvotes: "desc" },
+      }),
+    ]);
 
     if (!session) {
       return NextResponse.json(
@@ -28,12 +35,7 @@ export async function GET(
       );
     }
 
-    const questions = await prisma.question.findMany({
-      where: { eventSessionId: sessionId },
-      orderBy: { upvotes: "desc" },
-    });
-
-    const response: QuestionDto[] = questions.map((q) => ({
+    const response: QuestionDto[] = questions.map((q: Question) => ({
       id: q.id,
       content: q.content,
       authorName: q.authorName,

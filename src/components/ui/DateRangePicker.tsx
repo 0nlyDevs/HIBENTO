@@ -85,11 +85,10 @@ function CalendarPane({
   }
 
   return (
-    <div className="flex-1 min-w-[200px]">
-      {/* Label */}
+    <div className="flex-1 min-w-50">
+
       <p className="label-mono text-ivory/30 mb-3">{label}</p>
 
-      {/* Month nav */}
       <div className="flex items-center justify-between mb-3">
         <button
           onClick={() => setView(new Date(year, month - 1, 1))}
@@ -108,7 +107,6 @@ function CalendarPane({
         </button>
       </div>
 
-      {/* Day headers */}
       <div className="grid grid-cols-7 mb-1">
         {DAYS.map((d) => (
           <div key={d} className="text-center text-[0.55rem] font-bold tracking-widest text-ivory/20 py-0.5">
@@ -117,7 +115,6 @@ function CalendarPane({
         ))}
       </div>
 
-      {/* Grid */}
       <div className="grid grid-cols-7 gap-y-0.5">
         {cells.map((day, i) => {
           if (!day) return <div key={i} />;
@@ -155,7 +152,6 @@ export function DateRangePicker({ from, to, onFromChange, onToChange }: DateRang
 
   const hasRange = from || to;
 
-  // Trigger label
   let triggerLabel: React.ReactNode;
   if (from && to) {
     triggerLabel = <><span className="text-chartreuse">{fmt(from)}</span><span className="text-ivory/30 mx-1">→</span><span className="text-chartreuse">{fmt(to)}</span></>;
@@ -215,7 +211,7 @@ export function DateRangePicker({ from, to, onFromChange, onToChange }: DateRang
           sideOffset={8}
           align="start"
         >
-          {/* Two calendars side by side */}
+
           <div className="flex gap-5">
             <CalendarPane
               label="FROM"
@@ -232,7 +228,6 @@ export function DateRangePicker({ from, to, onFromChange, onToChange }: DateRang
             />
           </div>
 
-          {/* Footer */}
           <div
             className="flex items-center justify-between mt-4 pt-3"
             style={{ borderTop: "1px dashed rgba(255,255,255,0.1)" }}

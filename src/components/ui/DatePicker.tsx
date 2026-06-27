@@ -5,7 +5,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { CalendarDays, ChevronLeft, ChevronRight, X } from "lucide-react";
 
 interface DatePickerProps {
-  value: string; // "YYYY-MM-DD" or ""
+  value: string;
   onChange: (value: string) => void;
   placeholder?: string;
 }
@@ -46,7 +46,6 @@ export function DatePicker({ value, onChange, placeholder = "Pick a date" }: Dat
     ...Array(firstDay).fill(null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
-  // pad to full weeks
   while (cells.length % 7 !== 0) cells.push(null);
 
   function prevMonth() { setView(new Date(year, month - 1, 1)); }
@@ -98,7 +97,7 @@ export function DatePicker({ value, onChange, placeholder = "Pick a date" }: Dat
 
       <Popover.Portal>
         <Popover.Content
-          className="z-50 p-4 w-[280px]"
+          className="z-50 p-4 w-70"
           style={{
             background: "#1a1a1f",
             border: "1px dashed rgba(255,255,255,0.18)",
@@ -108,7 +107,7 @@ export function DatePicker({ value, onChange, placeholder = "Pick a date" }: Dat
           sideOffset={6}
           align="start"
         >
-          {/* Month navigation */}
+
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={prevMonth}
@@ -127,7 +126,6 @@ export function DatePicker({ value, onChange, placeholder = "Pick a date" }: Dat
             </button>
           </div>
 
-          {/* Day headers */}
           <div className="grid grid-cols-7 mb-2">
             {DAYS.map((d) => (
               <div key={d} className="text-center text-[0.6rem] font-bold tracking-widest text-ivory/25 py-1">
@@ -136,7 +134,6 @@ export function DatePicker({ value, onChange, placeholder = "Pick a date" }: Dat
             ))}
           </div>
 
-          {/* Calendar grid */}
           <div className="grid grid-cols-7 gap-y-1">
             {cells.map((day, i) => (
               <div key={i} className="flex items-center justify-center">
@@ -158,7 +155,6 @@ export function DatePicker({ value, onChange, placeholder = "Pick a date" }: Dat
             ))}
           </div>
 
-          {/* Footer */}
           <div className="mt-4 pt-3 flex items-center justify-between" style={{ borderTop: "1px dashed rgba(255,255,255,0.1)" }}>
             <button
               onClick={() => { onChange(""); setOpen(false); }}

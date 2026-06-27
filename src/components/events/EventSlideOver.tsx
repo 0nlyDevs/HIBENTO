@@ -24,10 +24,9 @@ export function EventSlideOver({ event, onClose }: EventSlideOverProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      {/* Backdrop */}
+
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Panel */}
       <div
         className="relative w-full max-w-lg h-full overflow-y-auto animate-slide-up"
         style={{
@@ -35,7 +34,7 @@ export function EventSlideOver({ event, onClose }: EventSlideOverProps) {
           borderLeft: "1px dashed rgba(255,255,255,0.18)",
         }}
       >
-        {/* Header */}
+
         <div
           className="sticky top-0 z-10 px-6 py-4 flex items-center justify-between backdrop-blur-md"
           style={{
@@ -57,7 +56,7 @@ export function EventSlideOver({ event, onClose }: EventSlideOverProps) {
         </div>
 
         <div className="p-6">
-          {/* Event Info */}
+
           <div className="grid grid-cols-3 gap-3 mb-6">
             <div className="card-glass squircle p-4">
               <div className="label-mono text-ivory/40 mb-1">DATES</div>
@@ -84,7 +83,6 @@ export function EventSlideOver({ event, onClose }: EventSlideOverProps) {
             <p className="text-sm text-ivory/50 mb-6 leading-relaxed">{event.description}</p>
           )}
 
-          {/* Room Selector */}
           <div className="mb-6">
             <div className="flex items-center gap-3 mb-4">
               <p className="label-mono text-chartreuse">§ ROOMS</p>
@@ -99,7 +97,7 @@ export function EventSlideOver({ event, onClose }: EventSlideOverProps) {
                     <button
                       key={room.id}
                       onClick={() => setSelectedRoomId(isSelected ? "" : room.id)}
-                      className="shrink-0 p-3 text-left transition-all min-w-[140px] squircle"
+                      className="shrink-0 p-3 text-left transition-all min-w-35 squircle"
                       style={{
                         background: isSelected ? "hsl(59 73% 52%)" : "#222222E6",
                         border: isSelected
@@ -124,7 +122,6 @@ export function EventSlideOver({ event, onClose }: EventSlideOverProps) {
             </div>
           </div>
 
-          {/* Sessions in Selected Room */}
           {selectedRoomId && (
             <div>
               <div className="flex items-center gap-3 mb-4">

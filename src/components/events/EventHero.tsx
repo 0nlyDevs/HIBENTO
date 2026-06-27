@@ -13,13 +13,14 @@ export function EventHero({ event, isLive, isEnded }: EventHeroProps) {
   const heroImg = pickEventImage(event.id);
 
   return (
-    <div className="relative overflow-hidden squircle-lg min-h-[260px] flex flex-col justify-end mb-4">
+    <div className="relative overflow-hidden squircle-lg min-h-65 flex flex-col justify-end mb-4">
       <Image
         src={heroImg}
         alt={event.title}
         fill
         className="object-cover object-center"
         sizes="1000px"
+        quality={85}
         priority
       />
       <div className="absolute inset-0 bg-linear-to-t from-black/92 via-black/45 to-transparent" />
@@ -27,7 +28,7 @@ export function EventHero({ event, isLive, isEnded }: EventHeroProps) {
       <div className="absolute top-4 left-4 flex items-center gap-2 flex-wrap">
         {isLive && (
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full label-mono text-xs glow-chip">
-            <span className="w-1.5 h-1.5 rounded-full bg-charcoal animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-chartreuse" />
             LIVE NOW
           </span>
         )}

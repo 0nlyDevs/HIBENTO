@@ -36,26 +36,23 @@ function SpeakerAvatar({
   );
 }
 
-/** Overlapping speaker avatars with a hover card listing all speakers. */
 export function SpeakersCell({ speakers }: { speakers: SpeakerRefDto[] }) {
   if (speakers.length === 0) {
     return <span className="text-sm text-ivory/30">—</span>;
   }
 
-  const firstSpeaker = speakers[0];
-
   return (
     <HoverCard.Root openDelay={100} closeDelay={150}>
       <HoverCard.Trigger asChild>
-        <div className="flex items-center gap-2 cursor-pointer group/sp">
-          {/* Overlapping avatars */}
+        <div className="flex items-center cursor-pointer group/sp">
+
           <div className="flex -space-x-2.5">
             {speakers.slice(0, 4).map((sp, i) => (
               <Link
                 key={sp.id}
                 href={`/speakers/${sp.id}`}
                 onClick={(e) => e.stopPropagation()}
-                className="relative z-[10] transition-transform duration-200 hover:-translate-y-1.5 hover:z-[20]"
+                className="relative z-10 transition-transform duration-200 hover:-translate-y-1.5 hover:z-20"
                 style={{ transitionDelay: `${i * 30}ms` }}
               >
                 <div
@@ -75,23 +72,12 @@ export function SpeakersCell({ speakers }: { speakers: SpeakerRefDto[] }) {
             )}
           </div>
 
-          {/* Speaker name(s) */}
-          <div className="min-w-0 text-left hidden sm:block">
-            <p className="text-sm font-semibold text-ivory/90 truncate leading-tight group-hover/sp:text-chartreuse transition-colors">
-              {firstSpeaker.name}
-            </p>
-            {speakers.length > 1 && (
-              <p className="text-xs text-ivory/40 truncate leading-tight">
-                +{speakers.length - 1} more
-              </p>
-            )}
-          </div>
         </div>
       </HoverCard.Trigger>
 
       <HoverCard.Portal>
         <HoverCard.Content
-          className="z-50 p-3 min-w-[260px] squircle-lg animate-slide-up"
+          className="z-50 p-3 min-w-65 squircle-lg animate-slide-up"
           style={{
             background: "#18181c",
             border: "1px dashed rgba(255,255,255,0.18)",
@@ -100,21 +86,19 @@ export function SpeakersCell({ speakers }: { speakers: SpeakerRefDto[] }) {
           sideOffset={10}
           align="start"
         >
-          {/* Header */}
+
           <div className="px-1 pb-2 mb-2" style={{ borderBottom: "1px dashed rgba(255,255,255,0.1)" }}>
             <p className="label-mono text-chartreuse text-xs">
               {speakers.length} {speakers.length === 1 ? "SPEAKER" : "SPEAKERS"}
             </p>
           </div>
 
-          {/* Speaker list */}
           <div className="space-y-1">
             {speakers.map((sp, i) => (
               <Link
                 key={sp.id}
                 href={`/speakers/${sp.id}`}
                 onClick={() => {
-                  // Small hack to close hover card on click in mobile
                   const event = document.createEvent("HTMLEvents");
                   event.initEvent("mouseleave", true, false);
                   document.dispatchEvent(event);

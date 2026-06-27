@@ -1,18 +1,53 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useGetEvents } from "@/lib/hooks/useEvents";
 import { api } from "@/lib/api";
 import { Select } from "@/components/ui/Select";
 import { DateRangePicker } from "@/components/ui/DateRangePicker";
-import { Search, X, Radio, MapPin, Wifi, Clock, Calendar, Users, ArrowRight } from "lucide-react";
+import { Search, X } from "lucide-react";
 import type { EventSummaryDto } from "@/types/dto";
+import { BentoGrid } from "@/components/features/EventsList/event-cards";
 
 type EventStatus = "all" | "live" | "upcoming" | "ended";
 type EventFormat = "all" | "onsite" | "online";
+
+const STATUS_OPTIONS = [
+  { value: "all" as const, label: "All statuses" },
+  { value: "live" as const, label: "Live now" },
+  { value: "upcoming" as const, label: "Upcoming" },
+  { value: "ended" as const, label: "Ended" },
+];
+
+const FORMAT_OPTIONS = [
+  { value: "all" as const, label: "All formats" },
+  { value: "onsite" as const, label: "Onsite" },
+  { value: "online" as const, label: "Online" },
+];
+
+function filterEvents(events: EventSummaryDto[], format: EventFormat): EventSummaryDto[] {
+  const now = new Date();
+  let filtered: EventSummaryDto[];
+  if (format === "online") {
+    filtered = events.filter((e) => e.isOnline);
+  } else if (format === "onsite") {
+    filtered = events.filter((e) => !e.isOnline);
+  } else {
+    filtered = events;
+  }
+  const live = filtered.filter((e) => {
+    const s = new Date(e.startDate), en = new Date(e.endDate);
+    return s <= now && en >= now;
+  });
+  const upcoming = filtered
+    .filter((e) => new Date(e.startDate) > now)
+    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+  const ended = filtered
+    .filter((e) => new Date(e.endDate) < now)
+    .sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
+  return [...live, ...upcoming, ...ended];
+}
 
 const STATUS_OPTIONS = [
   { value: "all",      label: "All statuses", icon: <Clock  size={11} /> },
@@ -292,59 +327,49 @@ function BentoGrid({ events }: { events: EventSummaryDto[] }) {
 
 // ── PAGE ─────────────────────────────────────────────────────────────────────
 export default function EventsPage() {
-  const [status,   setStatus]   = useState<EventStatus>("all");
-  const [format,   setFormat]   = useState<EventFormat>("all");
-  const [search,   setSearch]   = useState("");
-  const [city,     setCity]     = useState("all");
+  const [status, setStatus] = useState<EventStatus>("all");
+  const [format, setFormat] = useState<EventFormat>("all");
+  const [search, setSearch] = useState("");
+  const [city, setCity] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo,   setDateTo]   = useState("");
 
   const { data: venuesData } = useQuery({ queryKey: ["venues"], queryFn: () => api.getVenues() });
 
-  const { data: eventsData, isLoading } = useGetEvents({
+  const cityOptions = useMemo(
+    () => [
+      { value: "all", label: "All cities" },
+      ...[...new Set((venuesData?.data || []).map((v) => v.city))].sort().map((c) => ({ value: c, label: c })),
+    ],
+    [venuesData],
+  );
+
+  const queryParams = {
     page: 1, limit: 50,
     ...(status !== "all" && { status }),
     ...(search && { search }),
     ...(city !== "all" && { city }),
     ...(dateFrom && { dateFrom }),
     ...(dateTo && { dateTo }),
-  });
+  };
 
-  const cities = useMemo(
-    () => [...new Set((venuesData?.data || []).map((v) => v.city))].sort(),
-    [venuesData]
+  const { data: eventsData, isLoading } = useGetEvents(queryParams);
+
+  const events = useMemo(
+    () => filterEvents(eventsData?.data || [], format),
+    [eventsData, format],
   );
-
-  const cityOptions = useMemo(() => [
-    { value: "all", label: "All cities", icon: <MapPin size={11} /> },
-    ...cities.map((c) => ({ value: c, label: c, icon: <MapPin size={11} /> })),
-  ], [cities]);
-
-  const events = useMemo(() => {
-    const raw = eventsData?.data || [];
-    const filtered = format === "online" ? raw.filter(e => e.isOnline)
-                   : format === "onsite" ? raw.filter(e => !e.isOnline)
-                   : raw;
-    // Sort: live first, then upcoming (sorted by startDate), then ended
-    const now = new Date();
-    const live     = filtered.filter(e => { const s = new Date(e.startDate), en = new Date(e.endDate); return s <= now && en >= now; });
-    const upcoming = filtered.filter(e => new Date(e.startDate) > now).sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
-    const ended    = filtered.filter(e => new Date(e.endDate) < now).sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
-    return [...live, ...upcoming, ...ended];
-  }, [eventsData, format]);
 
   const hasActiveFilters = status !== "all" || format !== "all" || city !== "all" || !!search || !!dateFrom || !!dateTo;
 
-  function clearAll() {
+  const clearAll = () => {
     setStatus("all"); setFormat("all"); setCity("all");
     setSearch(""); setDateFrom(""); setDateTo("");
-  }
+  };
 
   return (
-    <div className="min-h-screen pt-28 pb-20">
+    <div className="pt-20 pb-20">
       <div className="max-w-7xl mx-auto px-6">
-
-        {/* Title row */}
         <div className="flex items-start justify-between mb-6">
           <div>
             <p className="label-mono text-chartreuse mb-2">§ EXPLORE</p>
@@ -360,7 +385,6 @@ export default function EventsPage() {
           </p>
         </div>
 
-        {/* Filter bar */}
         <div
           className="flex items-center justify-between gap-3 p-3 mb-8 squircle-lg"
           style={{ background: "#222222E6", border: "1px dashed rgba(255,255,255,0.18)" }}
@@ -371,7 +395,7 @@ export default function EventsPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search an event…"
+              placeholder="Search an event\u2026"
               className="w-full h-9 pl-8 pr-3 text-sm font-medium text-ivory placeholder-ivory/40 focus:outline-none transition-colors rounded-lg"
               style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}
             />
@@ -393,11 +417,10 @@ export default function EventsPage() {
           </div>
         </div>
 
-        {/* Content */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="col-span-full h-80 animate-pulse squircle-lg" style={{ background: "#222222E6" }} />
-            {[1,2,3].map(i => <div key={i} className="h-48 animate-pulse squircle-lg" style={{ background: "#222222E6" }} />)}
+            {[1, 2, 3].map((i) => <div key={i} className="h-48 animate-pulse squircle-lg" style={{ background: "#222222E6" }} />)}
           </div>
         ) : events.length > 0 ? (
           <BentoGrid events={events} />

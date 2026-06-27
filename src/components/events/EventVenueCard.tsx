@@ -1,5 +1,3 @@
-"use client";
-
 import { MapPin, Wifi, Building2, Navigation, ExternalLink } from "lucide-react";
 import type { EventDetailDto } from "@/types/dto";
 
@@ -28,12 +26,12 @@ export function EventVenueCard({ event }: EventVenueCardProps) {
 
   return (
     <div className="squircle-lg overflow-hidden card-glass group">
-      {/* ── Map / Hero Area ── */}
+
       <div
         className="h-44 flex items-center justify-center relative overflow-hidden"
         style={{ background: "#111316" }}
       >
-        {/* Dot grid pattern */}
+
         <div
           className="absolute inset-0 opacity-20"
           style={{
@@ -43,7 +41,6 @@ export function EventVenueCard({ event }: EventVenueCardProps) {
           }}
         />
 
-        {/* Animated gradient circles */}
         <div className="absolute -inset-16 opacity-30">
           <div
             className="absolute w-48 h-48 rounded-full blur-3xl animate-pulse"
@@ -64,7 +61,6 @@ export function EventVenueCard({ event }: EventVenueCardProps) {
           />
         </div>
 
-        {/* Center pin */}
         <div className="relative z-10 flex flex-col items-center gap-1.5">
           <div className="w-11 h-11 rounded-full glow-chip flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110">
             <MapPin size={18} className="text-charcoal" />
@@ -75,7 +71,6 @@ export function EventVenueCard({ event }: EventVenueCardProps) {
           </span>
         </div>
 
-        {/* Open map button */}
         <a
           href={mapUrl}
           target="_blank"
@@ -87,7 +82,6 @@ export function EventVenueCard({ event }: EventVenueCardProps) {
         </a>
       </div>
 
-      {/* ── Venue Info ── */}
       <div className="px-5 py-4">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="min-w-0">
@@ -101,7 +95,6 @@ export function EventVenueCard({ event }: EventVenueCardProps) {
             </p>
           </div>
 
-          {/* Room count badge */}
           <div
             className="shrink-0 px-3 py-1.5 rounded-full flex items-center gap-1.5"
             style={{ background: "rgba(255,255,255,0.06)", border: "1px dashed rgba(255,255,255,0.12)" }}
@@ -113,7 +106,6 @@ export function EventVenueCard({ event }: EventVenueCardProps) {
           </div>
         </div>
 
-        {/* Address with map link */}
         <a
           href={mapUrl}
           target="_blank"

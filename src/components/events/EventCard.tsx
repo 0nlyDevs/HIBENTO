@@ -8,18 +8,18 @@ interface EventCardProps {
 }
 
 const MONTH_COLORS = [
-  "hsl(61 69% 80%)",   // chartreuse-pale — Jan
-  "hsl(220 35% 62%)",  // slate blue      — Feb
-  "hsl(280 35% 68%)",  // lavender        — Mar
-  "hsl(160 35% 62%)",  // mint            — Apr
-  "hsl(30 65% 68%)",   // peach           — May
-  "hsl(340 45% 68%)",  // rose            — Jun
-  "hsl(59 73% 52%)",   // chartreuse      — Jul
-  "hsl(200 50% 65%)",  // sky             — Aug
-  "hsl(15 60% 65%)",   // coral           — Sep
-  "hsl(100 35% 60%)",  // lime            — Oct
-  "hsl(250 40% 68%)",  // periwinkle      — Nov
-  "hsl(45 70% 65%)",   // amber           — Dec
+  "hsl(61 69% 80%)",
+  "hsl(220 35% 62%)",
+  "hsl(280 35% 68%)",
+  "hsl(160 35% 62%)",
+  "hsl(30 65% 68%)",
+  "hsl(340 45% 68%)",
+  "hsl(59 73% 52%)",
+  "hsl(200 50% 65%)",
+  "hsl(15 60% 65%)",
+  "hsl(100 35% 60%)",
+  "hsl(250 40% 68%)",
+  "hsl(45 70% 65%)",
 ];
 
 function formatDateRange(start: Date, end: Date): string {
@@ -30,7 +30,7 @@ function formatDateRange(start: Date, end: Date): string {
   return `${start.toLocaleDateString("en-US", { day: "numeric", month: "short" })} – ${end.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}`;
 }
 
-export function EventCard({ event, index }: EventCardProps) {
+export function EventCard({ event }: EventCardProps) {
   const now   = new Date();
   const start = new Date(event.startDate);
   const end   = new Date(event.endDate);
@@ -53,7 +53,7 @@ export function EventCard({ event, index }: EventCardProps) {
         borderRadius: "0.75rem",
       }}
     >
-      {/* Date badge */}
+
       <div
         className="w-20 shrink-0 flex flex-col items-center justify-center gap-0.5 py-6"
         style={{ background: accentColor }}
@@ -65,18 +65,16 @@ export function EventCard({ event, index }: EventCardProps) {
           {month}
         </span>
         {isLive && (
-          <span className="mt-2 w-1.5 h-1.5 rounded-full bg-black/50 animate-pulse" />
+          <span className="mt-2 w-1.5 h-1.5 rounded-full bg-chartreuse" />
         )}
       </div>
 
-      {/* Content */}
       <div className="flex-1 px-4 py-4 flex flex-col justify-between min-w-0">
 
-        {/* Status + format badges */}
         <div className="flex items-center gap-2 mb-2 flex-wrap">
           {isLive && (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 label-mono glow-chip rounded-full text-[0.65rem]">
-              <span className="w-1 h-1 rounded-full bg-charcoal animate-pulse" />
+              <span className="w-1 h-1 rounded-full bg-chartreuse" />
               LIVE
             </span>
           )}
@@ -101,12 +99,10 @@ export function EventCard({ event, index }: EventCardProps) {
           )}
         </div>
 
-        {/* Title */}
         <h3 className="font-bold text-ivory group-hover:text-chartreuse transition-colors duration-200 text-base leading-snug mb-3 line-clamp-2">
           {event.title}
         </h3>
 
-        {/* Meta */}
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <span className="flex items-center gap-1 text-[0.7rem] font-medium text-ivory/70">
             <Calendar size={10} />
@@ -125,7 +121,6 @@ export function EventCard({ event, index }: EventCardProps) {
         </div>
       </div>
 
-      {/* Arrow */}
       <div className="flex items-center pr-3 pl-1 shrink-0">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none"
           className="text-ivory/20 group-hover:text-chartreuse transition-colors duration-200">

@@ -54,7 +54,7 @@ export function Select({ value, onValueChange, options, placeholder }: SelectPro
 
         <RadixSelect.Portal>
           <RadixSelect.Content
-            className="overflow-hidden z-50 min-w-[160px] py-1.5"
+            className="overflow-hidden z-50 min-w-40 py-1.5"
             style={{
               background: "#18181c",
               border: "1px solid rgba(255,255,255,0.12)",
@@ -87,7 +87,6 @@ export function Select({ value, onValueChange, options, placeholder }: SelectPro
         </RadixSelect.Portal>
       </RadixSelect.Root>
 
-      {/* X button — outside Radix trigger to avoid event conflict */}
       {isActive && (
         <button
           onClick={(e) => {

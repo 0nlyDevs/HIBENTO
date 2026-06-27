@@ -1,331 +1,245 @@
 @import "tailwindcss";
 
-@theme {
-  --color-cream: #FFFDF7;
-  --color-charcoal: #282828;
-  --color-yellow: #EAE151;
-  --color-yellow-dark: #D4CA3C;
-  --color-paper: #F5F2E9;
-  --color-ink: #1A1814;
-  --color-matcha: #7B8B6F;
-  --color-matcha-light: #E8EDE4;
-  --color-sakura: #F2E0DE;
-  --color-sakura-light: #FDF5F4;
-  --color-nori: #1C2E1A;
-  --color-rice: #FEFEF5;
-  --color-coral: #E8635A;
-  --color-indigo: #4A5A8A;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+@theme inline {
+  --color-charcoal: hsl(260 9% 18%);
+  --color-surface: hsl(260 8% 24%);
+  --color-ivory: hsl(84 64% 98%);
+  --color-chartreuse: hsl(59 73% 52%);
+  --color-chartreuse-soft: hsl(57 79% 62%);
+  --color-chartreuse-pale: hsl(61 69% 80%);
+
+  --color-background: var(--color-charcoal);
+  --color-foreground: var(--color-ivory);
+
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-ivory);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-ivory);
+
+  --color-primary: var(--color-chartreuse);
+
+  --color-accent: var(--color-chartreuse);
+  --color-accent-foreground: var(--color-charcoal);
+
+  --color-secondary: var(--color-chartreuse-soft);
+  --color-secondary-foreground: var(--color-charcoal);
+
+  --color-muted: var(--color-surface);
+
+  --color-border: hsl(260 8% 22%);
+
+  --radius: 0.75rem;
+  --radius-pill: 999px;
+  --radius-lg: 1rem;
+
+  --color-espresso: var(--color-ivory);
+  --color-espresso-soft: var(--color-chartreuse-pale);
+  --color-terracotta: var(--color-chartreuse);
+  --color-terracotta-deep: hsl(59 73% 32%);
+  --color-cream: var(--color-charcoal);
+  --color-cream-soft: var(--color-surface);
+  --color-glass: #222222e6;
+
+  --shadow-soft:
+    0 1px 2px hsl(260 9% 10% / 0.4), 0 8px 24px -8px hsl(260 9% 10% / 0.5);
+  --shadow-deep: 0 30px 60px -20px hsl(var(--color-chartreuse) / 0.25);
+
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-blink: blink 1.4s ease-in-out infinite;
+  --animate-nudge-up: nudge-up 1.8s ease-in-out infinite;
+  --animate-nudge-up: nudge-up 1.8s ease-in-out infinite;
+
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-serif: var(--font-sora), system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+  --animate-blink-cursor: blink-cursor 1.2s step-end infinite;
+  @keyframes blink-cursor {
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
 }
 
-* { box-sizing: border-box; }
+/* ── Global scrollbar styling ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: hsl(59 73% 52% / 0.45);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
 
 body {
-  background: var(--color-cream);
-  color: var(--color-ink);
+  margin: 0;
+  background-color: hsl(260 9% 18%);
+  background-image: url("/images/background.webp");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: hsl(84 64% 98%);
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
 }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--color-paper); }
-::-webkit-scrollbar-thumb { background: var(--color-charcoal); border-radius: 0; }
-
-/* ====== Bento Card ====== */
-.bento-card {
-  background: var(--color-rice);
-  border: 1px solid color-mix(in srgb, var(--color-charcoal) 10%, transparent);
-  padding: 1.5rem;
-  transition: all 0.3s;
-}
-.bento-card:hover {
-  border-color: color-mix(in srgb, var(--color-charcoal) 30%, transparent);
-  box-shadow: 4px 4px 0 0 rgba(234, 225, 81, 0.3);
+::selection {
+  background: hsl(var(--color-chartreuse));
+  color: hsl(var(--color-charcoal));
 }
 
-/* ====== Tags ====== */
-.tag-pill {
-  padding: 0.25rem 0.75rem;
-  font-size: 0.75rem;
+@utility text-display {
+  font-family: var(--font-serif);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+}
+
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   font-weight: 500;
-  border: 1px solid color-mix(in srgb, var(--color-charcoal) 20%, transparent);
-  background: var(--color-paper);
-  color: var(--color-charcoal);
-  letter-spacing: 0.05em;
 }
 
-/* ====== Live Badge ====== */
-.live-badge {
-  background: var(--color-nori);
-  color: var(--color-cream);
-  padding: 0.125rem 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  animation: livePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+@utility marquee {
+  animation: var(--animate-marquee);
+  will-change: transform;
 }
 
-/* ====== Buttons ====== */
-.btn-primary {
-  background: var(--color-charcoal);
-  color: var(--color-cream);
-  padding: 0.75rem 1.5rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  border: 1px solid var(--color-charcoal);
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.btn-primary:hover { background: var(--color-yellow); color: var(--color-charcoal); }
-
-.btn-outline {
-  background: transparent;
-  color: var(--color-charcoal);
-  padding: 0.75rem 1.5rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  border: 1px solid var(--color-charcoal);
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.btn-outline:hover { background: var(--color-yellow); }
-
-.btn-yellow {
-  background: var(--color-yellow);
-  color: var(--color-charcoal);
-  padding: 0.75rem 1.5rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  border: 1px solid var(--color-yellow-dark);
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.btn-yellow:hover { background: var(--color-yellow-dark); }
-
-.btn-ghost {
-  background: transparent;
-  color: var(--color-charcoal);
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.btn-ghost:hover { background: color-mix(in srgb, var(--color-charcoal) 5%, transparent); }
-
-.btn-sm { padding: 0.5rem 1rem; font-size: 0.75rem; }
-
-/* ====== Inputs ====== */
-.input-field {
-  width: 100%;
-  background: var(--color-cream);
-  border: 1px solid color-mix(in srgb, var(--color-charcoal) 20%, transparent);
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-  color: var(--color-charcoal);
-  transition: all 0.2s;
-}
-.input-field:focus { border-color: var(--color-charcoal); outline: none; }
-.input-field::placeholder { color: color-mix(in srgb, var(--color-charcoal) 40%, transparent); }
-
-/* ====== Chat Components ====== */
-.chat-bubble {
-  padding: 0.875rem 1rem;
-  border-radius: 0;
-  max-width: 85%;
-  position: relative;
-  line-height: 1.5;
-}
-.chat-bubble--attendee {
-  background: var(--color-paper);
-  border: 1px solid color-mix(in srgb, var(--color-charcoal) 10%, transparent);
-  align-self: flex-start;
-}
-.chat-bubble--speaker {
-  background: var(--color-matcha-light);
-  border: 1px solid var(--color-matcha);
-  align-self: flex-start;
-  border-left: 3px solid var(--color-matcha);
-}
-.chat-bubble--self {
-  background: var(--color-charcoal);
-  color: var(--color-cream);
-  align-self: flex-end;
-}
-
-.chat-input-bar {
-  background: var(--color-rice);
-  border-top: 1px solid color-mix(in srgb, var(--color-charcoal) 10%, transparent);
-  padding: 1rem 1.5rem;
-}
-
-/* ====== Toast ====== */
-.toast-container {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  pointer-events: none;
-}
-.toast {
-  background: var(--color-charcoal);
-  color: var(--color-cream);
-  padding: 0.75rem 1.25rem;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  border: 1px solid color-mix(in srgb, var(--color-cream) 15%, transparent);
-  pointer-events: auto;
-  animation: toastIn 0.3s ease-out, toastOut 0.3s ease-in 2.7s forwards;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.toast--success { border-left: 3px solid var(--color-yellow); }
-.toast--error { border-left: 3px solid var(--color-coral); }
-
-/* ====== Shoji Panel (Japanese sliding door animation) ====== */
-.shoji-panel {
-  overflow: hidden;
-  max-height: 0;
+@utility reveal-up {
   opacity: 0;
-  transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-              opacity 0.4s ease-out,
-              margin 0.3s ease-out;
+  transform: translateY(40px);
+  transition: all 1s var(--ease-editorial);
+  will-change: opacity, transform;
 }
-.shoji-panel--open {
-  max-height: 2000px;
+
+.reveal-up.in-view {
   opacity: 1;
+  transform: translateY(0);
 }
 
-/* ====== Timeline ====== */
-.timeline-track {
-  position: relative;
-}
-.timeline-track::before {
-  content: '';
-  position: absolute;
-  left: 0.75rem;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: color-mix(in srgb, var(--color-charcoal) 15%, transparent);
-}
-.timeline-dot {
-  width: 0.625rem;
-  height: 0.625rem;
-  border-radius: 50%;
-  position: absolute;
-  left: 0.4375rem;
-  top: 1.375rem;
-  z-index: 1;
+@utility blink-dot {
+  animation: var(--animate-blink);
 }
 
-/* ====== Skeleton ====== */
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--color-charcoal) 6%, transparent) 25%,
-    color-mix(in srgb, var(--color-charcoal) 12%, transparent) 50%,
-    color-mix(in srgb, var(--color-charcoal) 6%, transparent) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+@utility squircle {
+  border-radius: var(--radius);
 }
 
-/* ====== Geometries ====== */
-.bg-grid {
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--color-charcoal) 4%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--color-charcoal) 4%, transparent) 1px, transparent 1px);
-  background-size: 48px 48px;
+@utility squircle-lg {
+  border-radius: var(--radius-lg);
 }
 
-.bg-dots {
-  background-image: radial-gradient(circle, color-mix(in srgb, var(--color-charcoal) 8%, transparent) 1px, transparent 1px);
-  background-size: 24px 24px;
+@utility pill {
+  border-radius: var(--radius-pill);
 }
 
-.bg-yellow-dots {
-  background-image: radial-gradient(circle, rgba(234, 225, 81, 0.25) 1.5px, transparent 1.5px);
-  background-size: 32px 32px;
+@utility lift {
+  transition:
+    transform 0.5s var(--ease-spring),
+    box-shadow 0.5s var(--ease-editorial);
+  &:hover {
+    transform: translateY(-3px);
+  }
 }
 
-/* ====== Animations ====== */
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-slide-up { animation: slideUp 0.4s ease-out; }
-
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-slide-down { animation: slideDown 0.3s ease-out; }
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-.animate-fade-in { animation: fadeIn 0.3s ease-out; }
-
-@keyframes livePulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+@utility squish {
+  transition: transform 0.15s var(--ease-spring);
+  &:active {
+    transform: scale(0.97);
+  }
 }
 
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+@utility card-glass {
+  background: #222222e6;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius);
 }
 
-@keyframes toastIn {
-  from { opacity: 0; transform: translateX(100%) translateY(10px); }
-  to { opacity: 1; transform: translateX(0) translateY(0); }
-}
-@keyframes toastOut {
-  from { opacity: 1; transform: translateX(0); }
-  to { opacity: 0; transform: translateX(100%); }
+@utility animate-nudge-up {
+  animation: var(--animate-nudge-up);
 }
 
-@keyframes dotPulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.5); opacity: 0.5; }
+@utility glow-chip {
+  background: hsl(var(--color-chartreuse));
+  color: hsl(var(--color-charcoal));
+  box-shadow:
+    0 0 0 1px hsl(var(--color-chartreuse) / 0.4),
+    0 8px 30px -8px hsl(var(--color-chartreuse) / 0.6);
 }
-.animate-dot-pulse { animation: dotPulse 1.5s ease-in-out infinite; }
 
-/* ====== Emoji reaction picker ====== */
-.reaction-btn {
-  width: 2rem;
-  height: 2rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid color-mix(in srgb, var(--color-charcoal) 15%, transparent);
-  background: var(--color-cream);
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.15s;
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
-.reaction-btn:hover {
-  background: var(--color-yellow);
-  border-color: var(--color-yellow-dark);
-  transform: scale(1.15);
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
-.reaction-btn--active {
-  background: var(--color-yellow);
-  border-color: var(--color-yellow-dark);
+
+@keyframes nudge-up {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes schedule-row-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.schedule-row-fade-in {
+  animation: schedule-row-fade-in 0.4s ease-out both;
 }
