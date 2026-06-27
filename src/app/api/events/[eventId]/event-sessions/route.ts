@@ -7,6 +7,7 @@ import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 type EventSessionWithSpeakers = {
   id: string;
   title: string;
+  description: string | null;
   startTime: Date;
   endTime: Date;
   roomId: string | null;
