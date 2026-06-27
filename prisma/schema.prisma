@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum LinkType {
+  WEBSITE
+  GITHUB
+  X
+  LINKEDIN
+  FACEBOOK
+  INSTAGRAM
+  OTHER
+}
+
+model Venue {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String   @db.VarChar(255)
+  city         String   @db.VarChar(255)
+  neighborhood String   @db.VarChar(255)
+  totalRooms   Int      @default(0) @map("total_rooms")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  rooms  Room[]
+  events Event[]
+
+  @@map("venue")
+}
+
+model Event {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String   @db.VarChar(255)
+  description String?
+  venueId     String?  @db.Uuid @map("venueId")
+  isOnline    Boolean  @default(false) @map("is_online")
+  startDate   DateTime @map("start_date")
+  endDate     DateTime @map("end_date")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  venue         Venue?         @relation(fields: [venueId], references: [id], onDelete: SetNull)
+  eventSessions EventSession[]
+
+  @@map("event")
+}
+
+model Room {
+  id        String   @id @default(uuid()) @db.Uuid
+  venueId   String   @db.Uuid @map("venueId")
+  name      String   @db.VarChar(100)
+  capacity  Int?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  venue         Venue          @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  eventSessions EventSession[]
+
+  @@unique([venueId, name])
+  @@index([venueId])
+  @@map("room")
+}
+
+model EventSession {
+  id          String   @id @default(uuid()) @db.Uuid
+  eventId     String   @db.Uuid @map("eventId")
+  roomId      String?  @db.Uuid @map("roomId")
+  title       String   @db.VarChar(255)
+  description String?
+  startTime   DateTime @map("start_time")
+  endTime     DateTime @map("end_time")
+  capacity    Int?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  event     Event                 @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  room      Room?                 @relation(fields: [roomId], references: [id])
+  speakers        EventSessionSpeaker[]
+  questions       Question[]
+
+  @@unique([roomId, startTime])
+  @@index([eventId])
+  @@index([startTime])
+  @@index([roomId])
+  @@map("event_session")
+}
+
+model Speaker {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(255)
+  avatarUrl String?  @map("avatar_url")
+  bio       String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  links    SpeakerExternalLink[]
+  sessions EventSessionSpeaker[]
+
+  @@map("speaker")
+}
+
+model SpeakerExternalLink {
+  id        String   @id @default(uuid()) @db.Uuid
+  speakerId String   @db.Uuid @map("speakerId")
+  linkType  LinkType @map("link_type")
+  url       String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  speaker Speaker @relation(fields: [speakerId], references: [id], onDelete: Cascade)
+
+  @@map("speaker_external_link")
+}
+
+model EventSessionSpeaker {
+  eventSessionId String   @db.Uuid @map("eventSessionId")
+  speakerId      String   @db.Uuid @map("speakerId")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  eventSession EventSession @relation(fields: [eventSessionId], references: [id], onDelete: Cascade)
+  speaker      Speaker      @relation(fields: [speakerId], references: [id], onDelete: Cascade)
+
+  @@id([eventSessionId, speakerId])
+  @@map("event_session_speaker")
+}
+
+model Question {
+  id             String   @id @default(uuid())
+  eventSessionId String   @db.Uuid @map("eventSessionId")
+  content        String
+  authorName     String   @default("Anonymous") @map("author_name") @db.VarChar(100)
+  upvotes        Int      @default(0)
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  eventSession EventSession @relation(fields: [eventSessionId], references: [id], onDelete: Cascade)
+
+  upvoters QuestionUpvote[]
+
+  @@index([eventSessionId])
+  @@index([upvotes])
+  @@map("question")
+}
+
+model QuestionUpvote {
+  id         String   @id @default(uuid())
+  questionId String   @map("questionId")
+  visitorId  String   @map("visitor_id") @db.VarChar(64)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, visitorId])
+  @@index([questionId])
+  @@map("question_upvote")
+}

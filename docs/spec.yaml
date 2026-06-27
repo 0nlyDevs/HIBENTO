@@ -1,0 +1,765 @@
+openapi: 3.0.3
+info:
+  title: HiBento API
+  description: |
+    Real-time event management and participant engagement platform.
+    Browse events, sessions, speakers, and interact with live Q&A.
+    Base URL: http://localhost:3000/api
+  version: 2.1.0
+
+servers:
+- url: http://localhost:3000/api
+  description: Local development server
+
+tags:
+- name: Events
+  description: Browse and filter events by city and status
+- name: Sessions
+  description: Event sessions with live detection
+- name: Rooms
+  description: Room-based session browsing
+- name: Speakers
+  description: Speaker profiles and their sessions
+- name: Questions
+  description: Live Q&A system
+
+paths:
+  # ==================== EVENTS ====================
+  /events:
+    get:
+      tags: [ Events ]
+      summary: List all events with filters
+      description: |
+        Returns paginated events list. Filter by city and status.
+        Status values: "live" (ongoing), "upcoming" (future), "ended" (past), "all" (default).
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+        description: Page number
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+        description: Items per page
+      - name: upcoming
+        in: query
+        schema:
+          type: boolean
+        description: Only show upcoming events
+      - name: city
+        in: query
+        schema:
+          type: string
+        description: Filter by venue city
+        example: Antananarivo
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum: [ live, upcoming, ended, all ]
+          default: all
+        description: Filter by event status
+      - name: search
+        in: query
+        schema:
+          type: string
+        description: Search by event title
+      - name: dateFrom
+        in: query
+        schema:
+          type: string
+          format: date
+        description: Filter events ending on or after this date
+      - name: dateTo
+        in: query
+        schema:
+          type: string
+          format: date
+        description: Filter events starting on or before this date
+      responses:
+        '200':
+          description: Paginated event list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEventsResponse'
+              example:
+                data:
+                - id: "e0020000-0000-0000-0000-000000000000"
+                  title: "Tech Innovation Summit 2026"
+                  description: "Ongoing summit about AI and blockchain"
+                  startDate: "2026-05-19T09:00:00Z"
+                  endDate: "2026-05-22T17:00:00Z"
+                  venue:
+                    id: "v0020000-0000-0000-0000-000000000000"
+                    name: "Convention Center"
+                    city: "Antananarivo"
+                    neighborhood: "Anjanahary"
+                    totalRooms: 3
+                  isOnline: false
+                  eventSessionCount: 5
+                pagination:
+                  page: 1
+                  limit: 20
+                  total: 6
+
+  /events/{eventId}:
+    get:
+      tags: [ Events ]
+      summary: Get event details with sessions
+      description: Returns full event details including all sessions with live indicators
+      parameters:
+      - $ref: '#/components/parameters/EventId'
+      responses:
+        '200':
+          description: Event with sessions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ==================== SESSIONS ====================
+  /events/{eventId}/event-sessions:
+    get:
+      tags: [ Sessions ]
+      summary: List sessions for an event
+      description: Filter sessions by room name or live status
+      parameters:
+      - $ref: '#/components/parameters/EventId'
+      - name: room
+        in: query
+        schema:
+          type: string
+        description: Filter by room name
+      - name: liveOnly
+        in: query
+        schema:
+          type: boolean
+          default: false
+        description: Only show currently live sessions
+      responses:
+        '200':
+          description: Session list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionListResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /event-sessions/{sessionId}:
+    get:
+      tags: [ Sessions ]
+      summary: Get session details
+      description: Full session info with speakers and questions (if live)
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Session details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ==================== ROOMS ====================
+  /events/{eventId}/rooms:
+    get:
+      tags: [ Rooms ]
+      summary: List rooms for an event
+      parameters:
+      - $ref: '#/components/parameters/EventId'
+      responses:
+        '200':
+          description: Room list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Room'
+
+  /events/{eventId}/rooms/{roomId}/sessions:
+    get:
+      tags: [ Rooms ]
+      summary: Get sessions by room
+      description: Chronological session list for a specific room
+      parameters:
+      - $ref: '#/components/parameters/EventId'
+      - $ref: '#/components/parameters/RoomId'
+      responses:
+        '200':
+          description: Room sessions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionListResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ==================== SPEAKERS ====================
+  /speakers:
+    get:
+      tags: [ Speakers ]
+      summary: List all speakers
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 20
+      responses:
+        '200':
+          description: Speaker list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSpeakersResponse'
+
+  /speakers/{speakerId}:
+    get:
+      tags: [ Speakers ]
+      summary: Get speaker profile
+      parameters:
+      - $ref: '#/components/parameters/SpeakerId'
+      responses:
+        '200':
+          description: Speaker profile with sessions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeakerProfile'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ==================== QUESTIONS ====================
+  /event-sessions/{sessionId}/questions:
+    get:
+      tags: [ Questions ]
+      summary: Get questions for a session
+      description: Questions sorted by upvotes (descending)
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Question list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Question'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    post:
+      tags: [ Questions ]
+      summary: Submit a question
+      description: Submit question for a live session
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ content ]
+              properties:
+                content:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                authorName:
+                  type: string
+                  maxLength: 100
+                  description: Defaults to "Anonymous"
+      responses:
+        '201':
+          description: Question created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '403':
+          $ref: '#/components/responses/SessionNotLive'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ==================== VENUES ====================
+  /venues:
+    get:
+      tags: [ Events ]
+      summary: List all venues
+      responses:
+        '200':
+          description: Venue list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Venue'
+
+  /venues/{venueId}:
+    get:
+      tags: [ Events ]
+      summary: Get venue details with rooms
+      parameters:
+      - $ref: '#/components/parameters/VenueId'
+      responses:
+        '200':
+          description: Venue with rooms
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VenueDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ==================== UPVOTES ====================
+  /questions/{questionId}/upvote:
+    post:
+      tags: [ Questions ]
+      summary: Upvote a question
+      description: Only allowed for live sessions
+      parameters:
+      - $ref: '#/components/parameters/QuestionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ visitorId ]
+              properties:
+                visitorId:
+                  type: string
+                  description: Anonymous visitor identifier for deduplication
+      responses:
+        '200':
+          description: Upvote recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpvoteResponse'
+        '403':
+          $ref: '#/components/responses/SessionNotLive'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  parameters:
+    EventId:
+      name: eventId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Event UUID
+
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Session UUID
+
+    RoomId:
+      name: roomId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Room UUID
+
+    VenueId:
+      name: venueId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Venue UUID
+
+    SpeakerId:
+      name: speakerId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Speaker UUID
+
+    QuestionId:
+      name: questionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Question UUID
+
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+
+    Venue:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        city:
+          type: string
+        neighborhood:
+          type: string
+        totalRooms:
+          type: integer
+
+    Room:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        capacity:
+          type: integer
+          nullable: true
+        venueId:
+          type: string
+
+    SpeakerRef:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        avatar:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+
+    SpeakerSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        avatar:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+        eventSessionCount:
+          type: integer
+
+    SpeakerDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        avatar:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+        externalLinks:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              url:
+                type: string
+
+    SpeakerProfile:
+      allOf:
+      - $ref: '#/components/schemas/SpeakerDetail'
+      - type: object
+        properties:
+          eventSessions:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                eventId:
+                  type: string
+                title:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                eventName:
+                  type: string
+                startTime:
+                  type: string
+                  format: date-time
+                endTime:
+                  type: string
+                  format: date-time
+                room:
+                  type: string
+                neighborhood:
+                  type: string
+                  nullable: true
+                isLive:
+                  type: boolean
+                speakers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+
+    EventSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        venue:
+          $ref: '#/components/schemas/Venue'
+          nullable: true
+        isOnline:
+          type: boolean
+        eventSessionCount:
+          type: integer
+
+    EventDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        venue:
+          $ref: '#/components/schemas/Venue'
+          nullable: true
+        isOnline:
+          type: boolean
+        eventSessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionSummary'
+
+    SessionSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        room:
+          $ref: '#/components/schemas/Room'
+        isOnline:
+          type: boolean
+        isLive:
+          type: boolean
+        speakers:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpeakerRef'
+        questionCount:
+          type: integer
+
+    SessionDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        room:
+          $ref: '#/components/schemas/Room'
+        venue:
+          $ref: '#/components/schemas/Venue'
+          nullable: true
+        capacity:
+          type: integer
+          nullable: true
+        isOnline:
+          type: boolean
+        isLive:
+          type: boolean
+        speakers:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpeakerDetail'
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+
+    Question:
+      type: object
+      properties:
+        id:
+          type: string
+        content:
+          type: string
+        authorName:
+          type: string
+        upvotes:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    VenueDetail:
+      allOf:
+      - $ref: '#/components/schemas/Venue'
+      - type: object
+        properties:
+          rooms:
+            type: array
+            items:
+              $ref: '#/components/schemas/Room'
+
+    UpvoteResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        upvotes:
+          type: integer
+
+    PaginatedEventsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventSummary'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    PaginatedSpeakersResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpeakerSummary'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    SessionListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionSummary'
+
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Event not found"
+
+    SessionNotLive:
+      description: Action only allowed for live sessions
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Questions can only be submitted for live sessions"
