@@ -39,7 +39,9 @@ export async function GET(
       }
     }
 
-    const data: EventSessionSummaryDto[] = sessions.map((session) => {
+    const withSpeakers = sessions.filter((s) => s.speakers.length > 0);
+
+    const data: EventSessionSummaryDto[] = withSpeakers.map((session) => {
       const roomData = session.room!;
       const roomDto: RoomDto = {
         id: roomData.id,
