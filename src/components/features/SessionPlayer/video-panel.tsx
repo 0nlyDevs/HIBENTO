@@ -49,17 +49,19 @@ export function VideoPanel({ isLive, isUpcoming, isEnded, startTime }: VideoPane
 
   return (
     <div ref={videoContainerRef} className="relative w-full aspect-video lg:aspect-auto lg:flex-1 overflow-hidden bg-black">
-      <video
-        ref={videoRef}
-        src="/videos/taylor.mp4"
-        autoPlay
-        loop
-        playsInline
-        muted={isMuted}
-        className="absolute inset-0 w-full h-full object-cover"
-      />
+      {isLive && (
+        <video
+          ref={videoRef}
+          src="/videos/taylor.mp4"
+          autoPlay
+          loop
+          playsInline
+          muted={isMuted}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      )}
 
-      {(isUpcoming || isEnded) && (
+      {!isLive && (
         <div className="absolute inset-0 bg-black/55 z-1" />
       )}
 
@@ -100,45 +102,47 @@ export function VideoPanel({ isLive, isUpcoming, isEnded, startTime }: VideoPane
         </div>
       )}
 
-      <div className="absolute bottom-3 left-3 right-3 z-3 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/60 backdrop-blur-sm">
-          <button
-            onClick={toggleMute}
-            className="text-ivory/70 hover:text-ivory transition-colors cursor-pointer shrink-0"
-            aria-label={isMuted ? "Unmute" : "Mute"}
-          >
-            {isMuted || volume === 0 ? <VolumeX size={13} /> : <Volume2 size={13} />}
-          </button>
-          <div className="relative w-20 h-3 flex items-center group">
-            <div className="absolute inset-y-0 my-auto h-0.75 w-full rounded-full bg-white/15" />
-            <div
-              className="absolute inset-y-0 my-auto h-0.75 rounded-full bg-chartreuse transition-all duration-75"
-              style={{ width: `${(isMuted ? 0 : volume) * 100}%` }}
-            />
-            <div
-              className="absolute w-3 h-3 rounded-full bg-chartreuse shadow-[0_0_6px_rgba(210,255,0,0.6)] -translate-x-1/2 transition-all duration-75"
-              style={{ left: `${(isMuted ? 0 : volume) * 100}%` }}
-            />
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.05"
-              value={isMuted ? 0 : volume}
-              onChange={handleVolumeChange}
-              className="absolute inset-0 w-full opacity-0 cursor-pointer"
-              aria-label="Volume"
-            />
+      {isLive && (
+        <div className="absolute bottom-3 left-3 right-3 z-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/60 backdrop-blur-sm">
+            <button
+              onClick={toggleMute}
+              className="text-ivory/70 hover:text-ivory transition-colors cursor-pointer shrink-0"
+              aria-label={isMuted ? "Unmute" : "Mute"}
+            >
+              {isMuted || volume === 0 ? <VolumeX size={13} /> : <Volume2 size={13} />}
+            </button>
+            <div className="relative w-20 h-3 flex items-center group">
+              <div className="absolute inset-y-0 my-auto h-0.75 w-full rounded-full bg-white/15" />
+              <div
+                className="absolute inset-y-0 my-auto h-0.75 rounded-full bg-chartreuse transition-all duration-75"
+                style={{ width: `${(isMuted ? 0 : volume) * 100}%` }}
+              />
+              <div
+                className="absolute w-3 h-3 rounded-full bg-chartreuse shadow-[0_0_6px_rgba(210,255,0,0.6)] -translate-x-1/2 transition-all duration-75"
+                style={{ left: `${(isMuted ? 0 : volume) * 100}%` }}
+              />
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={isMuted ? 0 : volume}
+                onChange={handleVolumeChange}
+                className="absolute inset-0 w-full opacity-0 cursor-pointer"
+                aria-label="Volume"
+              />
+            </div>
           </div>
+          <button
+            onClick={handleFullscreen}
+            className="w-8 h-8 rounded-lg bg-black/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-ivory/60 hover:text-ivory hover:bg-black/80 transition-all cursor-pointer shrink-0"
+            aria-label={isFullscreen ? "Exit full screen" : "Full screen"}
+          >
+            {isFullscreen ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+          </button>
         </div>
-        <button
-          onClick={handleFullscreen}
-          className="w-8 h-8 rounded-lg bg-black/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-ivory/60 hover:text-ivory hover:bg-black/80 transition-all cursor-pointer shrink-0"
-          aria-label={isFullscreen ? "Exit full screen" : "Full screen"}
-        >
-          {isFullscreen ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
-        </button>
-      </div>
+      )}
     </div>
   );
 }
