@@ -14,7 +14,7 @@ export function SessionBadges({ isLive, isUpcoming, isEnded, isOnline, roomName 
       {isLive && (
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full label-mono text-xs glow-chip">
           <span className="w-1.5 h-1.5 rounded-full bg-charcoal animate-pulse" />
-          LIVE NOW
+          ONGOING
         </span>
       )}
       {isUpcoming && !isLive && (

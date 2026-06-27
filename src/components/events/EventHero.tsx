@@ -29,7 +29,7 @@ export function EventHero({ event, isLive, isEnded }: EventHeroProps) {
         {isLive && (
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full label-mono text-xs glow-chip">
             <span className="w-1.5 h-1.5 rounded-full bg-chartreuse" />
-            LIVE NOW
+            ONGOING
           </span>
         )}
         {!isLive && !isEnded && (
