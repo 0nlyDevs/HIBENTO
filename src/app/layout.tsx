@@ -24,6 +24,7 @@ const sora = Sora({
 export const metadata: Metadata = {
   title: "HiBento",
   description: "Events should feel alive.",
+  icons: [{ rel: "icon", url: "/images/brand/logo.svg", type: "image/svg+xml" }],
 };
 
 export default function RootLayout({
