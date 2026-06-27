@@ -1,7 +1,5 @@
 "use client";
 
-import { useCallback } from "react";
-
 interface MenuItem {
   id: string;
   label: string;
