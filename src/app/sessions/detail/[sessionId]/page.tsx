@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useGetEventSession } from "@/lib/hooks/useSessions";
 import { useFavorites } from "@/lib/hooks/useFavorites";
 import { useToast } from "@/components/ui/Toast";
-import { api } from "@/lib/api";
 import { PageLoader } from "@/components/ui/Spinner";
 import { SessionBadges } from "@/components/ui/SessionBadges";
 import { SpeakerCard } from "@/components/ui/SpeakerCard";
@@ -15,7 +13,7 @@ import { ROUTES } from "@/constants/routes";
 import { formatTime, formatFullDate } from "@/lib/utils/dates";
 import { getSessionStatus } from "@/lib/utils/session-status";
 import {
-  Heart, Play, Clock, MapPin, Calendar, Users, ChevronRight, X,
+  Heart, Play, Clock, MapPin, Calendar, Users,
 } from "lucide-react";
 
 function InfoCard({ icon, label, children }: { icon: React.ReactNode; label: string; children: React.ReactNode }) {
@@ -38,11 +36,6 @@ export default function SessionDetailPage() {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { data: session, isLoading } = useGetEventSession(sessionId);
 
-  const [showRegister, setShowRegister] = useState(false);
-  const [signupName, setSignupName] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
-  const [isSigningUp, setIsSigningUp] = useState(false);
-
   if (isLoading) return <PageLoader className="pt-24 pb-24" />;
 
   if (!session) {
@@ -58,30 +51,7 @@ export default function SessionDetailPage() {
   const endTime = new Date(session.endTime);
   const { isLive, isUpcoming, isEnded } = getSessionStatus(session);
   const isOnline = session.isOnline;
-  const spotsLeft = session.capacity ? session.capacity - session.registrationCount : null;
-  const isFull = spotsLeft !== null && spotsLeft <= 0;
   const favorited = isFavorite(session.id);
-
-  const spotsLabel = spotsLeft !== null && spotsLeft > 0
-    ? `${spotsLeft} spots left`
-    : spotsLeft === 0
-      ? "Full"
-      : `${session.registrationCount} registered`;
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!signupName.trim() || !signupEmail.trim()) return;
-    setIsSigningUp(true);
-    try {
-      await api.registerForSession(sessionId, { name: signupName.trim(), email: signupEmail.trim() });
-      setSignupName(""); setSignupEmail(""); setShowRegister(false);
-      toast("Check your email for confirmation!", "success");
-    } catch (err) {
-      toast(err instanceof Error ? err.message : "Registration failed", "error");
-    } finally {
-      setIsSigningUp(false);
-    }
-  };
 
   return (
     <div className="pt-16 pb-24">
@@ -141,26 +111,8 @@ export default function SessionDetailPage() {
 
               <InfoCard icon={<Users size={13} className="text-chartreuse" />} label="CAPACITY">
                 <p className="text-sm font-semibold text-ivory">{session.capacity ? `${session.capacity} seats` : "Open enrollment"}</p>
-                {session.capacity && !isOnline && (
-                  <>
-                    <div className="w-full h-1.5 rounded-full bg-white/8 overflow-hidden mt-1">
-                      <div className="h-full bg-chartreuse rounded-full transition-all" style={{ width: `${Math.min(100, (session.registrationCount / session.capacity) * 100)}%` }} />
-                    </div>
-                    <p className="text-xs text-ivory/50">{spotsLabel}</p>
-                  </>
-                )}
               </InfoCard>
             </div>
-
-            {session.capacity && !isOnline && spotsLeft !== null && spotsLeft > 0 && spotsLeft <= Math.floor(session.capacity * 0.2) && (
-              <div className="rounded-xl px-4 py-3 flex items-center gap-3 mb-6"
-                style={{ background: "rgba(200,210,50,0.08)", border: "1px solid rgba(200,210,50,0.2)" }}>
-                <span className="text-sm">🔥</span>
-                <p className="text-xs font-semibold text-chartreuse">
-                  Almost full — only <strong>{spotsLeft} {spotsLeft === 1 ? "spot" : "spots"}</strong> remaining!
-                </p>
-              </div>
-            )}
 
             {session.speakers.length > 0 && (
               <div className="mb-7">
@@ -174,66 +126,6 @@ export default function SessionDetailPage() {
             )}
 
             <VenueCard venue={session.venue!} room={session.room} isOnline={isOnline} />
-
-            {!isOnline && isUpcoming && !isEnded && (
-              <div className="mb-7">
-                {!showRegister ? (
-                  <button
-                    onClick={() => setShowRegister(true)}
-                    disabled={isFull}
-                    className="w-full flex items-center justify-between px-5 py-4 rounded-xl transition-all hover:border-chartreuse/40 disabled:opacity-40 group/reg"
-                    style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed rgba(255,255,255,0.15)" }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-chartreuse/10 group-hover/reg:bg-chartreuse/20 transition-colors">
-                        <Users size={15} className="text-chartreuse" />
-                      </div>
-                      <div className="text-left">
-                        <p className="label-mono text-ivory/80 text-sm font-semibold">
-                          {isFull ? "This session is full" : "Attend in person"}
-                        </p>
-                        {spotsLeft !== null && !isFull && (
-                          <p className="label-mono text-ivory/40 text-[0.6rem] mt-0.5">{spotsLeft} {spotsLeft === 1 ? "spot" : "spots"} remaining</p>
-                        )}
-                      </div>
-                    </div>
-                    {!isFull && (
-                      <div className="flex items-center gap-1 text-chartreuse">
-                        <span className="label-mono text-xs">REGISTER</span>
-                        <ChevronRight size={14} className="group-hover/reg:translate-x-0.5 transition-transform" />
-                      </div>
-                    )}
-                  </button>
-                ) : (
-                  <form onSubmit={handleSignup} className="rounded-xl p-6 space-y-4"
-                    style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-chartreuse/10">
-                          <Users size={13} className="text-chartreuse" />
-                        </div>
-                        <p className="label-mono text-ivory/60 text-xs">REGISTER FOR ONSITE</p>
-                      </div>
-                      <button type="button" onClick={() => setShowRegister(false)}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center text-ivory/30 hover:text-ivory hover:bg-white/10 transition-colors cursor-pointer">
-                        <X size={13} />
-                      </button>
-                    </div>
-                    <input type="text" value={signupName} onChange={e => setSignupName(e.target.value)} placeholder="Full name"
-                      className="w-full px-4 py-3 text-sm text-ivory placeholder-ivory/25 focus:outline-none rounded-lg transition-all focus:border-chartreuse/40"
-                      style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }} required />
-                    <input type="email" value={signupEmail} onChange={e => setSignupEmail(e.target.value)} placeholder="Email address"
-                      className="w-full px-4 py-3 text-sm text-ivory placeholder-ivory/25 focus:outline-none rounded-lg transition-all focus:border-chartreuse/40"
-                      style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }} required />
-                    <button type="submit" disabled={isSigningUp || !signupName.trim() || !signupEmail.trim()}
-                      className="w-full py-3 rounded-xl label-mono text-sm font-bold text-charcoal disabled:opacity-50 transition-all hover:brightness-110 active:scale-[0.98]"
-                      style={{ background: "hsl(59 73% 52%)", boxShadow: "0 0 0 1px hsl(59 73% 52%/0.3), 0 6px 20px -6px hsl(59 73% 52%/0.5)" }}>
-                      {isSigningUp ? "Confirming\u2026" : "Confirm My Spot"}
-                    </button>
-                  </form>
-                )}
-              </div>
-            )}
           </div>
 
           <div className="shrink-0 px-7 py-4 flex items-center gap-3"

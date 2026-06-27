@@ -67,7 +67,7 @@ model Room {
 model EventSession {
   id          String   @id @default(uuid()) @db.Uuid
   eventId     String   @db.Uuid @map("eventId")
-  roomId      String?  @db.Uuid @map("roomId")
+  roomId      String?  @db.Uuid @map("roomId") // null uniquement pour les sessions en ligne (isOnline = true sur l'événement parent)
   title       String   @db.VarChar(255)
   description String?
   startTime   DateTime @map("start_time")
@@ -78,9 +78,9 @@ model EventSession {
 
   event     Event                 @relation(fields: [eventId], references: [id], onDelete: Cascade)
   room      Room?                 @relation(fields: [roomId], references: [id])
+  // Règle métier : une session doit avoir au moins un intervenant (EventSessionSpeaker)
   speakers        EventSessionSpeaker[]
   questions       Question[]
-  registrations   SessionRegistration[]
 
   @@unique([roomId, startTime])
   @@index([eventId])
@@ -127,20 +127,6 @@ model EventSessionSpeaker {
   @@map("event_session_speaker")
 }
 
-model SessionRegistration {
-  id             String   @id @default(uuid())
-  eventSessionId String   @db.Uuid @map("eventSessionId")
-  name           String   @db.VarChar(255)
-  email          String   @db.VarChar(255)
-  createdAt      DateTime @default(now()) @map("created_at")
-
-  eventSession   EventSession @relation(fields: [eventSessionId], references: [id], onDelete: Cascade)
-
-  @@unique([eventSessionId, email])
-  @@index([eventSessionId])
-  @@map("session_registration")
-}
-
 model Question {
   id             String   @id @default(uuid())
   eventSessionId String   @db.Uuid @map("eventSessionId")
@@ -156,89 +142,6 @@ model Question {
   @@index([eventSessionId])
   @@index([upvotes])
   @@map("question")
-}
-
-// ── BetterAuth auth tables ──
-
-model User {
-  id               String      @id
-  name             String
-  email            String
-  emailVerified    Boolean     @default(false)
-  image            String?
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
-  twoFactorEnabled Boolean?    @default(false)
-  username         String?
-  displayUsername  String?
-  sessions         Session[]
-  accounts         Account[]
-  twofactors       TwoFactor[]
-
-  @@unique([email])
-  @@unique([username])
-  @@map("user")
-}
-
-model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([token])
-  @@index([userId])
-  @@map("session")
-}
-
-model Account {
-  id                    String    @id
-  accountId             String
-  providerId            String
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
-  password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-
-  @@index([userId])
-  @@map("account")
-}
-
-model Verification {
-  id         String   @id
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([identifier])
-  @@map("verification")
-}
-
-model TwoFactor {
-  id          String   @id
-  secret      String
-  backupCodes String
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  verified    Boolean? @default(true)
-
-  @@index([secret])
-  @@index([userId])
-  @@map("twoFactor")
 }
 
 model QuestionUpvote {

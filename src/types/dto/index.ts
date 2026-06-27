@@ -109,7 +109,7 @@ export interface EventSessionDetailDto {
   capacity: number | null;
   isOnline: boolean;
   isLive: boolean;
-  registrationCount: number;
+
   speakers: SpeakerDetailDto[];
   questions: QuestionDto[];
 }
@@ -138,14 +138,3 @@ export interface PaginationDto {
   total: number;
 }
 
-export interface SessionRegistrationRequestDto {
-  name: string;
-  email: string;
-}
-
-export interface SessionRegistrationResponseDto {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
-}
