@@ -148,9 +148,7 @@ export async function GET(
       endDate: event.endDate.toISOString(),
       venue: venueDto,
       isOnline: event.isOnline,
-      eventSessions: event.eventSessions
-        .filter((s) => s.speakers.length > 0)
-        .map(transformToEventSessionSummary),
+      eventSessions: event.eventSessions.map(transformToEventSessionSummary),
     };
 
     return NextResponse.json(response, { status: 200 });
