@@ -9,7 +9,7 @@ info:
     Real-time event management and participant engagement platform.
     Browse events, sessions, speakers, and interact with live Q&A.
     Base URL: http://localhost:3000/api
-  version: 2.0.0
+  version: 2.1.0
 
 servers:
 - url: http://localhost:3000/api
@@ -346,48 +346,6 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  # ==================== REGISTRATIONS ====================
-  /event-sessions/{sessionId}/registrations:
-    post:
-      tags: [ Sessions ]
-      summary: Register for a session
-      description: Register with name and email. Online sessions do not require registration.
-      parameters:
-      - $ref: '#/components/parameters/SessionId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SessionRegistrationRequest'
-      responses:
-        '201':
-          description: Registration created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SessionRegistrationResponse'
-        '400':
-          description: Online sessions do not require registration
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          description: Duplicate email or session at capacity
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-
   # ==================== UPVOTES ====================
   /questions/{questionId}/upvote:
     post:
@@ -396,6 +354,17 @@ paths:
       description: Only allowed for live sessions
       parameters:
       - $ref: '#/components/parameters/QuestionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ visitorId ]
+              properties:
+                visitorId:
+                  type: string
+                  description: Anonymous visitor identifier for deduplication
       responses:
         '200':
           description: Upvote recorded
@@ -509,6 +478,12 @@ components:
           type: string
         name:
           type: string
+        avatar:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
 
     SpeakerSummary:
       type: object
@@ -558,18 +533,40 @@ components:
             type: array
             items:
               type: object
-              properties:
-                id:
+      properties:
+        id:
+          type: string
+        eventId:
+          type: string
+        title:
                   type: string
-                title:
+                description:
                   type: string
+                  nullable: true
                 eventName:
                   type: string
                 startTime:
                   type: string
                   format: date-time
+                endTime:
+                  type: string
+                  format: date-time
                 room:
                   type: string
+                neighborhood:
+                  type: string
+                  nullable: true
+                isLive:
+                  type: boolean
+                speakers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
 
     EventSummary:
       type: object
@@ -589,6 +586,7 @@ components:
           format: date-time
         venue:
           $ref: '#/components/schemas/Venue'
+          nullable: true
         isOnline:
           type: boolean
         eventSessionCount:
@@ -612,6 +610,7 @@ components:
           format: date-time
         venue:
           $ref: '#/components/schemas/Venue'
+          nullable: true
         isOnline:
           type: boolean
         eventSessions:
@@ -626,6 +625,9 @@ components:
           type: string
         title:
           type: string
+        description:
+          type: string
+          nullable: true
         startTime:
           type: string
           format: date-time
@@ -673,8 +675,6 @@ components:
           type: boolean
         isLive:
           type: boolean
-        registrationCount:
-          type: integer
         speakers:
           type: array
           items:
@@ -708,29 +708,6 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Room'
-
-    SessionRegistrationRequest:
-      type: object
-      required: [ name, email ]
-      properties:
-        name:
-          type: string
-        email:
-          type: string
-          format: email
-
-    SessionRegistrationResponse:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        email:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
 
     UpvoteResponse:
       type: object
