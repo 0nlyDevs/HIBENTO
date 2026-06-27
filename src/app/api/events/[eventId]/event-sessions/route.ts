@@ -84,9 +84,11 @@ export async function GET(
 
     const sessions = rawSessions as unknown as EventSessionWithSpeakers[];
 
-    let filteredSessions = sessions;
+    const withSpeakers = sessions.filter((s) => s.speakers.length > 0);
+
+    let filteredSessions = withSpeakers;
     if (liveOnly) {
-      filteredSessions = sessions.filter(
+      filteredSessions = withSpeakers.filter(
         (session) => getEventSessionStatus(session) === "live"
       );
     }
