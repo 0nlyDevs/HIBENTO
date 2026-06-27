@@ -15,8 +15,6 @@ import type {
 } from "@/types/dto";
 import { API_BASE_URL } from "./constants";
 
-// ============= Types =============
-
 export interface PaginatedResponse<T> {
   data: T[];
   pagination: {
@@ -42,8 +40,6 @@ export interface GetEventSessionsParams {
   liveOnly?: boolean;
 }
 
-// ============= HTTP helper =============
-
 const DEFAULT_TIMEOUT_MS = 15_000;
 
 async function http<T>(
@@ -54,9 +50,12 @@ async function http<T>(
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
 
+  const isGet = !init?.method || init.method === "GET";
+
   try {
     const res = await fetch(`${API_BASE_URL}${path}`, {
       ...init,
+      cache: isGet ? "no-store" : undefined,
       headers: {
         "Content-Type": "application/json",
         ...(init?.headers || {}),
@@ -70,7 +69,6 @@ async function http<T>(
         const body = await res.json();
         if (body?.error) errorMessage = body.error;
       } catch {
-        // ignore JSON parse errors
       }
       throw new Error(errorMessage);
     }
@@ -93,14 +91,10 @@ async function http<T>(
   }
 }
 
-// ============= API surface =============
-
 export const api = {
-  // Venues
   getVenues: () => http<{ data: VenueDto[] }>("/api/venues"),
   getVenue: (venueId: string) => http<VenueDetailDto>(`/api/venues/${venueId}`),
 
-  // Speakers
   getSpeakers: (params?: { page?: number; limit?: number }) => {
     const searchParams = new URLSearchParams();
     if (params?.page) searchParams.set("page", params.page.toString());
@@ -113,7 +107,6 @@ export const api = {
   getSpeaker: (speakerId: string) => 
     http<SpeakerProfileDto>(`/api/speakers/${speakerId}`),
 
-  // Events
   getEvents: (params?: GetEventsParams) => {
     const searchParams = new URLSearchParams();
     if (params?.page) searchParams.set("page", params.page.toString());
@@ -138,7 +131,6 @@ export const api = {
   },
   getEvent: (eventId: string) => http<EventDetailDto>(`/api/events/${eventId}`),
 
-  // Event Sessions
   getEventSessions: (eventId: string, params?: GetEventSessionsParams) => {
     const searchParams = new URLSearchParams();
     if (params?.room) searchParams.set("room", params.room);
@@ -147,36 +139,36 @@ export const api = {
 
     const query = searchParams.toString();
     return http<{ data: EventSessionSummaryDto[] }>(
-      `/api/events/${eventId}/sessions${query ? `?${query}` : ""}`,
+      `/api/events/${eventId}/event-sessions${query ? `?${query}` : ""}`,
     );
   },
   getEventSession: (sessionId: string) =>
     http<EventSessionDetailDto>(`/api/event-sessions/${sessionId}`),
 
-  // Rooms
   getEventRooms: (eventId: string) =>
     http<{ data: RoomDto[] }>(`/api/events/${eventId}/rooms`),
   getRoomSessions: (eventId: string, roomId: string) =>
     http<{ data: EventSessionSummaryDto[] }>(`/api/events/${eventId}/rooms/${roomId}/sessions`),
 
-  // Registrations
   registerForSession: (sessionId: string, data: SessionRegistrationRequestDto) =>
     http<SessionRegistrationResponseDto>(`/api/event-sessions/${sessionId}/registrations`, {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
-  // Questions
   getQuestions: (eventSessionId: string) =>
     http<{ data: QuestionDto[] }>(`/api/event-sessions/${eventSessionId}/questions`),
   createQuestion: (eventSessionId: string, content: string, authorName?: string) =>
     http<QuestionDto>(`/api/event-sessions/${eventSessionId}/questions`, {
       method: "POST",
       body: JSON.stringify({ content, authorName }),
-    })
+    }),
+  upvoteQuestion: (questionId: string, visitorId: string) =>
+    http<UpvoteResponseDto>(`/api/questions/${questionId}/upvote`, {
+      method: "POST",
+      body: JSON.stringify({ visitorId }),
+    }),
 };
-
-// ============= Helpers =============
 
 export function isEventLive(event: {
   startDate: string;
