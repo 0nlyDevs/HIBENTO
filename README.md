@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+  <img src="https://i.ibb.co/9HW62gc6/logo.png" alt="HiBento Logo" width="80" height="80"/>
+  <div>
+    <h1 style="margin: 0;">HIBENTO — Events Should Feel Alive</h1>
+  </div>
+</div>
 
-First, run the development server:
+<p>A modern event experience platform with real-time sessions, speaker profiles, and interactive Q&A ✨</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+<div align="center" style="margin-bottom: 1rem; margin-top: 1rem;">
+  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white">
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white">
+  <img src="https://img.shields.io/badge/Prisma-0C344B?style=for-the-badge&logo=prisma&logoColor=white">
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white">
+  <img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white">
+  <img src="https://img.shields.io/badge/shadcn/UI-000000?style=for-the-badge&logo=react&logoColor=white">
+  <img src="https://img.shields.io/badge/Zod-3068B7?style=for-the-badge&logo=zod&logoColor=white">
+  <img src="https://img.shields.io/badge/NextAuth-000000?style=for-the-badge&logo=nextauth&logoColor=white">
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white">
+</div>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+</div>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ✨ What is HiBento?
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+HiBento is a modern event platform that brings schedules, speakers, and Q&A into one seamless experience. Whether you're attending a conference or running a multi-track event, HiBento keeps everything alive and interactive.
 
-## Learn More
+## 🎀 Features
 
-To learn more about Next.js, take a look at the following resources:
+| Feature | Description | Technology |
+| :------ | :---------- | :--------- |
+| **Event Management** 🎪 | Browse and discover live and upcoming events with rich detail pages | Next.js App Router |
+| **Session Schedule** 📅 | Multi-track session listings with speaker info, time slots, and live status | Prisma + PostgreSQL |
+| **Speaker Profiles** 🎤 | Dedicated speaker pages with bios, external links, and session lists | Server Components |
+| **Live Q&A** 💬 | Real-time question submission and upvoting during sessions | API Routes |
+| **Favorites** ⭐ | Bookmark events and sessions for quick access | Zustand + LocalStorage |
+| **Video Streaming** 🎥 | Embedded video player with live indicator and fullscreen controls | YouTube IFrame API |
+| **Responsive Nav** 🧭 | Adaptive navigation with glassmorphism and mobile burger menu | Framer Motion + Tailwind |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚀 Quick Start
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Installation
 
-## Deploy on Vercel
+1. **Clone with love**
+   ```bash
+   git clone https://github.com/yourusername/hibento.git
+   cd hibento
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. **Environment setup**
+   ```bash
+   cp .env.example .env.local
+   # Fill in your environment variables 💫
+   ```
+
+4. **Generate Prisma client & push schema**
+   ```bash
+   npx prisma generate && npx prisma db push
+   ```
+
+5. **Start creating magic**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) and watch the magic unfold!
+
+## 📜 Scripts Guide
+
+| Script Command | Purpose | When to Use |
+| :--- | :--- | :--- |
+| `npm run dev` | Development server with Prisma generation | Daily development with hot reload |
+| `npm run build` | Production build with Prisma generation | Before deployment to Vercel |
+| `npm run start` | Start production server | After build to run optimized app |
+
+## 🖼️ App Preview
+
+<div align="center">
+
+![App Preview](https://i.ibb.co/PZ9Lp5Cp/Screenshot-From-2026-06-27-11-27-56.png)
+
+</div>
+
+## 🛠️ Deployment
+
+Deployed on **Vercel** for the frontend with **PostgreSQL** hosted on the cloud.
+
+Make sure to update API endpoints and environment variables for your production environment.
