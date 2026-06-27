@@ -33,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("h-full", "antialiased", manrope.variable, sora.variable, "font-sans", geist.variable)}>
+    <html lang="en" className={cn("h-full", "antialiased", manrope.variable, sora.variable, "font-sans", geist.variable)} data-scroll-behavior="smooth">
       <body className="min-h-screen overflow-x-hidden">
         <Script
           id="scroll-reset"
