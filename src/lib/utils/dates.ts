@@ -25,3 +25,29 @@ export function formatDateRange(start: Date, end: Date): string {
   const e = formatDate(end, "short");
   return `${s} – ${e}`;
 }
+
+export function formatTime(date: Date): string {
+  return date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+export function formatShortDate(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+}
+
+export function toDateKey(date: Date): string {
+  return date.toISOString().split("T")[0];
+}
+
+export function formatTimeRange(start: Date, end: Date): string {
+  return `${formatTime(start)} – ${formatTime(end)}`;
+}
+
+export function formatSessionStartsAt(date: Date): string {
+  return `Starts at ${formatTime(date)}`;
+}
