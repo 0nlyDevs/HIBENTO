@@ -1,23 +1,29 @@
 import type { Metadata } from "next";
-import { Inter, Noto_Sans_JP } from "next/font/google";
+import { Manrope, Sora, Geist } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
+import { cn } from "@/lib/utils";
 import { Providers } from "./providers";
-import { Nav } from "@/components/Nav";
+import { NavSelector, MainWrapper } from "@/components/layouts/NavSelector";
+import DotGrid from "@/components/circle-style/DotGrid";
 
-const inter = Inter({
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-manrope",
+  display: "swap",
 });
 
-const notoSansJP = Noto_Sans_JP({
+const sora = Sora({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-noto",
+  variable: "--font-sora",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "HIBENTO — Event Platform",
-  description: "Real-time event management and engagement platform",
+  title: "HiBento",
+  description: "Events should feel alive.",
 };
 
 export default function RootLayout({
@@ -26,11 +32,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${notoSansJP.variable}`}>
-      <body className="min-h-screen bg-cream font-sans antialiased">
+    <html lang="en" className={cn("h-full", "antialiased", manrope.variable, sora.variable, "font-sans", geist.variable)}>
+      <body className="min-h-screen overflow-x-hidden">
+        <Script
+          id="scroll-reset"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `history.scrollRestoration = "manual"; window.scrollTo(0, 0);`,
+          }}
+        />
+        <DotGrid />
+        <NavSelector />
         <Providers>
-          <Nav />
-          {children}
+          <MainWrapper>{children}</MainWrapper>
         </Providers>
       </body>
     </html>
