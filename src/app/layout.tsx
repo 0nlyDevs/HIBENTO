@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Providers } from "./providers";
 import { NavSelector, MainWrapper } from "@/components/layouts/NavSelector";
 import DotGrid from "@/components/circle-style/DotGrid";
+import { Analytics } from "@vercel/analytics/next"
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -42,6 +43,7 @@ export default function RootLayout({
             __html: `history.scrollRestoration = "manual"; window.scrollTo(0, 0);`,
           }}
         />
+        <Analytics />
         <DotGrid />
         <NavSelector />
         <Providers>
