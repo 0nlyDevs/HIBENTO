@@ -83,7 +83,7 @@ export const Nav = () => {
     <>
       <style>{NAV_STYLES}</style>
       <header className="fixed top-0 inset-x-0 z-50 flex items-center justify-start gap-1 px-6 md:px-10 py-8 pointer-events-none">
-        <div className="flex items-center justify-center w-11 h-12 shrink-0 pointer-events-auto" style={GLASS_STYLE}>
+        <div className="flex items-center justify-center w-11 h-12 shrink-0 pointer-events-auto z-[71]" style={GLASS_STYLE}>
           <button
             aria-label="Open menu"
             onClick={toggleMenu}
