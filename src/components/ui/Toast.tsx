@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useCallback, ReactNode } from "rea
 
 type ToastType = "success" | "error" | "info";
 
-interface Toast {
+interface ToastItem {
   id: string;
   message: string;
   type: ToastType;
@@ -19,22 +19,20 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 export function useToast() {
   const context = useContext(ToastContext);
   if (!context) {
-    return { toast: (message: string, type?: ToastType) => {
-      console.log(`Toast: ${message} (${type})`);
-    }};
+    return { toast: () => {} };
   }
   return context;
 }
 
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   const addToast = useCallback((message: string, type: ToastType = "info") => {
     const id = Math.random().toString(36).substr(2, 9);
     setToasts((prev) => [...prev, { id, message, type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+    }, 3500);
   }, []);
 
   return (
@@ -44,13 +42,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`px-4 py-3 bg-charcoal text-cream text-sm tracking-wider border-l-4 animate-slide-up ${
-              t.type === "success" ? "border-l-matcha" :
-              t.type === "error" ? "border-l-sakura" :
-              "border-l-yellow"
-            }`}
+            className="card-glass squircle-lg px-4 py-3 min-w-70 max-w-sm flex items-start gap-3 shadow-deep animate-nudge-up"
           >
-            {t.message}
+            <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+              { success: "bg-chartreuse", error: "bg-rose-500", info: "bg-chartreuse/50" }[t.type]
+            }`} />
+            <p className="text-sm text-ivory/85 tracking-wider font-medium">{t.message}</p>
           </div>
         ))}
       </div>
