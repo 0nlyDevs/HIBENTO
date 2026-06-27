@@ -20,6 +20,12 @@ export function formatDate(
   return date.toLocaleDateString("en-US", base);
 }
 
+export function formatFullDate(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    weekday: "long", month: "long", day: "numeric", year: "numeric",
+  });
+}
+
 export function formatDateRange(start: Date, end: Date): string {
   const s = formatDate(start, "short");
   const e = formatDate(end, "short");

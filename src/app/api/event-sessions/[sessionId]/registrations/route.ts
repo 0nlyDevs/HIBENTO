@@ -46,27 +46,28 @@ export async function POST(
       );
     }
 
-    if (session.capacity) {
-      const count = await prisma.sessionRegistration.count({
-        where: { eventSessionId: sessionId },
-      });
-
-      if (count >= session.capacity) {
-        return NextResponse.json(
-          { error: "Session is full" },
-          { status: 409 }
-        );
-      }
-    }
-
-    const existing = await prisma.sessionRegistration.findUnique({
-      where: {
-        eventSessionId_email: {
-          eventSessionId: sessionId,
-          email,
+    const [countResult, existing] = await Promise.all([
+      session.capacity
+        ? prisma.sessionRegistration.count({
+            where: { eventSessionId: sessionId },
+          })
+        : Promise.resolve(0),
+      prisma.sessionRegistration.findUnique({
+        where: {
+          eventSessionId_email: {
+            eventSessionId: sessionId,
+            email,
+          },
         },
-      },
-    });
+      }),
+    ]);
+
+    if (session.capacity && countResult >= session.capacity) {
+      return NextResponse.json(
+        { error: "Session is full" },
+        { status: 409 }
+      );
+    }
 
     if (existing) {
       return NextResponse.json(

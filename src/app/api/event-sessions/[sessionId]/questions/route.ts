@@ -18,9 +18,15 @@ export async function GET(
       );
     }
 
-    const session = await prisma.eventSession.findUnique({
-      where: { id: sessionId },
-    });
+    const [session, questions] = await Promise.all([
+      prisma.eventSession.findUnique({
+        where: { id: sessionId },
+      }),
+      prisma.question.findMany({
+        where: { eventSessionId: sessionId },
+        orderBy: { upvotes: "desc" },
+      }),
+    ]);
 
     if (!session) {
       return NextResponse.json(
@@ -28,11 +34,6 @@ export async function GET(
         { status: 404 }
       );
     }
-
-    const questions = await prisma.question.findMany({
-      where: { eventSessionId: sessionId },
-      orderBy: { upvotes: "desc" },
-    });
 
     const response: QuestionDto[] = questions.map((q: Question) => ({
       id: q.id,
