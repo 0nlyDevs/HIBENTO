@@ -27,6 +27,11 @@ export async function POST(
 
     const question = await prisma.question.findUnique({
       where: { id: questionId },
+      include: {
+        eventSession: {
+          select: { startTime: true, endTime: true },
+        },
+      },
     });
 
     if (!question) {
@@ -36,18 +41,7 @@ export async function POST(
       );
     }
 
-    const session = await prisma.eventSession.findUnique({
-      where: { id: question.eventSessionId },
-    });
-
-    if (!session) {
-      return NextResponse.json(
-        { error: "Session does not exist" },
-        { status: 404 }
-      );
-    }
-
-    const isLive = getEventSessionStatus(session) === "live";
+    const isLive = getEventSessionStatus(question.eventSession) === "live";
     if (!isLive) {
       return NextResponse.json(
         { error: "Question can only be upvoted when session is live" },
@@ -64,8 +58,10 @@ export async function POST(
       },
     });
 
+    let updatedUpvotes: number;
+
     if (existingUpvote) {
-      await prisma.$transaction([
+      const [, updated] = await prisma.$transaction([
         prisma.questionUpvote.delete({
           where: {
             questionId_visitorId: {
@@ -79,8 +75,9 @@ export async function POST(
           data: { upvotes: { decrement: 1 } },
         }),
       ]);
+      updatedUpvotes = updated.upvotes;
     } else {
-      await prisma.$transaction([
+      const [, created] = await prisma.$transaction([
         prisma.questionUpvote.create({
           data: { questionId, visitorId },
         }),
@@ -89,15 +86,11 @@ export async function POST(
           data: { upvotes: { increment: 1 } },
         }),
       ]);
+      updatedUpvotes = created.upvotes;
     }
 
-    const result = await prisma.question.findUnique({
-      where: { id: questionId },
-      select: { upvotes: true },
-    });
-
     return NextResponse.json(
-      { success: true, upvotes: result!.upvotes },
+      { success: true, upvotes: updatedUpvotes },
       { status: 200 }
     );
   } catch (err) {
