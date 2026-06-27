@@ -71,11 +71,12 @@ export function Nav() {
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               <Image
-                src="/images/brand/header-text-white1497×414@3x.png"
+                src="/images/brand/header-text-white1497x414@3x.png"
                 alt="HiBento"
                 width={100}
                 height={30}
                 className="h-auto w-auto"
+                style={{ width: "auto", height: "auto" }}
                 priority
               />
             </motion.div>
