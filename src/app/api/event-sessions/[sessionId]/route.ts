@@ -50,9 +50,6 @@ type EventSessionWithDetails = {
     upvotes: number;
     createdAt: Date;
   }>;
-  _count: {
-    registrations: number;
-  };
 };
 
 export async function GET(
@@ -90,9 +87,7 @@ export async function GET(
             upvotes: "desc",
           },
         },
-        _count: {
-          select: { registrations: true },
-        },
+
       },
     })) as EventSessionWithDetails | null;
 
@@ -103,6 +98,9 @@ export async function GET(
       );
     }
 
+    if (session.speakers.length === 0) {
+      console.warn(`[WARN] Session ${sessionId} has no speakers — violates business rule §5`);
+    }
 
     const isLive = getEventSessionStatus(session) === "live";
     const isOnline = session.event.isOnline;
@@ -138,7 +136,6 @@ export async function GET(
       capacity: session.capacity,
       isOnline: isOnline,
       isLive: isLive,
-      registrationCount: session._count.registrations,
       speakers: session.speakers.map(
         (sessionSpeaker): SpeakerDetailDto => ({
           id: sessionSpeaker.speaker.id,
