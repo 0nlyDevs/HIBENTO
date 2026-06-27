@@ -64,24 +64,24 @@ INSERT INTO speaker (id, name, avatar_url, bio, created_at, updated_at) VALUES
 
 -- ==================== SPEAKER LINKS ====================
 INSERT INTO speaker_external_link (id, "speakerId", link_type, url, created_at) VALUES
-('990e8400-e29b-41d4-a716-446655440001'::uuid, '880e8400-e29b-41d4-a716-446655440001'::uuid, 'TWITTER', 'https://twitter.com/rijarakoto', NOW()),
+('990e8400-e29b-41d4-a716-446655440001'::uuid, '880e8400-e29b-41d4-a716-446655440001'::uuid, 'X', 'https://twitter.com/rijarakoto', NOW()),
 ('990e8400-e29b-41d4-a716-446655440002'::uuid, '880e8400-e29b-41d4-a716-446655440001'::uuid, 'GITHUB', 'https://github.com/rijarakoto', NOW()),
 ('990e8400-e29b-41d4-a716-446655440003'::uuid, '880e8400-e29b-41d4-a716-446655440002'::uuid, 'LINKEDIN', 'https://linkedin.com/in/miora', NOW()),
-('990e8400-e29b-41d4-a716-446655440004'::uuid, '880e8400-e29b-41d4-a716-446655440003'::uuid, 'TWITTER', 'https://twitter.com/lovaai', NOW()),
+('990e8400-e29b-41d4-a716-446655440004'::uuid, '880e8400-e29b-41d4-a716-446655440003'::uuid, 'X', 'https://twitter.com/lovaai', NOW()),
 ('990e8400-e29b-41d4-a716-446655440005'::uuid, '880e8400-e29b-41d4-a716-446655440004'::uuid, 'LINKEDIN', 'https://linkedin.com/in/tiana', NOW()),
 ('990e8400-e29b-41d4-a716-446655440006'::uuid, '880e8400-e29b-41d4-a716-446655440005'::uuid, 'OTHER', 'https://youtube.com/@hajatech', NOW()),
 ('990e8400-e29b-41d4-a716-446655440007'::uuid, '880e8400-e29b-41d4-a716-446655440006'::uuid, 'GITHUB', 'https://github.com/fetrar', NOW()),
-('990e8400-e29b-41d4-a716-446655440008'::uuid, '880e8400-e29b-41d4-a716-446655440006'::uuid, 'TWITTER', 'https://twitter.com/fetrar', NOW()),
+('990e8400-e29b-41d4-a716-446655440008'::uuid, '880e8400-e29b-41d4-a716-446655440006'::uuid, 'X', 'https://twitter.com/fetrar', NOW()),
 ('990e8400-e29b-41d4-a716-446655440009'::uuid, '880e8400-e29b-41d4-a716-446655440007'::uuid, 'LINKEDIN', 'https://linkedin.com/in/nomena', NOW()),
 ('990e8400-e29b-41d4-a716-446655440010'::uuid, '880e8400-e29b-41d4-a716-446655440008'::uuid, 'GITHUB', 'https://github.com/tolotra', NOW()),
-('990e8400-e29b-41d4-a716-446655440011'::uuid, '880e8400-e29b-41d4-a716-446655440008'::uuid, 'TWITTER', 'https://twitter.com/tolotra', NOW()),
-('990e8400-e29b-41d4-a716-446655440012'::uuid, '880e8400-e29b-41d4-a716-446655440009'::uuid, 'TWITTER', 'https://twitter.com/mamisoa', NOW()),
+('990e8400-e29b-41d4-a716-446655440011'::uuid, '880e8400-e29b-41d4-a716-446655440008'::uuid, 'X', 'https://twitter.com/tolotra', NOW()),
+('990e8400-e29b-41d4-a716-446655440012'::uuid, '880e8400-e29b-41d4-a716-446655440009'::uuid, 'X', 'https://twitter.com/mamisoa', NOW()),
 ('990e8400-e29b-41d4-a716-446655440013'::uuid, '880e8400-e29b-41d4-a716-446655440010'::uuid, 'OTHER', 'https://soa.sec/blog', NOW()),
 ('990e8400-e29b-41d4-a716-446655440014'::uuid, '880e8400-e29b-41d4-a716-446655440010'::uuid, 'GITHUB', 'https://github.com/soarab', NOW()),
-('990e8400-e29b-41d4-a716-446655440015'::uuid, '880e8400-e29b-41d4-a716-446655440011'::uuid, 'TWITTER', 'https://twitter.com/heryflut', NOW()),
+('990e8400-e29b-41d4-a716-446655440015'::uuid, '880e8400-e29b-41d4-a716-446655440011'::uuid, 'X', 'https://twitter.com/heryflut', NOW()),
 ('990e8400-e29b-41d4-a716-446655440016'::uuid, '880e8400-e29b-41d4-a716-446655440012'::uuid, 'GITHUB', 'https://github.com/tahiri', NOW()),
 ('990e8400-e29b-41d4-a716-446655440017'::uuid, '880e8400-e29b-41d4-a716-446655440013'::uuid, 'LINKEDIN', 'https://linkedin.com/in/mendrika', NOW()),
-('990e8400-e29b-41d4-a716-446655440018'::uuid, '880e8400-e29b-41d4-a716-446655440014'::uuid, 'TWITTER', 'https://twitter.com/voahangy_ml', NOW()),
+('990e8400-e29b-41d4-a716-446655440018'::uuid, '880e8400-e29b-41d4-a716-446655440014'::uuid, 'X', 'https://twitter.com/voahangy_ml', NOW()),
 ('990e8400-e29b-41d4-a716-446655440019'::uuid, '880e8400-e29b-41d4-a716-446655440015'::uuid, 'GITHUB', 'https://github.com/sitraka', NOW());
 
 -- ==================== LIVE SESSIONS (ALL HAPPENING RIGHT NOW - JUNE 27, 2026) ====================

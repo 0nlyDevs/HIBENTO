@@ -9,7 +9,7 @@ datasource db {
 enum LinkType {
   WEBSITE
   GITHUB
-  TWITTER
+  X
   LINKEDIN
   FACEBOOK
   INSTAGRAM
