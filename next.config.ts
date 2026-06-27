@@ -11,6 +11,7 @@ const nextConfig = {
         hostname: "i.pravatar.cc",
       },
     ],
+    qualities: [75, 85],
   },
 };
 
