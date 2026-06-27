@@ -58,7 +58,7 @@ HiBento is a modern event platform that brings schedules, speakers, and Q&A into
 3. **Environment setup**
 
    ```bash
-   cp .env.example .env.local
+   cp .env.example .env
    # Fill in your environment variables
    ```
 
