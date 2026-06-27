@@ -103,6 +103,10 @@ export async function GET(
       );
     }
 
+    if (session.speakers.length === 0) {
+      console.warn(`[GET /api/event-sessions/:sessionId] Session ${sessionId} has no speakers`);
+    }
+
     const isLive = getEventSessionStatus(session) === "live";
     const isOnline = session.event.isOnline;
 
