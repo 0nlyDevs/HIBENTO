@@ -21,10 +21,10 @@ export const footerConfig: FooterConfig = {
     {
       title: "PRODUCT",
       links: [
-        { label: "Browse Events", href: "/events" },
-        { label: "Speakers", href: "/speakers" },
+        { label: "Overview", href: "#product" },
         { label: "Live Q&A", href: "#qa" },
         { label: "Planning", href: "#planning" },
+        { label: "Speakers", href: "#speakers" },
       ],
     },
     {

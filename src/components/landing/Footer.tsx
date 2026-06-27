@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { footerConfig, FooterConfig } from "@/data/footer";
 
 interface FooterProps {
@@ -8,13 +9,10 @@ export const Footer = ({ config: propConfig }: FooterProps) => {
   const displayConfig = propConfig || footerConfig;
   return (
     <footer className="text-foreground/70 border-t border-border py-12">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-6 md:px-16 lg:px-20">
         <div className="grid md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-accent blink-dot" />
-              <span className="font-display font-bold text-2xl text-foreground">HiBento</span>
-            </div>
+            <Image src="/images/brand/header-white-text.svg" alt="HiBento" width={140} height={28} className="h-7 w-auto" />
             <p className="mt-4 max-w-sm text-sm leading-relaxed">
               {displayConfig.brandDescription}
             </p>

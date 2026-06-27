@@ -6,11 +6,13 @@ export default function NotFound() {
     <div className="relative min-h-screen w-full overflow-hidden flex flex-col items-center justify-center">
 
       <Image
-        src="/forest.png"
+        src="/images/forest.png"
         alt=""
         fill
         className="object-cover object-center"
+        sizes="100vw"
         priority
+        quality={90}
       />
 
       <div className="absolute inset-0 bg-background/40" />
@@ -24,10 +26,12 @@ export default function NotFound() {
       <div className="absolute inset-0 flex items-end justify-center z-20">
         <div className="relative w-full max-w-3xl h-screen">
           <Image
-            src="/lost-person.png"
+            src="/images/lost-person.png"
             alt="Lost person"
             fill
             className="object-contain object-center"
+            sizes="100vw"
+            quality={90}
           />
         </div>
       </div>

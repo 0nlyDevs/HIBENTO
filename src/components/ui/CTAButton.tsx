@@ -7,7 +7,6 @@ interface Props {
   as?: "a" | "button";
   onClick?: () => void;
   newTab?: boolean;
-  type?: "button" | "submit" | "reset";
   className?: string;
   textClassName?: string;
   arrowClassName?: string;
@@ -21,7 +20,6 @@ export default function CTAButton({
   as = "a",
   onClick,
   newTab = false,
-  type = "button",
   className = "",
   textClassName = "",
   arrowClassName = "",
@@ -52,7 +50,7 @@ export default function CTAButton({
 
   if (as === "button") {
     return (
-      <button type={type} onClick={onClick} className={`${styles.root} ${className}`}>
+      <button type="button" onClick={onClick} className={`${styles.root} ${className}`}>
         {inner}
       </button>
     );

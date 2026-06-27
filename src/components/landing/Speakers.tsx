@@ -1,8 +1,7 @@
-"use client";
-
 import Image from "next/image";
 import { Users, Presentation, UserRound, ArrowRight, BadgeCheck } from "lucide-react";
 import { Speaker, speakers } from "@/data/speakers";
+import Link from "next/link";
 
 interface SpeakersProps {
   speakers?: Speaker[];
@@ -22,8 +21,8 @@ const row2Styles: React.CSSProperties[] = [
 function SpeakerCard({ s, i, style }: { s: Speaker; i: number; style: React.CSSProperties }) {
   return (
     <article
-      className="group relative squircle-lg overflow-hidden cursor-pointer shadow-deep shrink-0"
-      style={{ width: "280px", height: "380px", ...style }}
+      className="group relative squircle-lg overflow-hidden cursor-pointer shadow-deep shrink-0 w-full aspect-280/380 sm:w-50 sm:h-72.5 md:w-60 md:h-85 lg:w-70 lg:h-95"
+      style={style}
     >
       {s.image ? (
         <Image
@@ -31,7 +30,8 @@ function SpeakerCard({ s, i, style }: { s: Speaker; i: number; style: React.CSSP
           alt={s.name}
           fill
           className="object-cover object-top"
-          sizes="240px"
+          sizes="(max-width: 640px) 50vw, (max-width: 768px) 200px, (max-width: 1024px) 240px, 280px"
+          quality={85}
         />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center font-display font-bold text-5xl text-white/80"
@@ -76,9 +76,9 @@ export const Speakers = ({ speakers: propSpeakers }: SpeakersProps) => {
   const total = all.length;
 
   return (
-    <section id="speakers" className="relative py-28 md:py-40 overflow-hidden">
-      <div className="container mx-auto relative">
-        <div className="flex items-end justify-between mb-32 flex-wrap gap-6">
+    <section id="speakers" className="relative py-16 md:py-24 overflow-hidden">
+      <div className="container mx-auto px-6 md:px-16 lg:px-20 relative">
+        <div className="flex items-end justify-between mb-16 flex-wrap gap-6">
           <div>
             <p className="label-mono text-accent mb-6">§ 04 Speakers</p>
             <h2 className="text-display text-[clamp(2.5rem,6vw,5rem)] text-foreground">
@@ -91,26 +91,38 @@ export const Speakers = ({ speakers: propSpeakers }: SpeakersProps) => {
           </p>
         </div>
 
-        <div className="flex flex-col items-center gap-28">
-          {/* Row 1 — 3 cards */}
-          <div className="flex items-start justify-center gap-20">
+        <div className="grid md:hidden grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center">
+          {all.slice(0, 5).map((s, i) => (
+            <SpeakerCard key={s.name} s={s} i={i} style={{}} />
+          ))}
+          <Link
+            href="/speakers"
+            className="flex items-center justify-center gap-3 w-36 h-36 rounded-full bg-accent hover:brightness-110 transition-all duration-300 shadow-deep"
+          >
+            <ArrowRight size={26} className="text-charcoal" />
+            <span className="label-mono text-charcoal font-bold text-[0.65rem] text-center leading-tight">
+              {total} speakers
+            </span>
+          </Link>
+        </div>
+
+        <div className="hidden md:flex flex-col items-center gap-28">
+          <div className="flex items-start justify-center gap-10 lg:gap-20">
             {row1.map((s, i) => (
-              <SpeakerCard key={i} s={s} i={i} style={row1Styles[i]} />
+              <SpeakerCard key={s.name} s={s} i={i} style={row1Styles[i]} />
             ))}
           </div>
 
-          {/* Row 2 — 2 cards + All speakers button */}
-          <div className="flex items-start justify-center gap-20">
+          <div className="flex items-start justify-center gap-10 lg:gap-20">
             {row2.map((s, i) => (
-              <SpeakerCard key={i} s={s} i={i + 3} style={row2Styles[i]} />
+              <SpeakerCard key={s.name} s={s} i={i + 3} style={row2Styles[i]} />
             ))}
 
-            {/* All speakers button */}
             <div
-              className="shrink-0 flex items-center justify-center"
-              style={{ width: "280px", height: "380px", rotate: "6deg", translate: "0px -25px" }}
+              className="shrink-0 flex items-center justify-center w-60 h-85 lg:w-70 lg:h-95"
+              style={{ rotate: "6deg", translate: "0px -25px" }}
             >
-              <a
+              <Link
                 href="/speakers"
                 className="group flex flex-col items-center justify-center gap-3 w-36 h-36 rounded-full bg-accent hover:brightness-110 transition-all duration-300 shadow-deep"
               >
@@ -118,7 +130,7 @@ export const Speakers = ({ speakers: propSpeakers }: SpeakersProps) => {
                 <span className="label-mono text-charcoal font-bold text-[0.65rem] text-center leading-tight">
                   {total} speakers
                 </span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

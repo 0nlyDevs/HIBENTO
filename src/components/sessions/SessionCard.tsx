@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import type { EventSessionSummaryDto } from "@/types/dto";
 import { formatDate } from "@/lib/utils/dates";
@@ -18,6 +16,8 @@ export function SessionCard({ session, compact = false }: SessionCardProps) {
 
   const isNow = session.isLive;
 
+  const borderLeftColor = session.isLive ? "#EAE151" : isPast ? "#ccc" : "#EAE151";
+
   return (
     <Link
       href={`/sessions/${session.id}`}
@@ -27,7 +27,7 @@ export function SessionCard({ session, compact = false }: SessionCardProps) {
       style={{
         background: isNow ? "#FEFAE6" : "#FEFCF7",
         border: "1px solid rgba(40,40,40,0.1)",
-        borderLeft: `3px solid ${session.isLive ? "#EAE151" : isPast ? "#ccc" : "#EAE151"}`,
+        borderLeft: `3px solid ${borderLeftColor}`,
       }}
     >
       <div className="flex items-center gap-2 mb-1.5">

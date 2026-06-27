@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { CTAConfig, ctaConfig } from "@/data/cta";
 import { TypingAnimation } from "@/components/ui/typing-animation";
-import CTAButton from "@/components/ui/CTAButton";
 
 interface CTAProps {
   config?: CTAConfig;
@@ -16,12 +15,12 @@ export const CTA = ({ config: propConfig }: CTAProps) => {
   return (
     <section
       id="cta"
-      className="relative py-28 md:py-40 overflow-hidden"
+      className="relative py-16 md:py-24 overflow-hidden"
     >
 
-      <div className="container mx-auto relative">
+      <div className="container mx-auto px-6 md:px-16 lg:px-20 relative">
         <p className="label-mono text-accent mb-6">{displayConfig.tagline}</p>
-        <h2 className="text-display text-[clamp(3rem,9vw,8rem)] text-foreground leading-[0.95]">
+        <h2 className="text-display text-[clamp(2.5rem,5vw,4.5rem)] text-foreground leading-[0.95]">
           {displayConfig.heading}
           <br />
           <span className="text-accent">{displayConfig.subheading}</span>
@@ -44,29 +43,28 @@ export const CTA = ({ config: propConfig }: CTAProps) => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full card-glass px-5 py-4 text-foreground focus:outline-none focus:border-accent pill relative z-10"
+              className="w-full card-glass px-5 py-4 text-foreground focus:outline-none focus:border-accent pill relative z-10 bg-transparent"
             />
             {!email && (
-              <div className="absolute inset-0 flex items-center px-5 pointer-events-none z-20">
+              <div className="absolute inset-0 flex items-center px-5 pointer-events-none">
                 <TypingAnimation
                   words={["you@event.com", "organiser@summit.io", "hello@conference.co"]}
                   cursorStyle="underscore"
                   loop
                   duration={70}
                   pauseDelay={2200}
-                  className="text-sm font-normal tracking-normal text-foreground/80"
+                  className="text-sm font-normal tracking-normal text-foreground/40"
                 />
               </div>
             )}
           </div>
-          <CTAButton
-            as="button"
+          <button
             type="submit"
-            label={done ? displayConfig.doneText : displayConfig.buttonText}
-            color="var(--color-accent)"
-            textColor="var(--color-background)"
-            className="label-mono"
-          />
+            className="label-mono pill px-8 py-4 bg-accent text-accent-foreground hover:opacity-90 transition lift squish"
+            disabled={!email.trim()}
+          >
+            {done ? displayConfig.doneText : displayConfig.buttonText}
+          </button>
         </form>
 
         <div className="mt-16 grid sm:grid-cols-3 gap-6">

@@ -20,7 +20,7 @@ export const heroContent: HeroContent = {
   description: "HiBento turns any event into one live screen. Stream, ask, vote. No PDFs. No login walls. Just the room, in real time.",
   cta: {
     primary: "Try it free",
-    secondary: "Browse events",
+    secondary: "See how",
   },
   bottomStrip: {
     categories: "Tech · Workshops · Meetups · Summits",

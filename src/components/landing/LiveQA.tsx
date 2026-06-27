@@ -3,7 +3,6 @@
 import { ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { useReveal } from "@/hooks/useReveal";
 import { Question, initialQuestions } from "@/data/questions";
 import SwipeLettersButton from "@/components/ui/SwipeLetterButton";
 import { TypingAnimation } from "@/components/ui/typing-animation";
@@ -15,7 +14,6 @@ interface LiveQAProps {
 }
 
 export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
-  const ref = useReveal<HTMLDivElement>();
   const listRef = useRef<HTMLUListElement>(null);
   const [questions, setQuestions] = useState(propQuestions || initialQuestions);
   const [draft, setDraft] = useState("");
@@ -53,12 +51,20 @@ export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
   const remaining = MAX_CHARS - draft.length;
   const canSubmit = draft.trim().length > 0 && draft.length <= MAX_CHARS;
 
+  let remainingColor: string;
+  if (remaining < 10) {
+    remainingColor = "text-rose-400";
+  } else if (remaining < 40) {
+    remainingColor = "text-accent";
+  } else {
+    remainingColor = "text-foreground/25";
+  }
+
   return (
-    <section id="qa" className="relative py-28 md:py-40 overflow-hidden">
-      <div className="container mx-auto relative">
+    <section id="qa" className="relative pt-32 md:pt-40 pb-24 md:pb-32 overflow-hidden">
+      <div className="container mx-auto px-6 md:px-16 lg:px-20 relative">
         <div className="grid lg:grid-cols-12 gap-12 items-end">
 
-          {/* Left — copy card, tilted right, pushed up */}
           <div className="lg:col-span-5 md:rotate-2 md:-translate-y-20 card-glass squircle-lg p-8 lift">
             <p className="label-mono text-accent mb-6">§ 02 Live Q&A</p>
             <h2 className="text-display text-[clamp(2.5rem,6vw,5rem)] text-foreground">
@@ -85,22 +91,20 @@ export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
             </ul>
           </div>
 
-          {/* Right — image on top + interactive card below, tilted left */}
           <div className="lg:col-span-7 md:-rotate-1 flex flex-col gap-4">
 
-            {/* Image stylisée */}
             <div className="relative w-3/4 self-start h-52 squircle-lg overflow-hidden md:-rotate-3 shadow-deep md:-translate-y-16 md:translate-x-4">
               <Image
-                src="/liveqa.jpg"
+                src="/images/liveqa.jpg"
                 alt="Live Q&A in action"
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 768px) 100vw, 40vw"
+                quality={85}
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
             </div>
 
-            {/* Interactive card */}
             <div className="squircle-lg card-glass overflow-hidden shadow-deep">
 
                 <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
@@ -113,13 +117,12 @@ export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
                   <div className="flex items-center gap-3">
                     <span className="label-mono text-foreground/40">{questions.length} questions</span>
                     <span className="label-mono pill flex items-center gap-2 px-3 py-1.5 glow-chip text-chartreuse-soft font-bold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-charcoal blink-dot" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-charcoal" />
                       LIVE
                     </span>
                   </div>
                 </div>
 
-              {/* Form */}
               <form onSubmit={submit} className="px-6 py-4 border-b border-white/10 bg-white/5">
                 <div className="relative">
                   <textarea
@@ -162,7 +165,7 @@ export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
                         </div>
                       )}
                     </div>
-                    <span className={`label-mono shrink-0 tabular-nums ${remaining < 40 ? remaining < 10 ? "text-rose-400" : "text-accent" : "text-foreground/25"}`}>
+                    <span className={`label-mono shrink-0 tabular-nums ${remainingColor}`}>
                       {remaining}
                     </span>
                   </div>
@@ -180,7 +183,6 @@ export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
                 </div>
               </form>
 
-              {/* Questions list */}
               {questions.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-foreground/30">
                   <span className="text-4xl mb-3">💬</span>
@@ -195,7 +197,7 @@ export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
                         flashId === q.id ? "bg-accent/10" : "hover:bg-white/5"
                       }`}
                     >
-                      {/* Content */}
+
                       <div className="flex-1 min-w-0">
                         <p className={`leading-snug text-sm ${idx === 0 ? "text-foreground font-medium" : "text-foreground/80"}`}>
                           {q.content}
@@ -203,7 +205,6 @@ export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
                         <p className="label-mono text-foreground/40 mt-1.5">{q.authorName}</p>
                       </div>
 
-                      {/* Upvote — pill style */}
                       <div className="flex flex-col items-center gap-1 shrink-0">
                         <button
                           onClick={() => upvote(q.id)}
@@ -215,7 +216,7 @@ export const LiveQA = ({ initialQuestions: propQuestions }: LiveQAProps) => {
                         >
                           <ThumbsUp
                             size={16}
-                            className={!q.voted ? "animate-nudge-up" : ""}
+                            className=""
                           />
                         </button>
                         <span className={`font-display font-bold text-sm leading-none ${q.voted ? "text-accent" : "text-foreground/50"}`}>

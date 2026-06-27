@@ -1,4 +1,3 @@
-import { Nav } from "@/components/landing/Nav";
 import { Hero } from "@/components/landing/Hero";
 import { CTA } from "@/components/landing/CTA";
 import { Manifesto } from "@/components/landing/Manifesto";
@@ -11,8 +10,7 @@ import { Marquee } from "@/components/landing/Marquee";
 
 export default function Home() {
   return (
-    <main>
-      <Nav ctaHref="/events" ctaLabel="Browse Events" />
+    <>
       <Hero />
       <Marquee />
       <Manifesto />
@@ -22,6 +20,6 @@ export default function Home() {
       <FAQ />
       <CTA />
       <Footer />
-    </main>
+    </>
   );
 }

@@ -13,7 +13,7 @@ export const manifestoCards: ManifestoCard[] = [
     icon: "",
     title: "PDFs that go stale.",
     body: "Printed schedules, last-minute changes scribbled in the margins, attendees lost between rooms.",
-    image: "/hibento-vibes-01.webp",
+    image: "/images/hibento-vibes-01.jpg",
     bg: "bg-chartreuse",
   },
   {
@@ -21,7 +21,7 @@ export const manifestoCards: ManifestoCard[] = [
     icon: "",
     title: "One live screen.",
     body: "Every track, room, and speaker in real time. The room reorganises itself as the day unfolds.",
-    image: "/hibento-vibes-02.webp",
+    image: "/images/hibento-vibes-02.webp",
     bg: "bg-chartreuse-soft",
   },
   {
@@ -29,7 +29,7 @@ export const manifestoCards: ManifestoCard[] = [
     icon: "",
     title: "Memory of the room.",
     body: "Every question asked, every session attended and captured for organisers, ready for next time.",
-    image: "/hibento-vibes-03.jpg",
+    image: "/images/hibento-vibes-03.jpg",
     bg: "bg-chartreuse-pale",
   },
 ];

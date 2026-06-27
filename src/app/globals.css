@@ -10,16 +10,22 @@
 
   --color-background: var(--color-charcoal);
   --color-foreground: var(--color-ivory);
+
   --color-card: var(--color-surface);
   --color-card-foreground: var(--color-ivory);
   --color-popover: var(--color-surface);
   --color-popover-foreground: var(--color-ivory);
+
   --color-primary: var(--color-chartreuse);
+
   --color-accent: var(--color-chartreuse);
   --color-accent-foreground: var(--color-charcoal);
+
   --color-secondary: var(--color-chartreuse-soft);
   --color-secondary-foreground: var(--color-charcoal);
+
   --color-muted: var(--color-surface);
+
   --color-border: hsl(260 8% 22%);
 
   --radius: 0.75rem;
@@ -32,10 +38,10 @@
   --color-terracotta-deep: hsl(59 73% 32%);
   --color-cream: var(--color-charcoal);
   --color-cream-soft: var(--color-surface);
-  --color-paper: var(--color-surface);
-  --color-glass: #222222E6;
+  --color-glass: #222222e6;
 
-  --shadow-soft: 0 1px 2px hsl(260 9% 10% / 0.4), 0 8px 24px -8px hsl(260 9% 10% / 0.5);
+  --shadow-soft:
+    0 1px 2px hsl(260 9% 10% / 0.4), 0 8px 24px -8px hsl(260 9% 10% / 0.5);
   --shadow-deep: 0 30px 60px -20px hsl(var(--color-chartreuse) / 0.25);
 
   --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
@@ -44,59 +50,74 @@
   --animate-marquee: marquee 40s linear infinite;
   --animate-blink: blink 1.4s ease-in-out infinite;
   --animate-nudge-up: nudge-up 1.8s ease-in-out infinite;
-  --animate-blink-cursor: blink-cursor 1.2s step-end infinite;
+  --animate-nudge-up: nudge-up 1.8s ease-in-out infinite;
 
   --font-sans: var(--font-manrope), system-ui, sans-serif;
   --font-serif: var(--font-sora), system-ui, sans-serif;
   --font-mono: var(--font-mono), ui-monospace, monospace;
-
+  --animate-blink-cursor: blink-cursor 1.2s step-end infinite;
   @keyframes blink-cursor {
-    0%, 49% { opacity: 1; }
-    50%, 100% { opacity: 0; }
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
   }
+}
+
+/* ── Global scrollbar styling ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: hsl(59 73% 52% / 0.45);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 html {
   scroll-behavior: smooth;
-  min-height: 100%;
-  background-color: hsl(260 9% 18%);
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
-  background-color: hsl(260 9% 18%) !important;
-  background-image: url('/background.webp') !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-attachment: fixed !important;
+  background-color: hsl(260 9% 18%);
+  background-image: url("/images/background.webp");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   color: hsl(84 64% 98%);
   -webkit-font-smoothing: antialiased;
   font-family: var(--font-sans);
-  font-feature-settings: 'ss01', 'cv11';
+  font-feature-settings: "ss01", "cv11";
 }
-
-* { box-sizing: border-box; }
 
 ::selection {
-  background: hsl(59 73% 52%);
-  color: hsl(260 9% 18%);
+  background: hsl(var(--color-chartreuse));
+  color: hsl(var(--color-charcoal));
 }
 
-/* ── Container ── */
-@utility container {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-  @media (min-width: 1024px) {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
-}
-
-/* ── Typography ── */
 @utility text-display {
   font-family: var(--font-serif);
   font-weight: 800;
@@ -112,211 +133,115 @@ body {
   font-weight: 500;
 }
 
-/* ── Layout ── */
-@utility squircle { border-radius: var(--radius); }
-@utility squircle-lg { border-radius: var(--radius-lg); }
-@utility pill { border-radius: var(--radius-pill); }
-
-/* ── Glass card ── */
-@utility card-glass {
-  background: rgba(34, 34, 34, 0.9);
-  border: 1px dashed rgba(255,255,255,0.18);
-  border-radius: var(--radius);
+@utility marquee {
+  animation: var(--animate-marquee);
+  will-change: transform;
 }
 
-/* ── Glow chip ── */
-@utility glow-chip {
-  background: hsl(59 73% 52%);
-  color: hsl(260 9% 18%);
-  box-shadow:
-    0 0 0 1px hsl(59 73% 52% / 0.4),
-    0 8px 30px -8px hsl(59 73% 52% / 0.6);
-}
-
-/* ── Event schedule grid ── */
-@utility schedule-grid {
-  display: grid;
-  grid-template-columns: 150px 1fr 160px 130px 100px 80px;
-}
-
-/* ── Micro-interactions ── */
-@utility lift {
-  transition: transform 0.5s var(--ease-spring), box-shadow 0.5s var(--ease-editorial);
-  &:hover { transform: translateY(-3px); }
-}
-
-@utility squish {
-  transition: transform 0.15s var(--ease-spring);
-  &:active { transform: scale(0.97); }
-}
-
-/* ── Scroll reveal ── */
 @utility reveal-up {
   opacity: 0;
   transform: translateY(40px);
   transition: all 1s var(--ease-editorial);
   will-change: opacity, transform;
 }
+
 .reveal-up.in-view {
   opacity: 1;
   transform: translateY(0);
 }
-
-/* ── Marquee ── */
-@utility marquee {
-  animation: var(--animate-marquee);
-  will-change: transform;
-}
-
-/* ── Blink / nudge ── */
-@utility blink-dot { animation: var(--animate-blink); }
-@utility animate-nudge-up { animation: var(--animate-nudge-up); }
-
-/* ── Animations ── */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.35; }
-}
-
-@keyframes nudge-up {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-3px); }
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.animate-slide-up { animation: slideUp 0.4s ease-out; }
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-.animate-fade-in { animation: fadeIn 0.3s ease-out; }
-
-@keyframes toastIn {
-  from { opacity: 0; transform: translateX(100%) translateY(10px); }
-  to   { opacity: 1; transform: translateX(0) translateY(0); }
-}
-@keyframes toastOut {
-  from { opacity: 1; transform: translateX(0); }
-  to   { opacity: 0; transform: translateX(100%); }
-}
-
-/* ── Toast ── */
-.toast-container {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  pointer-events: none;
-}
-.toast {
-  background: rgba(34, 34, 34, 0.9);
-  color: hsl(84 64% 98%);
-  padding: 0.75rem 1.25rem;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  border: 1px dashed rgba(255,255,255,0.18);
-  border-radius: 0.75rem;
-  pointer-events: auto;
-  animation: toastIn 0.3s ease-out, toastOut 0.3s ease-in 2.7s forwards;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.toast--success { border-left: 3px solid hsl(59 73% 52%); }
-.toast--error   { border-left: 3px solid hsl(4 76% 58%); }
-.toast--info    { border-left: 3px solid hsl(228 32% 60%); }
-
-/* ── Inputs ── */
-.input-field {
-  width: 100%;
-  background: rgba(255,255,255,0.04);
-  border: 1px dashed rgba(255,255,255,0.18);
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-  color: hsl(84 64% 98%);
-  transition: border-color 0.2s;
-}
 .input-field:focus { border-color: hsl(59 73% 52% / 0.5); outline: none; }
 .input-field::placeholder { color: hsl(84 64% 98% / 0.3); }
 
-/* ── Buttons ── */
-.btn-primary {
-  background: hsl(59 73% 52%);
-  color: hsl(260 9% 18%);
-  padding: 0.75rem 1.5rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  border: none;
-  border-radius: 999px;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  box-shadow: 0 0 0 1px hsl(59 73% 52% / 0.4), 0 8px 30px -8px hsl(59 73% 52% / 0.6);
+@utility blink-dot {
+  animation: var(--animate-blink);
 }
-.btn-primary:hover { background: hsl(59 73% 62%); }
 
-.btn-outline {
-  background: rgba(34, 34, 34, 0.9);
-  color: hsl(84 64% 98%);
-  padding: 0.75rem 1.5rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  border: 1px dashed rgba(255,255,255,0.18);
-  border-radius: 999px;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+@utility squircle {
+  border-radius: var(--radius);
 }
-.btn-outline:hover { border-color: hsl(59 73% 52% / 0.5); }
 
-.btn-ghost {
-  background: transparent;
-  color: hsl(84 64% 98% / 0.5);
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: 999px;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+@utility squircle-lg {
+  border-radius: var(--radius-lg);
 }
-.btn-ghost:hover { color: hsl(84 64% 98%); }
 
-.btn-sm { padding: 0.5rem 1rem; font-size: 0.75rem; }
+@utility pill {
+  border-radius: var(--radius-pill);
+}
 
-/* ── Custom scrollbar ── */
-.scrollbar-custom {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.08) transparent;
+@utility lift {
+  transition:
+    transform 0.5s var(--ease-spring),
+    box-shadow 0.5s var(--ease-editorial);
+  &:hover {
+    transform: translateY(-3px);
+  }
 }
-.scrollbar-custom::-webkit-scrollbar {
-  width: 4px;
+
+@utility squish {
+  transition: transform 0.15s var(--ease-spring);
+  &:active {
+    transform: scale(0.97);
+  }
 }
-.scrollbar-custom::-webkit-scrollbar-track {
-  background: transparent;
+
+@utility card-glass {
+  background: #222222e6;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius);
 }
-.scrollbar-custom::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.08);
-  border-radius: 999px;
+
+@utility animate-nudge-up {
+  animation: var(--animate-nudge-up);
 }
-.scrollbar-custom::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.15);
+
+@utility glow-chip {
+  background: hsl(var(--color-chartreuse));
+  color: hsl(var(--color-charcoal));
+  box-shadow:
+    0 0 0 1px hsl(var(--color-chartreuse) / 0.4),
+    0 8px 30px -8px hsl(var(--color-chartreuse) / 0.6);
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes nudge-up {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes schedule-row-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.schedule-row-fade-in {
+  animation: schedule-row-fade-in 0.4s ease-out both;
 }

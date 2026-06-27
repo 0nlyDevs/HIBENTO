@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import { ManifestoCard, manifestoCards } from "@/data/manifesto";
 
@@ -10,8 +8,8 @@ interface ManifestoProps {
 export const Manifesto = ({ cards: propCards }: ManifestoProps) => {
   const displayCards = propCards || manifestoCards;
   return (
-    <section id="product" className="relative py-28 md:py-40 overflow-hidden">
-      <div className="container mx-auto flex flex-col gap-8">
+    <section id="product" className="relative py-16 md:py-24">
+      <div className="container mx-auto px-6 md:px-16 lg:px-20 flex flex-col gap-8">
         <div className="flex items-end justify-between mb-12 flex-wrap gap-6">
           <div>
             <p className="label-mono text-accent mb-6">§ 01 Why HiBento</p>
@@ -27,11 +25,11 @@ export const Manifesto = ({ cards: propCards }: ManifestoProps) => {
           </p>
         </div>
         <div className="mx-auto">
-          <div className="grid md:grid-cols-3 gap-20">
+          <div className="grid md:grid-cols-3 gap-8 lg:gap-20">
             {displayCards.map((c, i) => (
               <div
                 key={c.tag}
-                className={`${c.bg} lift overflow-hidden flex flex-col${
+                className={`${c.bg} lift flex flex-col${
                   i === 0 ? " md:-rotate-5 md:translate-y-30" :
                   i === 1 ? " md:rotate-1 md:-translate-y-4" :
                   " md:rotate-6 md:translate-y-16"
@@ -50,6 +48,7 @@ export const Manifesto = ({ cards: propCards }: ManifestoProps) => {
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 33vw"
+                    quality={85}
                   />
                 </div>
               </div>

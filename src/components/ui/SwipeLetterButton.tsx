@@ -54,10 +54,12 @@ export default function SwipeLettersButton({
       )}
       <span className={styles.letters}>
         {chars.map((ch, i) => {
-          const dir =
-            direction === "alternate"
-              ? i % 2 === 0 ? "from-top" : "from-bottom"
-              : direction === "top" ? "from-top" : "from-bottom";
+          let dir: string;
+          if (direction === "alternate") {
+            dir = i % 2 === 0 ? "from-top" : "from-bottom";
+          } else {
+            dir = direction === "top" ? "from-top" : "from-bottom";
+          }
 
           return (
             <span

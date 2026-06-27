@@ -1,16 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useReveal } from "@/hooks/useReveal";
 import { FAQItem, faqItems } from "@/data/faq";
 
 export const FAQ = ({ items: propItems }: { items?: FAQItem[] }) => {
-  const ref = useReveal<HTMLDivElement>();
   const displayItems = propItems || faqItems;
   const [open, setOpen] = useState<number | null>(0);
   return (
-    <section id="faq" className="relative py-28 md:py-40 overflow-hidden">
-      <div className="container mx-auto grid lg:grid-cols-12 gap-12">
+    <section id="faq" className="relative py-16 md:py-24 overflow-hidden">
+      <div className="container mx-auto px-6 md:px-16 lg:px-20 grid lg:grid-cols-12 gap-12">
         <div className="lg:col-span-4">
           <p className="label-mono text-accent mb-6">§ 05 FAQ</p>
           <h2 className="text-display text-[clamp(2.5rem,5vw,4.5rem)] text-foreground">
@@ -25,7 +23,7 @@ export const FAQ = ({ items: propItems }: { items?: FAQItem[] }) => {
               const isOpen = open === i;
               return (
                 <li
-                  key={i}
+                  key={it.q}
                   className={`card-glass border ${
                     isOpen ? "border-accent" : "border-dashed border-white/18 hover:border-accent/50"
                   }`}
