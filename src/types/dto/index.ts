@@ -122,11 +122,6 @@ export interface QuestionDto {
   createdAt: string;
 }
 
-export interface QuestionCreateRequestDto {
-  content: string;
-  authorName?: string;
-}
-
 export interface UpvoteResponseDto {
   success: boolean;
   upvotes: number;

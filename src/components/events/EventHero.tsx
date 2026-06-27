@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { MapPin, Wifi } from "lucide-react";
 import type { EventDetailDto } from "@/types/dto";
-import { pickEventImage } from "./constants";
+import { pickEventImage } from "@/constants/theme";
 
 interface EventHeroProps {
   event: EventDetailDto;
