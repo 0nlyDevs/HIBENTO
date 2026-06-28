@@ -126,9 +126,13 @@ export default function SessionPlayerPage() {
           upvotedQuestions={upvotedQuestions}
           upvotingQuestions={upvotingQuestions}
           onSubmitQuestion={async (text, authorName) => {
-            await api.createQuestion(sessionId, text, authorName);
-            refetchQuestions();
-            toast("Question submitted!", "success");
+            try {
+              await api.createQuestion(sessionId, text, authorName);
+              refetchQuestions();
+              toast("Question submitted!", "success");
+            } catch {
+              toast("Failed to submit question", "error");
+            }
           }}
         />
       </div>
