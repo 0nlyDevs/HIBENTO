@@ -103,13 +103,35 @@ export async function GET(
     const event = (await prisma.event.findUnique({
       where: { id: eventId },
       include: {
-        venue: true,
+        venue: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            neighborhood: true,
+            totalRooms: true,
+          },
+        },
         eventSessions: {
           include: {
-            room: true,
+            room: {
+              select: {
+                id: true,
+                name: true,
+                capacity: true,
+                venueId: true,
+              },
+            },
             speakers: {
               include: {
-                speaker: true,
+                speaker: {
+                  select: {
+                    id: true,
+                    name: true,
+                    avatarUrl: true,
+                    bio: true,
+                  },
+                },
               },
             },
             _count: {
