@@ -59,8 +59,38 @@ export async function POST(
 ): Promise<NextResponse<QuestionDto | { error: string }>> {
   try {
     const { sessionId } = await params;
-    const { content, authorName }: { content: string; authorName: string } =
-      await request.json();
+
+    let content: unknown;
+    let authorName: unknown;
+    try {
+      const body = await request.json();
+      content = body?.content;
+      authorName = body?.authorName;
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON body" },
+        { status: 400 },
+      );
+    }
+
+    if (!content || typeof content !== "string" || !content.trim()) {
+      return NextResponse.json(
+        { error: "Content is required and must be a non-empty string" },
+        { status: 400 },
+      );
+    }
+    if (content.length > 10000) {
+      return NextResponse.json(
+        { error: "Content must be less than 10000 characters" },
+        { status: 400 },
+      );
+    }
+    if (authorName && (typeof authorName !== "string" || authorName.length > 100)) {
+      return NextResponse.json(
+        { error: "Author name must be less than 100 characters" },
+        { status: 400 },
+      );
+    }
 
     if (!isValidUUID(sessionId)) {
       return NextResponse.json(

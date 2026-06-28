@@ -51,7 +51,12 @@ export async function GET(
       eventId: eventId,
     };
 
-    if (roomFilter) {
+    if (roomFilter && eventExists?.venueId) {
+      where.room = {
+        name: roomFilter,
+        venueId: eventExists.venueId,
+      };
+    } else if (roomFilter) {
       where.room = {
         name: roomFilter,
       };
@@ -60,7 +65,7 @@ export async function GET(
     const [eventExists, rawSessions] = await Promise.all([
       prisma.event.findUnique({
         where: { id: eventId },
-        select: { id: true, isOnline: true },
+        select: { id: true, isOnline: true, venueId: true },
       }),
       prisma.eventSession.findMany({
       where,
