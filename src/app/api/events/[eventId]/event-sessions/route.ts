@@ -25,6 +25,9 @@ type EventSessionWithSpeakers = {
       bio: string | null;
     };
   }>;
+  _count: {
+    questions: number;
+  };
 };
 
 export async function GET(
@@ -82,6 +85,11 @@ export async function GET(
             },
           },
         },
+        _count: {
+          select: {
+            questions: true,
+          },
+        },
       },
       orderBy: {
         startTime: "asc",
@@ -130,7 +138,7 @@ export async function GET(
           avatar: sessionSpeaker.speaker.avatarUrl,
           bio: sessionSpeaker.speaker.bio,
         })),
-        questionCount: 0,
+        questionCount: session._count.questions,
       };
     });
 
