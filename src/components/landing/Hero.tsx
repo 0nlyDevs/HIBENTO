@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { heroContent } from "@/data/hero";
 import { useLiveSessionCount } from "@/lib/hooks/useLiveSessions";
 import CTAButton from "../ui/CTAButton";
@@ -10,17 +10,21 @@ import DoubleCircle from "../circle-style/DoubleCircle";
 import DoubleCircle2 from "../circle-style/DoubleCircle2";
 
 function LiveClock() {
-  const [time, setTime] = useState(() => new Date());
+  const timeRef = useRef<HTMLSpanElement>(null);
   const { data: liveSessionCount = 0 } = useLiveSessionCount();
 
   useEffect(() => {
-    const i = setInterval(() => setTime(new Date()), 30000);
+    const i = setInterval(() => {
+      if (timeRef.current) {
+        timeRef.current.textContent = new Date().toLocaleTimeString("en-GB");
+      }
+    }, 1000);
     return () => clearInterval(i);
   }, []);
 
   return (
     <div className="absolute top-[10%] right-[7%] text-right label-mono text-foreground/40 hidden md:block z-10">
-      {time.toLocaleTimeString("en-GB")}
+      <span ref={timeRef}>{new Date().toLocaleTimeString("en-GB")}</span>
       <br />
       <span className="text-foreground/25">
         {String(liveSessionCount).padStart(2, "0")} sessions · LIVE
