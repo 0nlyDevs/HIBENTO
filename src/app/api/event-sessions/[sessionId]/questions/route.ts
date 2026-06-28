@@ -116,8 +116,8 @@ export async function POST(
 
     const post = await prisma.question.create({
       data: {
-        content: content,
-        authorName: authorName || "Anonymous",
+        content,
+        authorName: (authorName as string) || "Anonymous",
         eventSessionId: sessionId,
       },
     });

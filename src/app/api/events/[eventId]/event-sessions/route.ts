@@ -3,6 +3,7 @@ import prisma from "@/lib/db/prisma";
 import type { EventSessionSummaryDto } from "@/types/dto";
 import { toEventSessionSummary } from "@/lib/utils/mappers";
 import { isValidUUID } from "@/lib/utils/validation";
+import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
 type EventSessionWithSpeakers = {
   id: string;
@@ -47,28 +48,24 @@ export async function GET(
       );
     }
 
-    const where: Record<string, unknown> = {
-      eventId: eventId,
-    };
+    const eventExists = await prisma.event.findUnique({
+      where: { id: eventId },
+      select: { id: true, isOnline: true, venueId: true },
+    });
 
-    if (roomFilter && eventExists?.venueId) {
-      where.room = {
-        name: roomFilter,
-        venueId: eventExists.venueId,
-      };
-    } else if (roomFilter) {
-      where.room = {
-        name: roomFilter,
-      };
+    const sessionWhere: Record<string, unknown> = {
+      eventId,
+    };
+    if (roomFilter) {
+      if (eventExists?.venueId) {
+        sessionWhere.room = { name: roomFilter, venueId: eventExists.venueId };
+      } else {
+        sessionWhere.room = { name: roomFilter };
+      }
     }
 
-    const [eventExists, rawSessions] = await Promise.all([
-      prisma.event.findUnique({
-        where: { id: eventId },
-        select: { id: true, isOnline: true, venueId: true },
-      }),
-      prisma.eventSession.findMany({
-      where,
+    const rawSessions = await prisma.eventSession.findMany({
+      where: sessionWhere,
       include: {
         room: {
           select: {
@@ -99,8 +96,7 @@ export async function GET(
       orderBy: {
         startTime: "asc",
       },
-    }),
-  ]);
+    });
 
     if (!eventExists) {
       return NextResponse.json(
