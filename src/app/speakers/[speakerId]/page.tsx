@@ -61,38 +61,9 @@ export default function SpeakerProfilePage() {
   const safeQuestionPage = Math.min(questionPage, totalQuestionPages);
   const paginatedQuestions = questionsWithSession.slice((safeQuestionPage - 1) * QUESTION_PAGE_SIZE, safeQuestionPage * QUESTION_PAGE_SIZE);
 
-  if (!speaker) {
-    return (
-      <div className="pt-16 pb-24">
-        <div className="max-w-7xl mx-auto px-6 animate-pulse">
-          <div className="h-3 w-24 rounded-lg bg-white/5 mb-6" />
-          <div className="grid lg:grid-cols-12 gap-8 mb-12">
-            <div className="lg:col-span-4">
-              <div className="squircle-lg overflow-hidden flex flex-col p-6" style={{ background: "#222222E6" }}>
-                <div className="flex flex-col items-center">
-                  <div className="w-36 h-36 rounded-full bg-white/5 mb-3" />
-                  <div className="h-6 w-40 rounded-lg bg-white/5" />
-                </div>
-              </div>
-            </div>
-            <div className="lg:col-span-8">
-              <div className="squircle-lg p-6 flex flex-col" style={{ background: "#222222E6" }}>
-                <div className="h-3 w-48 rounded-full bg-white/5 mb-5" />
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="h-12 rounded-lg bg-white/5 mb-3" />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const sortedSessions = sortScheduleSessions(
-    speaker.eventSessions.map(fromSpeakerEventSession),
-    "asc",
-  );
+  const sortedSessions = speaker
+    ? sortScheduleSessions(speaker.eventSessions.map(fromSpeakerEventSession), "asc")
+    : [];
   const SESSION_PAGE_SIZE = 5;
   const totalSessPages = Math.max(1, Math.ceil(sortedSessions.length / SESSION_PAGE_SIZE));
   const safeSessPage = Math.min(sessPage, totalSessPages);
@@ -114,35 +85,46 @@ export default function SpeakerProfilePage() {
         <div className="grid lg:grid-cols-12 gap-8 mb-12 lg:grid-rows-1">
           <div className="lg:col-span-4">
             <div className="card-glass squircle-lg overflow-hidden h-full flex flex-col">
-              <div className="p-6 pb-4 flex flex-col items-center">
-                <div className="w-36 h-36 rounded-full bg-ivory/5 flex items-center justify-center overflow-hidden mb-3" style={{ border: "1px solid rgba(255,255,255,0.12)" }}>
-                  {speaker.avatar ? (
-                    <Image src={speaker.avatar} alt={speaker.name} width={144} height={144} className="object-cover w-full h-full" />
-                  ) : (
-                    <span className="text-5xl font-bold text-ivory/30">{speaker.name.charAt(0)}</span>
+              {speaker ? (
+                <>
+                  <div className="p-6 pb-4 flex flex-col items-center">
+                    <div className="w-36 h-36 rounded-full bg-ivory/5 flex items-center justify-center overflow-hidden mb-3" style={{ border: "1px solid rgba(255,255,255,0.12)" }}>
+                      {speaker!.avatar ? (
+                        <Image src={speaker!.avatar} alt={speaker!.name} width={144} height={144} className="object-cover w-full h-full" />
+                      ) : (
+                        <span className="text-5xl font-bold text-ivory/30">{speaker!.name.charAt(0)}</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="px-6 pb-6 text-center">
+                    <h1 className="text-display text-[clamp(1.5rem,3vw,2.2rem)] text-ivory leading-tight mb-3">{speaker!.name}</h1>
+                    <p className="text-sm text-ivory/70 leading-relaxed">{speaker!.bio || "No bio available"}</p>
+                  </div>
+                  {speaker!.externalLinks && speaker!.externalLinks.length > 0 && (
+                    <div className="px-6 pb-6 space-y-2 mt-auto">
+                      <div className="h-px bg-ivory/10 mb-3" />
+                      {speaker!.externalLinks.map((link) => (
+                        <a
+                          key={link.url}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between w-full px-4 py-2.5 label-mono text-xs text-ivory/70 rounded-lg transition-all hover:text-ivory"
+                          style={{ background: "rgba(255,255,255,0.05)", border: "1px dashed rgba(255,255,255,0.12)" }}
+                        >
+                          <span>{link.type.toUpperCase()}</span>
+                          <ExternalLink size={11} className="text-ivory/40" />
+                        </a>
+                      ))}
+                    </div>
                   )}
-                </div>
-              </div>
-              <div className="px-6 pb-6 text-center">
-                <h1 className="text-display text-[clamp(1.5rem,3vw,2.2rem)] text-ivory leading-tight mb-3">{speaker.name}</h1>
-                <p className="text-sm text-ivory/70 leading-relaxed">{speaker.bio || "No bio available"}</p>
-              </div>
-              {speaker.externalLinks && speaker.externalLinks.length > 0 && (
-                <div className="px-6 pb-6 space-y-2 mt-auto">
-                  <div className="h-px bg-ivory/10 mb-3" />
-                  {speaker.externalLinks.map((link) => (
-                    <a
-                      key={link.url}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-between w-full px-4 py-2.5 label-mono text-xs text-ivory/70 rounded-lg transition-all hover:text-ivory"
-                      style={{ background: "rgba(255,255,255,0.05)", border: "1px dashed rgba(255,255,255,0.12)" }}
-                    >
-                      <span>{link.type.toUpperCase()}</span>
-                      <ExternalLink size={11} className="text-ivory/40" />
-                    </a>
-                  ))}
+                </>
+              ) : (
+                <div className="p-6 flex flex-col items-center animate-pulse">
+                  <div className="w-36 h-36 rounded-full bg-white/5 mb-3" />
+                  <div className="h-6 w-40 rounded-lg bg-white/5" />
+                  <div className="h-4 w-full rounded bg-white/5 mt-4" />
+                  <div className="h-4 w-3/4 rounded bg-white/5 mt-2" />
                 </div>
               )}
             </div>
@@ -157,7 +139,16 @@ export default function SpeakerProfilePage() {
                 <span className="label-mono text-ivory/40">{questionsWithSession.length}</span>
               </div>
 
-              {questionsWithSession.length > 0 ? (
+              {!questionsBySession ? (
+                <div className="space-y-3 flex-1 animate-pulse">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="p-4 rounded-lg" style={{ background: "rgba(255,255,255,0.03)" }}>
+                      <div className="h-3 w-full rounded bg-white/5 mb-2" />
+                      <div className="h-3 w-2/3 rounded bg-white/5" />
+                    </div>
+                  ))}
+                </div>
+              ) : questionsWithSession.length > 0 ? (
                 <div className="space-y-3 pr-1 flex-1">
                   {paginatedQuestions.map((q) => (
                     <div key={q.id} className="p-4 rounded-lg" style={{ background: "rgba(255,255,255,0.03)", border: "1px dashed rgba(255,255,255,0.08)" }}>
@@ -208,30 +199,48 @@ export default function SpeakerProfilePage() {
           </div>
         </div>
 
-        {sortedSessions.length > 0 && (
-          <div>
-            <div className="flex items-center gap-3 mb-5">
-              <svg className="w-4 h-4 text-chartreuse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" />
-                <path d="M16 2v4M8 2v4M3 10h18" />
-              </svg>
-              <span className="label-mono text-ivory/85">SESSIONS</span>
-              <div className="flex-1 h-px bg-ivory/10" />
-              <span className="label-mono text-ivory/40">{sortedSessions.length} TOTAL</span>
-            </div>
-            <ScheduleTable
-              sessions={paginatedSessions}
-              variant="extended"
-              sort={false}
-              emptyMessage="No sessions found"
-            />
-            <TablePagination
-              page={safeSessPage}
-              totalPages={totalSessPages}
-              onChange={setSessPage}
-            />
+        <div>
+          <div className="flex items-center gap-3 mb-5">
+            <svg className="w-4 h-4 text-chartreuse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+              <path d="M16 2v4M8 2v4M3 10h18" />
+            </svg>
+            <span className="label-mono text-ivory/85">SESSIONS</span>
+            <div className="flex-1 h-px bg-ivory/10" />
+            <span className="label-mono text-ivory/40">{sortedSessions.length} TOTAL</span>
           </div>
-        )}
+          {!speaker ? (
+            <div className="space-y-3 animate-pulse">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="squircle-lg p-5 flex items-center gap-4"
+                  style={{ background: "#222222E6" }}
+                >
+                  <div className="h-10 w-10 rounded-lg bg-white/5" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-48 rounded bg-white/5" />
+                    <div className="h-3 w-32 rounded bg-white/5" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : sortedSessions.length > 0 ? (
+            <>
+              <ScheduleTable
+                sessions={paginatedSessions}
+                variant="extended"
+                sort={false}
+                emptyMessage="No sessions found"
+              />
+              <TablePagination
+                page={safeSessPage}
+                totalPages={totalSessPages}
+                onChange={setSessPage}
+              />
+            </>
+          ) : null}
+        </div>
       </div>
     </div>
   );
