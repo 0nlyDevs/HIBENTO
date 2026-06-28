@@ -1,5 +1,5 @@
-import { PageLoader } from "@/components/ui/Spinner";
+import { FavoritesSkeleton } from "@/components/ui/skeletons/FavoritesSkeleton";
 
 export default function FavoritesLoading() {
-  return <PageLoader className="pt-24 pb-24" />;
+  return <FavoritesSkeleton />;
 }
