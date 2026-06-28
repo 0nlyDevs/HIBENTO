@@ -38,9 +38,18 @@ export default function SessionDetailPage() {
   if (!session) {
     return (
       <div className="pt-16 pb-24">
-        <div className="max-w-7xl mx-auto px-6 animate-pulse">
-          <div className="h-3 w-16 rounded-lg bg-white/5 mb-6" />
-          <div className="w-full squircle-lg overflow-hidden" style={{ background: "#131418", border: "1px solid rgba(255,255,255,0.08)" }}>
+        <div className="max-w-7xl mx-auto px-6">
+          <button
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-wider text-ivory/70 hover:text-ivory transition-colors mb-6 group cursor-pointer"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="transition-transform group-hover:-translate-x-0.5">
+              <path d="M7 3L4 6L7 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+            BACK
+          </button>
+
+          <div className="w-full squircle-lg overflow-hidden animate-pulse" style={{ background: "#131418", border: "1px solid rgba(255,255,255,0.08)" }}>
             <div className="h-1 w-full bg-white/5 shrink-0 rounded-t-[1rem]" />
             <div className="px-7 py-6 space-y-6">
               <div className="space-y-3">
