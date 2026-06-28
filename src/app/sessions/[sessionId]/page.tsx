@@ -9,6 +9,7 @@ import { api } from "@/lib/api";
 import { useToast } from "@/components/ui/Toast";
 import { useFavorites } from "@/lib/hooks/useFavorites";
 import { PageLoader } from "@/components/ui/Spinner";
+import { NotFoundState } from "@/components/ui/NotFoundState";
 import { SpeakersCell } from "@/components/events/SpeakersCell";
 import { VideoPanel } from "@/components/features/SessionPlayer/video-panel";
 import { QaPanel } from "@/components/features/SessionPlayer/qa-panel";
@@ -43,14 +44,7 @@ export default function SessionPlayerPage() {
   if (isLoading) return <PageLoader />;
 
   if (!session) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold text-ivory/80">SESSION NOT FOUND</h1>
-        <Link href="/events" className="text-sm text-ivory/55 hover:text-ivory underline">
-          Back to events
-        </Link>
-      </div>
-    );
+    return <NotFoundState title="SESSION NOT FOUND" backHref="/events" backLabel="Back to events" />;
   }
 
   const now = new Date();
@@ -126,9 +120,13 @@ export default function SessionPlayerPage() {
           upvotedQuestions={upvotedQuestions}
           upvotingQuestions={upvotingQuestions}
           onSubmitQuestion={async (text, authorName) => {
-            await api.createQuestion(sessionId, text, authorName);
-            refetchQuestions();
-            toast("Question submitted!", "success");
+            try {
+              await api.createQuestion(sessionId, text, authorName);
+              refetchQuestions();
+              toast("Question submitted!", "success");
+            } catch {
+              toast("Failed to submit question", "error");
+            }
           }}
         />
       </div>

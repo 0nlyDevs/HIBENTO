@@ -35,7 +35,7 @@ model Event {
   id          String   @id @default(uuid()) @db.Uuid
   title       String   @db.VarChar(255)
   description String?
-  venueId     String?  @db.Uuid @map("venueId")
+  venueId     String?  @db.Uuid @map("venue_id")
   isOnline    Boolean  @default(false) @map("is_online")
   startDate   DateTime @map("start_date")
   endDate     DateTime @map("end_date")
@@ -50,7 +50,7 @@ model Event {
 
 model Room {
   id        String   @id @default(uuid()) @db.Uuid
-  venueId   String   @db.Uuid @map("venueId")
+  venueId   String   @db.Uuid @map("venue_id")
   name      String   @db.VarChar(100)
   capacity  Int?
   createdAt DateTime @default(now()) @map("created_at")
@@ -66,8 +66,8 @@ model Room {
 
 model EventSession {
   id          String   @id @default(uuid()) @db.Uuid
-  eventId     String   @db.Uuid @map("eventId")
-  roomId      String?  @db.Uuid @map("roomId")
+  eventId     String   @db.Uuid @map("event_id")
+  roomId      String?  @db.Uuid @map("room_id")
   title       String   @db.VarChar(255)
   description String?
   startTime   DateTime @map("start_time")
@@ -78,8 +78,8 @@ model EventSession {
 
   event     Event                 @relation(fields: [eventId], references: [id], onDelete: Cascade)
   room      Room?                 @relation(fields: [roomId], references: [id])
-  speakers        EventSessionSpeaker[]
-  questions       Question[]
+  speakers  EventSessionSpeaker[]
+  questions Question[]
 
   @@unique([roomId, startTime])
   @@index([eventId])
@@ -104,7 +104,7 @@ model Speaker {
 
 model SpeakerExternalLink {
   id        String   @id @default(uuid()) @db.Uuid
-  speakerId String   @db.Uuid @map("speakerId")
+  speakerId String   @db.Uuid @map("speaker_id")
   linkType  LinkType @map("link_type")
   url       String
   createdAt DateTime @default(now()) @map("created_at")
@@ -115,8 +115,8 @@ model SpeakerExternalLink {
 }
 
 model EventSessionSpeaker {
-  eventSessionId String   @db.Uuid @map("eventSessionId")
-  speakerId      String   @db.Uuid @map("speakerId")
+  eventSessionId String   @db.Uuid @map("event_session_id")
+  speakerId      String   @db.Uuid @map("speaker_id")
   createdAt      DateTime @default(now()) @map("created_at")
 
   eventSession EventSession @relation(fields: [eventSessionId], references: [id], onDelete: Cascade)
@@ -128,7 +128,7 @@ model EventSessionSpeaker {
 
 model Question {
   id             String   @id @default(uuid())
-  eventSessionId String   @db.Uuid @map("eventSessionId")
+  eventSessionId String   @db.Uuid @map("event_session_id")
   content        String
   authorName     String   @default("Anonymous") @map("author_name") @db.VarChar(100)
   upvotes        Int      @default(0)
@@ -145,7 +145,7 @@ model Question {
 
 model QuestionUpvote {
   id         String   @id @default(uuid())
-  questionId String   @map("questionId")
+  questionId String   @map("question_id")
   visitorId  String   @map("visitor_id") @db.VarChar(64)
   createdAt  DateTime @default(now()) @map("created_at")
 

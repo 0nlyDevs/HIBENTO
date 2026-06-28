@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useFavorites } from "@/lib/hooks/useFavorites";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import type { EventSessionDetailDto } from "@/types/dto";
 import { fromEventSessionDetail } from "@/lib/utils/sessionMappers";
 import { sortScheduleSessions } from "@/lib/utils/sortSessions";
 import { ScheduleTable } from "@/components/sessions/ScheduleTable";
@@ -20,10 +21,13 @@ export default function FavoritesPage() {
   const { data: sessions, isLoading } = useQuery({
     queryKey: ["favorite-sessions", ids],
     queryFn: async () => {
-      const results = await Promise.all(
+      const results = await Promise.allSettled(
         ids.map((id) => api.getEventSession(id)),
       );
-      return results.filter(Boolean);
+      return results
+        .filter((r): r is PromiseFulfilledResult<EventSessionDetailDto> => r.status === "fulfilled")
+        .map((r) => r.value)
+        .filter(Boolean);
     },
     enabled: ids.length > 0,
   });

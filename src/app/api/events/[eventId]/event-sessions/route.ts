@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import type { EventSessionSummaryDto, RoomDto } from "@/types/dto";
+import type { EventSessionSummaryDto } from "@/types/dto";
+import { toEventSessionSummary } from "@/lib/utils/mappers";
 import { isValidUUID } from "@/lib/utils/validation";
 import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
@@ -25,6 +26,9 @@ type EventSessionWithSpeakers = {
       bio: string | null;
     };
   }>;
+  _count: {
+    questions: number;
+  };
 };
 
 export async function GET(
@@ -44,23 +48,24 @@ export async function GET(
       );
     }
 
-    const where: Record<string, unknown> = {
-      eventId: eventId,
-    };
+    const eventExists = await prisma.event.findUnique({
+      where: { id: eventId },
+      select: { id: true, isOnline: true, venueId: true },
+    });
 
+    const sessionWhere: Record<string, unknown> = {
+      eventId,
+    };
     if (roomFilter) {
-      where.room = {
-        name: roomFilter,
-      };
+      if (eventExists?.venueId) {
+        sessionWhere.room = { name: roomFilter, venueId: eventExists.venueId };
+      } else {
+        sessionWhere.room = { name: roomFilter };
+      }
     }
 
-    const [eventExists, rawSessions] = await Promise.all([
-      prisma.event.findUnique({
-        where: { id: eventId },
-        select: { id: true },
-      }),
-      prisma.eventSession.findMany({
-      where,
+    const rawSessions = await prisma.eventSession.findMany({
+      where: sessionWhere,
       include: {
         room: {
           select: {
@@ -82,12 +87,16 @@ export async function GET(
             },
           },
         },
+        _count: {
+          select: {
+            questions: true,
+          },
+        },
       },
       orderBy: {
         startTime: "asc",
       },
-    }),
-  ]);
+    });
 
     if (!eventExists) {
       return NextResponse.json(
@@ -96,6 +105,7 @@ export async function GET(
       );
     }
 
+    const eventIsOnline = eventExists.isOnline;
     const sessions = rawSessions as unknown as EventSessionWithSpeakers[];
 
     let filteredSessions = sessions;
@@ -105,34 +115,9 @@ export async function GET(
       );
     }
 
-    const data: EventSessionSummaryDto[] = filteredSessions.map((session) => {
-      const roomDto: RoomDto | null = session.room
-        ? {
-            id: session.room.id,
-            name: session.room.name,
-            capacity: session.room.capacity,
-            venueId: session.room.venueId,
-          }
-        : null;
-
-      return {
-        id: session.id,
-        title: session.title,
-        description: session.description,
-        startTime: session.startTime.toISOString(),
-        endTime: session.endTime.toISOString(),
-        room: roomDto,
-        isOnline: session.room === null,
-        isLive: getEventSessionStatus(session) === "live",
-        speakers: session.speakers.map((sessionSpeaker) => ({
-          id: sessionSpeaker.speaker.id,
-          name: sessionSpeaker.speaker.name,
-          avatar: sessionSpeaker.speaker.avatarUrl,
-          bio: sessionSpeaker.speaker.bio,
-        })),
-        questionCount: 0,
-      };
-    });
+    const data: EventSessionSummaryDto[] = filteredSessions.map((session) =>
+      toEventSessionSummary({ session, eventIsOnline }),
+    );
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (err) {

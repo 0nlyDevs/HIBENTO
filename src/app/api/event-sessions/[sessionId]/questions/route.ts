@@ -2,7 +2,7 @@ import prisma from "@/lib/db/prisma";
 import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 import { isValidUUID } from "@/lib/utils/validation";
 import type { QuestionDto } from "@/types/dto";
-import type { Question } from "@prisma/client";
+import { toQuestionDto } from "@/lib/utils/mappers";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -35,13 +35,7 @@ export async function GET(
       );
     }
 
-    const response: QuestionDto[] = questions.map((q: Question) => ({
-      id: q.id,
-      content: q.content,
-      authorName: q.authorName,
-      upvotes: q.upvotes,
-      createdAt: q.createdAt.toISOString(),
-    }));
+    const response: QuestionDto[] = questions.map(toQuestionDto);
 
     return NextResponse.json({ data: response }, { status: 200 });
   } catch (err) {
@@ -59,8 +53,38 @@ export async function POST(
 ): Promise<NextResponse<QuestionDto | { error: string }>> {
   try {
     const { sessionId } = await params;
-    const { content, authorName }: { content: string; authorName: string } =
-      await request.json();
+
+    let content: unknown;
+    let authorName: unknown;
+    try {
+      const body = await request.json();
+      content = body?.content;
+      authorName = body?.authorName;
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON body" },
+        { status: 400 },
+      );
+    }
+
+    if (!content || typeof content !== "string" || !content.trim()) {
+      return NextResponse.json(
+        { error: "Content is required and must be a non-empty string" },
+        { status: 400 },
+      );
+    }
+    if (content.length > 10000) {
+      return NextResponse.json(
+        { error: "Content must be less than 10000 characters" },
+        { status: 400 },
+      );
+    }
+    if (authorName && (typeof authorName !== "string" || authorName.length > 100)) {
+      return NextResponse.json(
+        { error: "Author name must be less than 100 characters" },
+        { status: 400 },
+      );
+    }
 
     if (!isValidUUID(sessionId)) {
       return NextResponse.json(
@@ -92,19 +116,13 @@ export async function POST(
 
     const post = await prisma.question.create({
       data: {
-        content: content,
-        authorName: authorName || "Anonymous",
+        content,
+        authorName: (authorName as string) || "Anonymous",
         eventSessionId: sessionId,
       },
     });
 
-    const response: QuestionDto = {
-      id: post.id,
-      content: post.content,
-      authorName: post.authorName,
-      upvotes: post.upvotes,
-      createdAt: post.createdAt.toISOString(),
-    };
+    const response: QuestionDto = toQuestionDto(post);
 
     return NextResponse.json(response, { status: 201 });
   } catch (err) {

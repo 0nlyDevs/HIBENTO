@@ -1,5 +1,5 @@
 import prisma from "@/lib/db/prisma";
-import { SpeakerSummaryDto } from "@/types";
+import type { SpeakerSummaryDto } from "@/types/dto";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(

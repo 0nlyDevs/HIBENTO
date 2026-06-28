@@ -3,7 +3,9 @@ import prisma from "@/lib/db/prisma";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(): Promise<NextResponse<{ count: number }>> {
+export async function GET(): Promise<
+  NextResponse<{ count: number } | { error: string }>
+> {
   try {
     const count = await prisma.eventSession.count({
       where: {
@@ -15,6 +17,9 @@ export async function GET(): Promise<NextResponse<{ count: number }>> {
     return NextResponse.json({ count });
   } catch (err) {
     console.error("GET /api/live/count error:", err);
-    return NextResponse.json({ count: 0 });
+    return NextResponse.json(
+      { error: "Failed to fetch live session count" },
+      { status: 500 },
+    );
   }
 }

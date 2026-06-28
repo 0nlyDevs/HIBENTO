@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import type { EventSessionSummaryDto, RoomDto } from "@/types/dto";
+import type { EventSessionSummaryDto } from "@/types/dto";
+import { toEventSessionSummary, toRoomDto } from "@/lib/utils/mappers";
 import { isValidUUID } from "@/lib/utils/validation";
-import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
 export async function GET(
   request: NextRequest,
@@ -13,6 +13,15 @@ export async function GET(
 
     if (!isValidUUID(eventId) || !isValidUUID(roomId)) {
       return NextResponse.json({ error: "Invalid ID format" }, { status: 400 });
+    }
+
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      select: { isOnline: true },
+    });
+
+    if (!event) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
 
     const sessions = await prisma.eventSession.findMany({
@@ -39,33 +48,9 @@ export async function GET(
       }
     }
 
-    const data: EventSessionSummaryDto[] = sessions.map((session) => {
-      const roomData = session.room!;
-      const roomDto: RoomDto = {
-        id: roomData.id,
-        name: roomData.name,
-        capacity: roomData.capacity,
-        venueId: roomData.venueId,
-      };
-
-      return {
-        id: session.id,
-        title: session.title,
-        description: session.description,
-        startTime: session.startTime.toISOString(),
-        endTime: session.endTime.toISOString(),
-        room: roomDto,
-        isOnline: false,
-        isLive: getEventSessionStatus(session) === "live",
-        speakers: session.speakers.map((s) => ({
-          id: s.speaker.id,
-          name: s.speaker.name,
-          avatar: s.speaker.avatarUrl,
-          bio: s.speaker.bio,
-        })),
-        questionCount: session._count.questions,
-      };
-    });
+    const data: EventSessionSummaryDto[] = sessions.map((session) =>
+      toEventSessionSummary({ session, eventIsOnline: event.isOnline }),
+    );
 
     return NextResponse.json({ data });
   } catch (error) {

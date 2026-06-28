@@ -1,5 +1,6 @@
 import prisma from "@/lib/db/prisma";
 import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
+import { isValidUUID } from "@/lib/utils/validation";
 import type { UpvoteResponseDto } from "@/types/dto";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -9,6 +10,13 @@ export async function POST(
 ): Promise<NextResponse<UpvoteResponseDto | { error: string }>> {
   try {
     const { questionId } = await params;
+
+    if (!isValidUUID(questionId)) {
+      return NextResponse.json(
+        { error: "Invalid question ID format" },
+        { status: 400 }
+      );
+    }
 
     let visitorId: string | undefined;
     try {

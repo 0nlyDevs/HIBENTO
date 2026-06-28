@@ -12,6 +12,7 @@ import { BentoGrid } from "@/components/features/EventsList/event-cards";
 
 const DateRangePicker = dynamic(() =>
   import("@/components/ui/DateRangePicker").then((m) => ({ default: m.DateRangePicker })),
+  { loading: () => <div className="h-9 w-60 rounded-lg bg-white/5 animate-pulse" /> },
 );
 
 type EventStatus = "all" | "live" | "upcoming" | "ended";
