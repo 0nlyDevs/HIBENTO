@@ -112,9 +112,13 @@ export default function EventsPage() {
               Join our upcoming sessions and expand your skills.
             </p>
           </div>
-          <p className="label-mono text-ivory/40 pt-0.5 shrink-0">
-            {isLoading ? "—" : `${events.length} ${events.length === 1 ? "EVENT" : "EVENTS"}`}
-          </p>
+          {isLoading ? (
+            <div className="h-4 w-16 rounded-lg bg-white/5 animate-pulse shrink-0 mt-0.5" />
+          ) : (
+            <p className="label-mono text-ivory/40 pt-0.5 shrink-0">
+              {events.length} {events.length === 1 ? "EVENT" : "EVENTS"}
+            </p>
+          )}
         </div>
 
         <div
