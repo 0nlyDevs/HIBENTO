@@ -45,10 +45,10 @@ export async function GET(
       conditions.push({ title: { contains: search, mode: "insensitive" } });
     }
     if (dateFrom) {
-      conditions.push({ endDate: { gte: new Date(dateFrom) } });
+      conditions.push({ startDate: { gte: new Date(dateFrom) } });
     }
     if (dateTo) {
-      conditions.push({ startDate: { lte: new Date(dateTo) } });
+      conditions.push({ endDate: { lte: new Date(dateTo) } });
     }
 
     const where = conditions.length > 0 ? { AND: conditions } : {};
