@@ -37,14 +37,13 @@ export default function EventDetailPage() {
   const { data: event, isLoading } = useGetEvent(eventId);
   const [selectedDay, setSelectedDay] = useState<string>("all");
 
-  if (isLoading) return <LoadingSkeleton />;
-  if (!event) return <NotFound />;
+  if (!isLoading && !event) return <NotFound />;
 
-  const start = new Date(event.startDate);
-  const end = new Date(event.endDate);
+  const start = event ? new Date(event.startDate) : new Date();
+  const end = event ? new Date(event.endDate) : new Date();
   const now = new Date();
-  const isLive = start <= now && end >= now;
-  const isEnded = end < now;
+  const isLive = event ? start <= now && end >= now : false;
+  const isEnded = event ? end < now : false;
 
   return (
     <div className="pt-16 pb-24">
@@ -59,15 +58,18 @@ export default function EventDetailPage() {
           ALL EVENTS
         </Link>
 
-        <EventHero event={event} isLive={isLive} isEnded={isEnded} />
-
-        <EventInfoGrid event={event} isOnline={event.isOnline} />
-
-        {event.eventSessions.length > 0 && (
-          <EventSchedule event={event} selectedDay={selectedDay} onDayChange={setSelectedDay} />
+        {isLoading ? (
+          <LoadingSkeleton />
+        ) : (
+          <>
+            <EventHero event={event!} isLive={isLive} isEnded={isEnded} />
+            <EventInfoGrid event={event!} isOnline={event!.isOnline} />
+            {event!.eventSessions.length > 0 && (
+              <EventSchedule event={event!} selectedDay={selectedDay} onDayChange={setSelectedDay} />
+            )}
+            <EventVenueCard event={event!} />
+          </>
         )}
-
-        <EventVenueCard event={event} />
       </div>
     </div>
   );
