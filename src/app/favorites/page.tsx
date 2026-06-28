@@ -20,10 +20,13 @@ export default function FavoritesPage() {
   const { data: sessions, isLoading } = useQuery({
     queryKey: ["favorite-sessions", ids],
     queryFn: async () => {
-      const results = await Promise.all(
+      const results = await Promise.allSettled(
         ids.map((id) => api.getEventSession(id)),
       );
-      return results.filter(Boolean);
+      return results
+        .filter((r) => r.status === "fulfilled")
+        .map((r) => (r as PromiseFulfilledResult<typeof r>).value)
+        .filter(Boolean);
     },
     enabled: ids.length > 0,
   });
