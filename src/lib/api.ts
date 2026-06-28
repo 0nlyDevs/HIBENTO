@@ -49,12 +49,9 @@ async function http<T>(
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
 
-  const isGet = !init?.method || init.method === "GET";
-
   try {
     const res = await fetch(`${API_BASE_URL}${path}`, {
       ...init,
-      cache: isGet ? "force-cache" : undefined,
       headers: {
         "Content-Type": "application/json",
         ...(init?.headers || {}),

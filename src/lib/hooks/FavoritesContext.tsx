@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from "react";
 
 const STORAGE_KEY = "hibento_favorites";
 
@@ -53,8 +53,13 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     [favorites],
   );
 
+  const value = useMemo(
+    () => ({ favorites, isFavorite, toggleFavorite }),
+    [favorites, isFavorite, toggleFavorite],
+  );
+
   return (
-    <FavoritesContext.Provider value={{ favorites, isFavorite, toggleFavorite }}>
+    <FavoritesContext.Provider value={value}>
       {children}
     </FavoritesContext.Provider>
   );

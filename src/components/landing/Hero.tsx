@@ -9,7 +9,7 @@ import CircleDot from "../circle-style/CircleDot";
 import DoubleCircle from "../circle-style/DoubleCircle";
 import DoubleCircle2 from "../circle-style/DoubleCircle2";
 
-export const Hero = () => {
+function LiveClock() {
   const [time, setTime] = useState(() => new Date());
   const { data: liveSessionCount = 0 } = useLiveSessionCount();
 
@@ -19,6 +19,18 @@ export const Hero = () => {
   }, []);
 
   return (
+    <div className="absolute top-[10%] right-[7%] text-right label-mono text-foreground/40 hidden md:block z-10">
+      {time.toLocaleTimeString("en-GB")}
+      <br />
+      <span className="text-foreground/25">
+        {String(liveSessionCount).padStart(2, "0")} sessions · LIVE
+      </span>
+    </div>
+  );
+}
+
+export const Hero = () => {
+  return (
     <section
       className="relative min-h-screen flex flex-col justify-end pb-12"
     >
@@ -27,14 +39,7 @@ export const Hero = () => {
         <CircleDot />
         <DoubleCircle />
         <DoubleCircle2 />
-
-        <div className="absolute top-[10%] right-[7%] text-right label-mono text-foreground/40 hidden md:block z-10">
-          {time ? time.toLocaleTimeString("en-GB") : ""}
-          <br />
-          <span className="text-foreground/25">
-            {String(liveSessionCount).padStart(2, "0")} sessions · LIVE
-          </span>
-        </div>
+        <LiveClock />
       </div>
 
       <div className="px-6 md:px-16 lg:px-20 relative z-10 mt-16">
