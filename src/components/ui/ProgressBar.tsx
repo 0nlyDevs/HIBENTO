@@ -9,11 +9,38 @@ export function ProgressBar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const prevPathname = useRef(pathname);
+  const prevSearchParams = useRef(searchParams.toString());
   const progressRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  // Show progress bar on Link clicks
+  const startProgress = () => {
+    clearInterval(timerRef.current);
+    clearTimeout(hideTimerRef.current);
+    setVisible(true);
+    progressRef.current = 30;
+    setProgress(30);
+    timerRef.current = setInterval(() => {
+      progressRef.current = Math.min(
+        progressRef.current + (100 - progressRef.current) * 0.2,
+        90,
+      );
+      setProgress(Math.round(progressRef.current * 10) / 10);
+    }, 150);
+  };
+
+  const completeProgress = () => {
+    clearInterval(timerRef.current);
+    progressRef.current = 100;
+    setProgress(100);
+    hideTimerRef.current = setTimeout(() => {
+      setVisible(false);
+      setProgress(0);
+      progressRef.current = 0;
+    }, 300);
+  };
+
+  // Catch <a> click navigations (Link components)
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const link = (e.target as HTMLElement).closest("a");
@@ -22,20 +49,10 @@ export function ProgressBar() {
         const url = new URL(link.href);
         if (
           url.origin === window.location.origin &&
-          url.pathname !== window.location.pathname
+          (url.pathname !== window.location.pathname ||
+            url.search !== window.location.search)
         ) {
-          clearInterval(timerRef.current);
-          clearTimeout(hideTimerRef.current);
-          setVisible(true);
-          progressRef.current = 30;
-          setProgress(30);
-          timerRef.current = setInterval(() => {
-            progressRef.current = Math.min(
-              progressRef.current + (100 - progressRef.current) * 0.2,
-              90,
-            );
-            setProgress(Math.round(progressRef.current * 10) / 10);
-          }, 150);
+          startProgress();
         }
       } catch {
         // ignore invalid URLs
@@ -49,18 +66,39 @@ export function ProgressBar() {
     };
   }, []);
 
-  // Hide when navigation completes (pathname or search params change)
+  // Catch all programmatic navigations (router.push, router.replace, back/forward)
   useEffect(() => {
-    if (prevPathname.current === pathname) return;
-    prevPathname.current = pathname;
-    clearInterval(timerRef.current);
-    progressRef.current = 100;
-    setProgress(100);
-    hideTimerRef.current = setTimeout(() => {
-      setVisible(false);
-      setProgress(0);
-      progressRef.current = 0;
-    }, 300);
+    const originalPushState = history.pushState.bind(history);
+    const originalReplaceState = history.replaceState.bind(history);
+
+    history.pushState = (...args: unknown[]) => {
+      document.dispatchEvent(new CustomEvent("navigation-start"));
+      return originalPushState(...(args as [unknown, string, string | URL | null | undefined]));
+    };
+    history.replaceState = (...args: unknown[]) => {
+      document.dispatchEvent(new CustomEvent("navigation-start"));
+      return originalReplaceState(...(args as [unknown, string, string | URL | null | undefined]));
+    };
+
+    const handleNavigationStart = () => startProgress();
+
+    document.addEventListener("navigation-start", handleNavigationStart);
+
+    return () => {
+      history.pushState = originalPushState;
+      history.replaceState = originalReplaceState;
+      document.removeEventListener("navigation-start", handleNavigationStart);
+    };
+  }, []);
+
+  // Complete when navigation finishes (pathname or search params change)
+  useEffect(() => {
+    const currentPath = pathname;
+    const currentSearch = searchParams.toString();
+    if (prevPathname.current === currentPath && prevSearchParams.current === currentSearch) return;
+    prevPathname.current = currentPath;
+    prevSearchParams.current = currentSearch;
+    completeProgress();
   }, [pathname, searchParams]);
 
   if (!visible) return null;
