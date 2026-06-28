@@ -17,7 +17,6 @@ export function useGetEventSessions(
   return useQuery({
     queryKey: eventSessionKeys.eventSessions(eventId, params),
     queryFn: () => api.getEventSessions(eventId, params),
-    staleTime: 30_000,
     enabled: !!eventId,
     staleTime: 5 * 60 * 1000,
     ...options,
@@ -31,7 +30,6 @@ export function useGetEventSession(
   return useQuery({
     queryKey: eventSessionKeys.detail(sessionId),
     queryFn: () => api.getEventSession(sessionId),
-    staleTime: 15_000,
     enabled: !!sessionId,
     staleTime: 2 * 60 * 1000,
     ...options,
