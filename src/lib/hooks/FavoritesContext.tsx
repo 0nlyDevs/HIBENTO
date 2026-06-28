@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from "react";
 
 const STORAGE_KEY = "hibento_favorites";
 
@@ -50,9 +50,12 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const favoritesRef = useRef(favorites);
+  favoritesRef.current = favorites;
+
   const isFavorite = useCallback(
-    (sessionId: string) => favorites.has(sessionId),
-    [favorites],
+    (sessionId: string) => favoritesRef.current.has(sessionId),
+    [],
   );
 
   const value = useMemo(
