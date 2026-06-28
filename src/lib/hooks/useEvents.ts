@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { useQuery, keepPreviousData, UseQueryOptions } from "@tanstack/react-query";
 import { api, GetEventsParams, PaginatedResponse } from "@/lib/api";
 import type { EventSummaryDto, EventDetailDto } from "@/types/dto";
 
@@ -18,6 +18,7 @@ export function useGetEvents(
     queryKey: eventKeys.list(params),
     queryFn: () => api.getEvents(params),
     staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
     ...options,
   });
 }
@@ -31,6 +32,7 @@ export function useGetEvent(
     queryFn: () => api.getEvent(eventId),
     enabled: !!eventId,
     staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
     ...options,
   });
 }
