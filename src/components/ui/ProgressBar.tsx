@@ -10,8 +10,8 @@ export function ProgressBar() {
   const searchParams = useSearchParams();
   const prevPathname = useRef(pathname);
   const progressRef = useRef(0);
-  const timerRef = useRef<ReturnType<typeof setInterval>>();
-  const hideTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // Show progress bar on Link clicks
   useEffect(() => {
