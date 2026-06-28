@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Manrope, Sora, Geist } from "next/font/google";
 import Script from "next/script";
@@ -48,7 +49,9 @@ export default function RootLayout({
         />
         <SpeedInsights />
         <Analytics />
-        <ProgressBar />
+        <Suspense fallback={null}>
+          <ProgressBar />
+        </Suspense>
         <DotGrid />
         <NavSelector />
         <Providers>
