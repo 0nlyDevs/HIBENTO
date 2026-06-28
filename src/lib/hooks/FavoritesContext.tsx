@@ -18,25 +18,27 @@ interface FavoritesContextValue {
   favorites: Set<string>;
   isFavorite: (sessionId: string) => boolean;
   toggleFavorite: (sessionId: string) => void;
-  hydrated: boolean;
 }
 
 const FavoritesContext = createContext<FavoritesContextValue | null>(null);
 
 export function FavoritesProvider({ children }: { children: React.ReactNode }) {
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
-  const [hydrated, setHydrated] = useState(false);
+  const [favorites, setFavorites] = useState<Set<string>>(() => loadFavorites());
 
   useEffect(() => {
-    setFavorites(loadFavorites());
-    setHydrated(true);
-  }, []);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...favorites]));
+  }, [favorites]);
+
+  const favoritesRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    if (hydrated) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([...favorites]));
-    }
-  }, [favorites, hydrated]);
+    favoritesRef.current = favorites;
+  }, [favorites]);
+
+  const isFavorite = useCallback(
+    (sessionId: string) => favoritesRef.current.has(sessionId),
+    [],
+  );
 
   const toggleFavorite = useCallback((sessionId: string) => {
     setFavorites((prev) => {
@@ -50,17 +52,9 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const favoritesRef = useRef(favorites);
-  favoritesRef.current = favorites;
-
-  const isFavorite = useCallback(
-    (sessionId: string) => favoritesRef.current.has(sessionId),
-    [],
-  );
-
   const value = useMemo(
-    () => ({ favorites, isFavorite, toggleFavorite, hydrated }),
-    [favorites, isFavorite, toggleFavorite, hydrated],
+    () => ({ favorites, isFavorite, toggleFavorite }),
+    [favorites, isFavorite, toggleFavorite],
   );
 
   return (
