@@ -40,19 +40,29 @@ export default function SessionPlayerPage() {
 
   if (!session) {
     return (
-      <div className="h-screen flex flex-col overflow-hidden animate-pulse">
+      <div className="h-screen flex flex-col overflow-hidden">
         <header
           className="shrink-0 z-40 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between"
           style={{ background: "rgba(19, 20, 24, 0.95)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
         >
           <div className="flex items-center gap-3">
-            <div className="h-7 w-16 rounded-full bg-white/5" />
-            <div className="h-4 w-px bg-white/10 hidden sm:block" />
-            <div className="h-4 w-48 rounded-lg bg-white/5 hidden sm:block" />
+            <Link
+              href={`/sessions/detail/${sessionId}`}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full label-mono text-xs text-ivory/60 hover:text-ivory hover:bg-white/5 transition-all border border-dashed border-ivory/20 shrink-0"
+            >
+              <ArrowLeft size={12} />
+              BACK
+            </Link>
           </div>
-          <div className="h-9 w-9 rounded-lg bg-white/5" />
+          <div className="flex items-center gap-3">
+            <div
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center border border-dashed border-ivory/15 text-ivory/40"
+            >
+              <Heart size={15} />
+            </div>
+          </div>
         </header>
-        <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+        <div className="flex-1 flex flex-col lg:flex-row min-h-0 animate-pulse">
           <div className="flex-none lg:flex-1 flex items-center justify-center bg-black/40">
             <div className="w-16 h-16 rounded-full bg-white/5" />
           </div>
