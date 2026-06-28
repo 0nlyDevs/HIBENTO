@@ -10,11 +10,10 @@ import DoubleCircle from "../circle-style/DoubleCircle";
 import DoubleCircle2 from "../circle-style/DoubleCircle2";
 
 export const Hero = () => {
-  const [time, setTime] = useState<Date | null>(null);
+  const [time, setTime] = useState(() => new Date());
   const { data: liveSessionCount = 0 } = useLiveSessionCount();
 
   useEffect(() => {
-    setTime(new Date());
     const i = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(i);
   }, []);
