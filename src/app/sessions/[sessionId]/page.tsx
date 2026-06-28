@@ -8,7 +8,6 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/ui/Toast";
 import { useFavorites } from "@/lib/hooks/useFavorites";
-import { ArrowLeft, Heart } from "lucide-react";
 import { SpeakersCell } from "@/components/events/SpeakersCell";
 import { VideoPanel } from "@/components/features/SessionPlayer/video-panel";
 import { QaPanel } from "@/components/features/SessionPlayer/qa-panel";
