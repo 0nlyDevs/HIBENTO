@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import prisma from "@/lib/db/prisma";
 import type { SpeakerSummaryDto } from "@/types/dto";
 import { PaginationBar } from "@/components/ui/PaginationBar";
@@ -111,11 +112,13 @@ export default async function SpeakersPage({
             </div>
 
             {totalPages > 1 && (
-              <PaginationBar
-                page={page}
-                totalPages={totalPages}
-                basePath="/speakers"
-              />
+              <Suspense fallback={null}>
+                <PaginationBar
+                  page={page}
+                  totalPages={totalPages}
+                  basePath="/speakers"
+                />
+              </Suspense>
             )}
           </>
         ) : (
