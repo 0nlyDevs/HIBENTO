@@ -14,6 +14,7 @@ export function VideoPanel({ isLive, isUpcoming, isEnded, startTime }: VideoPane
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(true);
+  const [videoError, setVideoError] = useState(false);
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -49,7 +50,7 @@ export function VideoPanel({ isLive, isUpcoming, isEnded, startTime }: VideoPane
 
   return (
     <div ref={videoContainerRef} className="relative w-full aspect-video lg:aspect-auto lg:flex-1 overflow-hidden bg-black">
-      {isLive && (
+      {isLive && !videoError && (
         <video
           ref={videoRef}
           src="/videos/taylor.mp4"
@@ -57,12 +58,22 @@ export function VideoPanel({ isLive, isUpcoming, isEnded, startTime }: VideoPane
           loop
           playsInline
           muted={isMuted}
+          onError={() => setVideoError(true)}
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}
 
       {!isLive && (
         <div className="absolute inset-0 bg-black/55 z-1" />
+      )}
+
+      {isLive && videoError && (
+        <div className="absolute inset-0 bg-black/55 z-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-sm text-ivory/60">Video stream unavailable</p>
+            <p className="text-xs text-ivory/30 mt-1">Audio is playing in the background</p>
+          </div>
+        </div>
       )}
 
       <div className="absolute inset-0 z-2 flex flex-col items-center justify-center pointer-events-none">
