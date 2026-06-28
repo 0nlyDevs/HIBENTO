@@ -1,7 +1,11 @@
+"use client";
+
 import Image from "next/image";
 import { Users, Presentation, UserRound, ArrowRight, BadgeCheck } from "lucide-react";
 import { Speaker, speakers } from "@/data/speakers";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 interface SpeakersProps {
   speakers?: Speaker[];
@@ -73,7 +77,13 @@ export const Speakers = ({ speakers: propSpeakers }: SpeakersProps) => {
   const all = propSpeakers || speakers;
   const row1 = all.slice(0, 3);
   const row2 = all.slice(3, 5);
-  const total = all.length;
+
+  const { data: speakerData } = useQuery({
+    queryKey: ["speakers-count"],
+    queryFn: () => api.getSpeakers({ page: 1, limit: 1 }),
+    enabled: !propSpeakers,
+  });
+  const total = propSpeakers ? all.length : (speakerData?.pagination.total ?? all.length);
 
   return (
     <section id="speakers" className="relative py-16 md:py-24 overflow-hidden">
