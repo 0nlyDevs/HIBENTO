@@ -1,12 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import type {
-  EventSessionDetailDto,
-  SpeakerDetailDto,
-  QuestionDto,
-  RoomDto,
-  VenueDto,
-} from "@/types/dto";
+import type { EventSessionDetailDto, SpeakerDetailDto } from "@/types/dto";
+import { toRoomDto, toVenueDto, toSpeakerRef, toQuestionDto } from "@/lib/utils/mappers";
 import { isValidUUID } from "@/lib/utils/validation";
 import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
@@ -105,25 +100,6 @@ export async function GET(
     const isLive = getEventSessionStatus(session) === "live";
     const isOnline = session.event.isOnline;
 
-    const roomDto: RoomDto | null = session.room
-      ? {
-          id: session.room.id,
-          name: session.room.name,
-          capacity: session.room.capacity,
-          venueId: session.room.venueId,
-        }
-      : null;
-
-    const venueDto: VenueDto | null = session.room?.venue
-      ? {
-          id: session.room.venue.id,
-          name: session.room.venue.name,
-          city: session.room.venue.city,
-          neighborhood: session.room.venue.neighborhood,
-          totalRooms: session.room.venue.totalRooms,
-        }
-      : null;
-
     const response: EventSessionDetailDto = {
       id: session.id,
       eventId: session.eventId,
@@ -131,29 +107,18 @@ export async function GET(
       description: session.description,
       startTime: session.startTime.toISOString(),
       endTime: session.endTime.toISOString(),
-      room: roomDto,
-      venue: venueDto,
+      room: toRoomDto(session.room),
+      venue: session.room?.venue ? toVenueDto(session.room.venue) : null,
       capacity: session.capacity,
-      isOnline: isOnline,
-      isLive: isLive,
+      isOnline,
+      isLive,
       speakers: session.speakers.map(
         (sessionSpeaker): SpeakerDetailDto => ({
-          id: sessionSpeaker.speaker.id,
-          name: sessionSpeaker.speaker.name,
-          avatar: sessionSpeaker.speaker.avatarUrl,
-          bio: sessionSpeaker.speaker.bio,
+          ...toSpeakerRef(sessionSpeaker.speaker),
         })
       ),
       questions: isLive
-        ? session.questions.map(
-            (question): QuestionDto => ({
-              id: question.id,
-              content: question.content,
-              authorName: question.authorName,
-              upvotes: question.upvotes,
-              createdAt: question.createdAt.toISOString(),
-            })
-          )
+        ? session.questions.map(toQuestionDto)
         : [],
     };
 

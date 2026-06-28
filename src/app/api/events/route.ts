@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import type { EventSummaryDto, VenueDto } from "@/types/dto";
+import type { EventSummaryDto } from "@/types/dto";
+import { toVenueDto } from "@/lib/utils/mappers";
 
 export async function GET(
   request: NextRequest
@@ -81,23 +82,13 @@ export async function GET(
     );
 
     const data: EventSummaryDto[] = events.map((event) => {
-      const venueDto: VenueDto | null = event.venue
-        ? {
-            id: event.venue.id,
-            name: event.venue.name,
-            city: event.venue.city,
-            neighborhood: event.venue.neighborhood,
-            totalRooms: event.venue.totalRooms,
-          }
-        : null;
-
       return {
         id: event.id,
         title: event.title,
         description: event.description,
         startDate: event.startDate.toISOString(),
         endDate: event.endDate.toISOString(),
-        venue: venueDto,
+        venue: toVenueDto(event.venue),
         isOnline: event.isOnline,
         eventSessionCount: eventSessionCountMap.get(event.id) || 0,
       };

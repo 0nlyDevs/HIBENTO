@@ -2,7 +2,7 @@ import prisma from "@/lib/db/prisma";
 import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 import { isValidUUID } from "@/lib/utils/validation";
 import type { QuestionDto } from "@/types/dto";
-import type { Question } from "@prisma/client";
+import { toQuestionDto } from "@/lib/utils/mappers";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -35,13 +35,7 @@ export async function GET(
       );
     }
 
-    const response: QuestionDto[] = questions.map((q: Question) => ({
-      id: q.id,
-      content: q.content,
-      authorName: q.authorName,
-      upvotes: q.upvotes,
-      createdAt: q.createdAt.toISOString(),
-    }));
+    const response: QuestionDto[] = questions.map(toQuestionDto);
 
     return NextResponse.json({ data: response }, { status: 200 });
   } catch (err) {
@@ -128,13 +122,7 @@ export async function POST(
       },
     });
 
-    const response: QuestionDto = {
-      id: post.id,
-      content: post.content,
-      authorName: post.authorName,
-      upvotes: post.upvotes,
-      createdAt: post.createdAt.toISOString(),
-    };
+    const response: QuestionDto = toQuestionDto(post);
 
     return NextResponse.json(response, { status: 201 });
   } catch (err) {

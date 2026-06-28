@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import type { EventSessionSummaryDto, RoomDto } from "@/types/dto";
+import type { EventSessionSummaryDto } from "@/types/dto";
+import { toEventSessionSummary, toRoomDto } from "@/lib/utils/mappers";
 import { isValidUUID } from "@/lib/utils/validation";
-import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
 export async function GET(
   request: NextRequest,
@@ -48,34 +48,9 @@ export async function GET(
       }
     }
 
-    const data: EventSessionSummaryDto[] = sessions.map((session) => {
-      const roomDto: RoomDto = session.room
-        ? {
-            id: session.room.id,
-            name: session.room.name,
-            capacity: session.room.capacity,
-            venueId: session.room.venueId,
-          }
-        : { id: "", name: "Unknown", capacity: null, venueId: "" };
-
-      return {
-        id: session.id,
-        title: session.title,
-        description: session.description,
-        startTime: session.startTime.toISOString(),
-        endTime: session.endTime.toISOString(),
-        room: roomDto,
-        isOnline: event.isOnline,
-        isLive: getEventSessionStatus(session) === "live",
-        speakers: session.speakers.map((s) => ({
-          id: s.speaker.id,
-          name: s.speaker.name,
-          avatar: s.speaker.avatarUrl,
-          bio: s.speaker.bio,
-        })),
-        questionCount: session._count.questions,
-      };
-    });
+    const data: EventSessionSummaryDto[] = sessions.map((session) =>
+      toEventSessionSummary({ session, eventIsOnline: event.isOnline }),
+    );
 
     return NextResponse.json({ data });
   } catch (error) {

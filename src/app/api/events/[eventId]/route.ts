@@ -1,14 +1,8 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import type {
-  EventDetailDto,
-  EventSessionSummaryDto,
-  SpeakerRefDto,
-  RoomDto,
-  VenueDto,
-} from "@/types/dto";
+import type { EventDetailDto } from "@/types/dto";
+import { toVenueDto, toEventSessionSummary } from "@/lib/utils/mappers";
 import { isValidUUID } from "@/lib/utils/validation";
-import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
 type EventSessionWithRelations = {
   id: string;
@@ -52,40 +46,6 @@ type EventWithRelations = {
   } | null;
   eventSessions: EventSessionWithRelations[];
 };
-
-function transformToEventSessionSummary(
-  session: EventSessionWithRelations,
-  eventIsOnline: boolean
-): EventSessionSummaryDto {
-  const roomDto: RoomDto | null = session.room
-    ? {
-        id: session.room.id,
-        name: session.room.name,
-        capacity: session.room.capacity,
-        venueId: session.room.venueId,
-      }
-    : null;
-
-  return {
-    id: session.id,
-    title: session.title,
-    description: session.description,
-    startTime: session.startTime.toISOString(),
-    endTime: session.endTime.toISOString(),
-    room: roomDto,
-    isOnline: eventIsOnline || session.room === null,
-    isLive: getEventSessionStatus(session) === "live",
-    speakers: session.speakers.map(
-      (sessionSpeaker): SpeakerRefDto => ({
-        id: sessionSpeaker.speaker.id,
-        name: sessionSpeaker.speaker.name,
-        avatar: sessionSpeaker.speaker.avatarUrl,
-        bio: sessionSpeaker.speaker.bio,
-      })
-    ),
-    questionCount: session._count.questions,
-  };
-}
 
 export async function GET(
   req: Request,
@@ -153,25 +113,15 @@ export async function GET(
       );
     }
 
-    const venueDto: VenueDto | null = event.venue
-      ? {
-          id: event.venue.id,
-          name: event.venue.name,
-          city: event.venue.city,
-          neighborhood: event.venue.neighborhood,
-          totalRooms: event.venue.totalRooms,
-        }
-      : null;
-
     const response: EventDetailDto = {
       id: event.id,
       title: event.title,
       description: event.description,
       startDate: event.startDate.toISOString(),
       endDate: event.endDate.toISOString(),
-      venue: venueDto,
+      venue: toVenueDto(event.venue),
       isOnline: event.isOnline,
-      eventSessions: event.eventSessions.map((s) => transformToEventSessionSummary(s, event.isOnline)),
+      eventSessions: event.eventSessions.map((s) => toEventSessionSummary({ session: s, eventIsOnline: event.isOnline })),
     };
 
     return NextResponse.json(response, { status: 200 });
