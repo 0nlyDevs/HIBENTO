@@ -36,7 +36,7 @@ function MenuItemButton({
   );
 }
 
-export function MenuOverlay({ items, isClosing, onItemClick, onClose }: MenuOverlayProps) {
+export function MenuOverlay({ items, isClosing, onItemClick, onClose: _onClose }: MenuOverlayProps) {
   const midpoint = Math.ceil(items.length / 2);
   const showDivider = items.length > 3;
   const leftItems = items.slice(0, midpoint);
