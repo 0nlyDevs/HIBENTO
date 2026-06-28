@@ -19,7 +19,7 @@ export function fromEventSessionSummary(
     speakers: dto.speakers.map((s) => ({
       id: s.id,
       name: s.name,
-      image: s.avatar ?? undefined,
+      image: s.avatar || undefined,
       bio: s.bio,
     })),
     isLive: dto.isLive,
@@ -39,7 +39,7 @@ export function fromEventSessionDetail(dto: EventSessionDetailDto): ScheduleSess
     speakers: dto.speakers.map((s) => ({
       id: s.id,
       name: s.name,
-      image: s.avatar ?? undefined,
+      image: s.avatar || undefined,
       bio: s.bio,
     })),
     isLive: dto.isLive,
