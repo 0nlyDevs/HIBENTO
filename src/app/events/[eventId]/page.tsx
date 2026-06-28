@@ -8,37 +8,16 @@ import { EventHero } from "@/components/events/EventHero";
 import { EventInfoGrid } from "@/components/events/EventInfoGrid";
 import { EventSchedule } from "@/components/features/EventSchedule";
 import { EventVenueCard } from "@/components/events/EventVenueCard";
-
-function LoadingSkeleton() {
-  return (
-    <div className="pt-20">
-      <div className="max-w-7xl mx-auto px-6 space-y-4">
-        <div className="h-72 animate-pulse card-glass squircle-lg" />
-        <div className="grid grid-cols-4 gap-3">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-20 animate-pulse card-glass squircle" />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function NotFound() {
-  return (
-    <div className="pt-20 flex items-center justify-center">
-      <p className="label-mono text-ivory/40">EVENT NOT FOUND</p>
-    </div>
-  );
-}
+import { PageLoader } from "@/components/ui/Spinner";
+import { NotFoundState } from "@/components/ui/NotFoundState";
 
 export default function EventDetailPage() {
   const { eventId } = useParams<{ eventId: string }>();
   const { data: event, isLoading } = useGetEvent(eventId);
   const [selectedDay, setSelectedDay] = useState<string>("all");
+  if (isLoading) return <PageLoader />;
 
-  if (isLoading) return <LoadingSkeleton />;
-  if (!event) return <NotFound />;
+  if (!event) return <NotFoundState title="EVENT NOT FOUND" backHref="/events" backLabel="Back to events" />;
 
   const start = new Date(event.startDate);
   const end = new Date(event.endDate);

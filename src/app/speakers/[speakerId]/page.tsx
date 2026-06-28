@@ -11,6 +11,7 @@ import { sortScheduleSessions } from "@/lib/utils/sortSessions";
 import { ScheduleTable } from "@/components/sessions/ScheduleTable";
 import { TablePagination } from "@/components/ui/TablePagination";
 import { PageLoader } from "@/components/ui/Spinner";
+import { NotFoundState } from "@/components/ui/NotFoundState";
 import { MessageCircle, ChevronUp, ExternalLink } from "lucide-react";
 import type { QuestionDto } from "@/types/dto";
 
@@ -64,12 +65,7 @@ export default function SpeakerProfilePage() {
   }
 
   if (!speaker) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold text-ivory/80">SPEAKER NOT FOUND</h1>
-        <Link href="/speakers" className="text-sm text-ivory/55 hover:text-ivory underline">Back to speakers</Link>
-      </div>
-    );
+    return <NotFoundState title="SPEAKER NOT FOUND" backHref="/speakers" backLabel="Back to speakers" />;
   }
 
   const sortedSessions = sortScheduleSessions(

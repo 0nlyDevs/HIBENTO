@@ -6,6 +6,7 @@ import { useGetEventSession } from "@/lib/hooks/useSessions";
 import { useFavorites } from "@/lib/hooks/useFavorites";
 import { useToast } from "@/components/ui/Toast";
 import { PageLoader } from "@/components/ui/Spinner";
+import { NotFoundState } from "@/components/ui/NotFoundState";
 import { SessionBadges } from "@/components/ui/SessionBadges";
 import { SpeakerCard } from "@/components/ui/SpeakerCard";
 import { VenueCard } from "@/components/ui/VenueCard";
@@ -39,12 +40,7 @@ export default function SessionDetailPage() {
   if (isLoading) return <PageLoader className="pt-24 pb-24" />;
 
   if (!session) {
-    return (
-      <div className="pt-24 pb-24 flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold text-ivory/80">SESSION NOT FOUND</h1>
-        <Link href={ROUTES.EVENTS} className="text-sm text-ivory/55 hover:text-ivory underline">Back to events</Link>
-      </div>
-    );
+    return <NotFoundState title="SESSION NOT FOUND" backHref={ROUTES.EVENTS} backLabel="Back to events" />;
   }
 
   const startTime = new Date(session.startTime);
