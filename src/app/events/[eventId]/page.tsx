@@ -113,7 +113,7 @@ export default function EventDetailPage() {
           </div>
 
           {event && event.eventSessions.length > 0 ? (
-            <EventSchedule event={event} selectedDay={selectedDay} onDayChange={setSelectedDay} />
+            <EventSchedule event={event} selectedDay={selectedDay} onDayChange={setSelectedDay} hideHeader />
           ) : event && event.eventSessions.length === 0 ? null : (
             <div className="space-y-3 animate-pulse">
               <div className="h-6 w-full rounded-lg bg-ivory/5" />

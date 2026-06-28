@@ -7,6 +7,7 @@ export interface EventScheduleProps {
   event: EventDetailDto;
   selectedDay: string;
   onDayChange: (day: string) => void;
+  hideHeader?: boolean;
 }
 
 export interface PillProps {
@@ -19,8 +20,10 @@ export interface PillProps {
   uppercase?: boolean;
 }
 
-export interface CalendarSessionBlock {
-  session: EventSessionSummaryDto;
-  top: number;
-  height: number;
+export interface CalendarViewProps {
+  uniqueRooms: string[];
+  calendarHours: number[];
+  sessionsByRoom: Map<string, EventSessionSummaryDto[]>;
+  hourRange: { start: number; end: number };
+  isEmpty: boolean;
 }
