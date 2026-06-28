@@ -27,15 +27,15 @@ export function ProgressBar() {
           clearInterval(timerRef.current);
           clearTimeout(hideTimerRef.current);
           setVisible(true);
-          progressRef.current = 5;
-          setProgress(5);
+          progressRef.current = 30;
+          setProgress(30);
           timerRef.current = setInterval(() => {
             progressRef.current = Math.min(
-              progressRef.current + (100 - progressRef.current) * 0.05,
-              92,
+              progressRef.current + (100 - progressRef.current) * 0.2,
+              90,
             );
-            setProgress(progressRef.current);
-          }, 200);
+            setProgress(Math.round(progressRef.current * 10) / 10);
+          }, 150);
         }
       } catch {
         // ignore invalid URLs
@@ -71,7 +71,7 @@ export function ProgressBar() {
       style={{ opacity: progress >= 100 ? 0 : 1, transition: "opacity 0.2s" }}
     >
       <div
-        className="h-full bg-chartreuse transition-all duration-300 ease-out"
+        className="h-full bg-chartreuse"
         style={{ width: `${progress}%` }}
       />
     </div>
