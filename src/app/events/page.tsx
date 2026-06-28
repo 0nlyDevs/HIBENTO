@@ -67,6 +67,7 @@ export default function EventsPage() {
   const { data: venuesData } = useQuery({
     queryKey: ["venues"],
     queryFn: () => api.getVenues(),
+    staleTime: 5 * 60 * 1000,
   });
 
   const cityOptions = useMemo(

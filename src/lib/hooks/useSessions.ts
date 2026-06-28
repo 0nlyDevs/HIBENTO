@@ -19,6 +19,7 @@ export function useGetEventSessions(
     queryFn: () => api.getEventSessions(eventId, params),
     staleTime: 30_000,
     enabled: !!eventId,
+    staleTime: 5 * 60 * 1000,
     ...options,
   });
 }
@@ -32,6 +33,7 @@ export function useGetEventSession(
     queryFn: () => api.getEventSession(sessionId),
     staleTime: 15_000,
     enabled: !!sessionId,
+    staleTime: 2 * 60 * 1000,
     ...options,
   });
 }

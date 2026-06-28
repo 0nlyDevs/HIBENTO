@@ -49,9 +49,12 @@ async function http<T>(
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
 
+  const isGet = !init?.method || init.method === "GET";
+
   try {
     const res = await fetch(`${API_BASE_URL}${path}`, {
       ...init,
+      cache: isGet ? (init?.cache ?? "no-store") : undefined,
       headers: {
         "Content-Type": "application/json",
         ...(init?.headers || {}),
@@ -161,3 +164,38 @@ export const api = {
 
   getLiveSessionCount: () => http<{ count: number }>("/api/live/count"),
 };
+
+export function isEventLive(event: {
+  startDate: string;
+  endDate: string;
+}): boolean {
+  const now = new Date();
+  return now >= new Date(event.startDate) && now <= new Date(event.endDate);
+}
+
+export function isEventSessionLive(session: {
+  startTime: string;
+  endTime: string;
+}): boolean {
+  const now = new Date();
+  return now >= new Date(session.startTime) && now <= new Date(session.endTime);
+}
+
+export function formatEventDate(dateString: string): string {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+export function formatSessionTime(dateString: string): string {
+  return new Date(dateString).toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+export function getVenueDisplayName(venue: VenueDto): string {
+  return `${venue.neighborhood}, ${venue.city} - ${venue.name}`;
+}

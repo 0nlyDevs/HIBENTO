@@ -18,6 +18,7 @@ export function useGetEventRooms(
     queryFn: () => api.getEventRooms(eventId),
     staleTime: 300_000,
     enabled: !!eventId,
+    staleTime: 5 * 60 * 1000,
     ...options,
   });
 }
@@ -32,6 +33,7 @@ export function useGetRoomSessions(
     queryFn: () => api.getRoomSessions(eventId, roomName),
     staleTime: 30_000,
     enabled: !!eventId && !!roomName,
+    staleTime: 5 * 60 * 1000,
     ...options,
   });
 }
