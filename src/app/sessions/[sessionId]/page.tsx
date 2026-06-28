@@ -4,8 +4,9 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Heart } from "lucide-react";
 import { useGetEventSession } from "@/lib/hooks/useSessions";
-import { useToast } from "@/components/ui/Toast";
+import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { useToast } from "@/components/ui/Toast";
 import { useFavorites } from "@/lib/hooks/useFavorites";
 import { PageLoader } from "@/components/ui/Spinner";
 import { SpeakersCell } from "@/components/events/SpeakersCell";
@@ -21,10 +22,23 @@ export default function SessionPlayerPage() {
   const {
     data: session,
     isLoading,
-    refetch,
-  } = useGetEventSession(sessionId, { refetchInterval: 5000 });
+  } = useGetEventSession(sessionId);
 
-  const { upvotedQuestions, upvotingQuestions, handleUpvote } = useUpvote(sessionId, refetch);
+  const isLive = session?.isLive ?? false;
+
+  const { data: questionsData, refetch: refetchQuestions } = useQuery({
+    queryKey: ["session-questions", sessionId],
+    queryFn: () => api.getQuestions(sessionId),
+    refetchInterval: isLive ? 15_000 : undefined,
+    enabled: !!session,
+  });
+
+  const questions = questionsData?.data ?? session?.questions ?? [];
+
+  const { upvotedQuestions, upvotingQuestions, handleUpvote } = useUpvote(
+    sessionId,
+    refetchQuestions,
+  );
 
   if (isLoading) return <PageLoader />;
 
@@ -44,7 +58,6 @@ export default function SessionPlayerPage() {
   const endTime = new Date(session.endTime);
   const isUpcoming = now < startTime;
   const isEnded = now > endTime;
-  const isLive = session.isLive;
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
@@ -105,7 +118,7 @@ export default function SessionPlayerPage() {
         </div>
 
         <QaPanel
-          questions={session.questions}
+          questions={questions}
           isLive={isLive}
           isUpcoming={isUpcoming}
           isEnded={isEnded}
@@ -114,7 +127,7 @@ export default function SessionPlayerPage() {
           upvotingQuestions={upvotingQuestions}
           onSubmitQuestion={async (text, authorName) => {
             await api.createQuestion(sessionId, text, authorName);
-            refetch();
+            refetchQuestions();
             toast("Question submitted!", "success");
           }}
         />

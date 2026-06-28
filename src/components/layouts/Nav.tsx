@@ -64,21 +64,15 @@ export function Nav() {
     <nav className="sticky top-0 z-40 backdrop-blur border-b border-white/10">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            >
-              <Image
-                src="/images/brand/header-text-white1497×414@3x.png"
-                alt="HiBento"
-                width={100}
-                height={30}
-                className="h-auto w-auto"
-                priority
-              />
-            </motion.div>
+          <Link href="/" className="flex items-center h-7">
+            <Image
+              src="/images/brand/header-white-text.svg"
+              alt="HiBento"
+              width={140}
+              height={28}
+              className="h-7 w-auto"
+              priority
+            />
           </Link>
 
           <div ref={navRef} className="relative flex items-center gap-8 pb-1">

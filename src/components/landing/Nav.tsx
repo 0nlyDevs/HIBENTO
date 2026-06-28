@@ -1,14 +1,18 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Mic, Tickets, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { navLinks } from "@/data/nav-links";
 import SwipeLettersButton from "@/components/ui/SwipeLetterButton";
-import { MenuOverlay } from "@/components/layouts/MenuOverlay";
 import { NAV_STYLES } from "@/constants/styles";
+
+const MenuOverlay = dynamic(() =>
+  import("@/components/layouts/MenuOverlay").then((m) => ({ default: m.MenuOverlay })),
+);
 
 const GLASS_STYLE: React.CSSProperties = {
   background: "#222222E6",
@@ -79,6 +83,12 @@ export const Nav = () => {
     router.push("/speakers");
   }, [router]);
 
+  useEffect(() => {
+    router.prefetch("/events");
+    router.prefetch("/speakers");
+    router.prefetch("/sessions");
+  }, [router]);
+
   return (
     <>
       <style>{NAV_STYLES}</style>
@@ -110,7 +120,7 @@ export const Nav = () => {
 
         <div className="hidden lg:flex items-center h-12 px-6 gap-6 pointer-events-auto" style={GLASS_STYLE}>
           <Link href="/" className="flex items-center pl-1 pr-5 border-r border-dashed border-white/15 shrink-0">
-            <Image src="/images/brand/header-white-text.svg" alt="HiBento" width={140} height={28} className="h-7 w-auto" style={{ width: "auto", height: "auto" }} priority />
+            <Image src="/images/brand/header-white-text.svg" alt="HiBento" width={140} height={28} className="h-7 w-auto" priority />
           </Link>
           <nav className="flex items-center gap-4">
             {navLinks.map((l) => (
