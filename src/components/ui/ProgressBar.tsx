@@ -8,36 +8,33 @@ export function ProgressBar() {
   const [progress, setProgress] = useState(0);
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const timerRef = useRef<ReturnType<typeof setInterval>>();
   const prevPathname = useRef(pathname);
+  const progressRef = useRef(0);
+  const timerRef = useRef<ReturnType<typeof setInterval>>();
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
-  // Hide when navigation completes
-  useEffect(() => {
-    prevPathname.current = pathname;
-    setProgress(100);
-    const t = setTimeout(() => {
-      setVisible(false);
-      setProgress(0);
-    }, 300);
-    return () => clearTimeout(t);
-  }, [pathname, searchParams]);
-
-  // Detect Link clicks to show the bar
+  // Show progress bar on Link clicks
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const link = (e.target as HTMLElement).closest("a");
-      if (!link || !link.href) return;
+      if (!link?.href) return;
       try {
         const url = new URL(link.href);
         if (
           url.origin === window.location.origin &&
           url.pathname !== window.location.pathname
         ) {
-          setVisible(true);
-          setProgress(5);
           clearInterval(timerRef.current);
+          clearTimeout(hideTimerRef.current);
+          setVisible(true);
+          progressRef.current = 5;
+          setProgress(5);
           timerRef.current = setInterval(() => {
-            setProgress((p) => Math.min(p + (100 - p) * 0.05, 92));
+            progressRef.current = Math.min(
+              progressRef.current + (100 - progressRef.current) * 0.05,
+              92,
+            );
+            setProgress(progressRef.current);
           }, 200);
         }
       } catch {
@@ -48,8 +45,23 @@ export function ProgressBar() {
     return () => {
       document.removeEventListener("click", handleClick);
       clearInterval(timerRef.current);
+      clearTimeout(hideTimerRef.current);
     };
   }, []);
+
+  // Hide when navigation completes (pathname or search params change)
+  useEffect(() => {
+    if (prevPathname.current === pathname) return;
+    prevPathname.current = pathname;
+    clearInterval(timerRef.current);
+    progressRef.current = 100;
+    setProgress(100);
+    hideTimerRef.current = setTimeout(() => {
+      setVisible(false);
+      setProgress(0);
+      progressRef.current = 0;
+    }, 300);
+  }, [pathname, searchParams]);
 
   if (!visible) return null;
 
