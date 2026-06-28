@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Providers } from "./providers";
+import { ProgressBar } from "@/components/ui/ProgressBar";
 import { NavSelector, MainWrapper } from "@/components/layouts/NavSelector";
 import DotGrid from "@/components/circle-style/DotGrid";
 import { Analytics } from "@vercel/analytics/next"
@@ -47,6 +48,7 @@ export default function RootLayout({
         />
         <SpeedInsights />
         <Analytics />
+        <ProgressBar />
         <DotGrid />
         <NavSelector />
         <Providers>
