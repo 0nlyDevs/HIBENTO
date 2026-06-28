@@ -2,7 +2,6 @@ import prisma from "@/lib/db/prisma";
 import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 import type { UpvoteResponseDto } from "@/types/dto";
 import { NextRequest, NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
 
 export async function POST(
   request: NextRequest,
