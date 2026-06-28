@@ -23,12 +23,10 @@ interface FavoritesContextValue {
 const FavoritesContext = createContext<FavoritesContextValue | null>(null);
 
 export function FavoritesProvider({ children }: { children: React.ReactNode }) {
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [favorites, setFavorites] = useState<Set<string>>(() => loadFavorites());
   const hydrated = useRef(false);
 
   useEffect(() => {
-    const saved = loadFavorites();
-    setFavorites(saved);
     hydrated.current = true;
   }, []);
 

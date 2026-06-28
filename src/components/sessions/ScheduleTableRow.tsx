@@ -62,6 +62,12 @@ export function ScheduleTableRow({
     router.push(`/sessions/detail/${session.id}`);
   };
 
+  const prefetchSession = () => {
+    if (!onSessionClick) {
+      router.prefetch(`/sessions/detail/${session.id}`);
+    }
+  };
+
   const handleRowKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
@@ -74,6 +80,7 @@ export function ScheduleTableRow({
       role="button"
       tabIndex={0}
       onClick={navigateToSession}
+      onMouseEnter={prefetchSession}
       onKeyDown={handleRowKeyDown}
       className={`gap-4 px-6 py-5 group transition-colors items-center border-b border-dashed cursor-pointer hover:bg-white/3 outline-none focus-visible:ring-1 focus-visible:ring-chartreuse/40 schedule-row-fade-in ${
         isLast ? "border-transparent" : "border-white/8"

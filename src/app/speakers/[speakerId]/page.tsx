@@ -113,7 +113,7 @@ export default function SpeakerProfilePage() {
               {speaker.externalLinks && speaker.externalLinks.length > 0 && (
                 <div className="px-6 pb-6 space-y-2 mt-auto">
                   <div className="h-px bg-ivory/10 mb-3" />
-                  {speaker.externalLinks.map((link, idx) => (
+                  {speaker.externalLinks.map((link) => (
                     <a
                       key={link.url}
                       href={link.url}

@@ -99,7 +99,7 @@ export const PlanningShowcase = ({
                     ))}
                     {displaySessions
                       .filter((s) => s.room === ti)
-                      .map((s, i) => {
+                      .map((s) => {
                         const top = (s.start - displayHours[0]) * 128;
                         const height = (s.end - s.start) * 128 - 6;
                         return (

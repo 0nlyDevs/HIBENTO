@@ -1,14 +1,18 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Mic, Tickets, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { navLinks } from "@/data/nav-links";
 import SwipeLettersButton from "@/components/ui/SwipeLetterButton";
-import { MenuOverlay } from "@/components/layouts/MenuOverlay";
 import { NAV_STYLES } from "@/constants/styles";
+
+const MenuOverlay = dynamic(() =>
+  import("@/components/layouts/MenuOverlay").then((m) => ({ default: m.MenuOverlay })),
+);
 
 const GLASS_STYLE: React.CSSProperties = {
   background: "#222222E6",
@@ -77,6 +81,12 @@ export const Nav = () => {
     setIsMenuOpen(false);
     setIsClosing(false);
     router.push("/speakers");
+  }, [router]);
+
+  useEffect(() => {
+    router.prefetch("/events");
+    router.prefetch("/speakers");
+    router.prefetch("/sessions");
   }, [router]);
 
   return (

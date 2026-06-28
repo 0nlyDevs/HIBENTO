@@ -54,7 +54,7 @@ async function http<T>(
   try {
     const res = await fetch(`${API_BASE_URL}${path}`, {
       ...init,
-      cache: isGet ? "no-store" : undefined,
+      cache: isGet ? "force-cache" : undefined,
       headers: {
         "Content-Type": "application/json",
         ...(init?.headers || {}),
@@ -161,6 +161,8 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ visitorId }),
     }),
+
+  getLiveSessionCount: () => http<{ count: number }>("/api/live/count"),
 };
 
 export function isEventLive(event: {

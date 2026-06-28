@@ -1,14 +1,18 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useDeferredValue } from "react";
 import { useQuery } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
 import { useGetEvents } from "@/lib/hooks/useEvents";
 import { api } from "@/lib/api";
 import { Select } from "@/components/ui/Select";
-import { DateRangePicker } from "@/components/ui/DateRangePicker";
 import { Search, X } from "lucide-react";
 import type { EventSummaryDto } from "@/types/dto";
 import { BentoGrid } from "@/components/features/EventsList/event-cards";
+
+const DateRangePicker = dynamic(() =>
+  import("@/components/ui/DateRangePicker").then((m) => ({ default: m.DateRangePicker })),
+);
 
 type EventStatus = "all" | "live" | "upcoming" | "ended";
 type EventFormat = "all" | "onsite" | "online";
@@ -57,6 +61,8 @@ export default function EventsPage() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
 
+  const deferredSearch = useDeferredValue(search);
+
   const { data: venuesData } = useQuery({
     queryKey: ["venues"],
     queryFn: () => api.getVenues(),
@@ -70,14 +76,14 @@ export default function EventsPage() {
     [venuesData],
   );
 
-  const queryParams = {
+  const queryParams = useMemo(() => ({
     page: 1, limit: 50,
     ...(status !== "all" && { status }),
-    ...(search && { search }),
+    ...(deferredSearch && { search: deferredSearch }),
     ...(city !== "all" && { city }),
     ...(dateFrom && { dateFrom }),
     ...(dateTo && { dateTo }),
-  };
+  }), [status, deferredSearch, city, dateFrom, dateTo]);
 
   const { data: eventsData, isLoading } = useGetEvents(queryParams);
 

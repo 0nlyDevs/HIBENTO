@@ -62,10 +62,24 @@ export async function GET(
       prisma.eventSession.findMany({
       where,
       include: {
-        room: true,
+        room: {
+          select: {
+            id: true,
+            name: true,
+            capacity: true,
+            venueId: true,
+          },
+        },
         speakers: {
           include: {
-            speaker: true,
+            speaker: {
+              select: {
+                id: true,
+                name: true,
+                avatarUrl: true,
+                bio: true,
+              },
+            },
           },
         },
       },
