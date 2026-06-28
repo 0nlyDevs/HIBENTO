@@ -60,7 +60,7 @@ export async function GET(
     const [eventExists, rawSessions] = await Promise.all([
       prisma.event.findUnique({
         where: { id: eventId },
-        select: { id: true },
+        select: { id: true, isOnline: true },
       }),
       prisma.eventSession.findMany({
       where,
@@ -104,6 +104,7 @@ export async function GET(
       );
     }
 
+    const eventIsOnline = eventExists.isOnline;
     const sessions = rawSessions as unknown as EventSessionWithSpeakers[];
 
     let filteredSessions = sessions;
@@ -130,7 +131,7 @@ export async function GET(
         startTime: session.startTime.toISOString(),
         endTime: session.endTime.toISOString(),
         room: roomDto,
-        isOnline: session.room === null,
+        isOnline: eventIsOnline || session.room === null,
         isLive: getEventSessionStatus(session) === "live",
         speakers: session.speakers.map((sessionSpeaker) => ({
           id: sessionSpeaker.speaker.id,

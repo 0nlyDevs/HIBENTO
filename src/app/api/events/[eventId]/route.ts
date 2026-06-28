@@ -54,7 +54,8 @@ type EventWithRelations = {
 };
 
 function transformToEventSessionSummary(
-  session: EventSessionWithRelations
+  session: EventSessionWithRelations,
+  eventIsOnline: boolean
 ): EventSessionSummaryDto {
   const roomDto: RoomDto | null = session.room
     ? {
@@ -72,7 +73,7 @@ function transformToEventSessionSummary(
     startTime: session.startTime.toISOString(),
     endTime: session.endTime.toISOString(),
     room: roomDto,
-    isOnline: session.room === null,
+    isOnline: eventIsOnline || session.room === null,
     isLive: getEventSessionStatus(session) === "live",
     speakers: session.speakers.map(
       (sessionSpeaker): SpeakerRefDto => ({
@@ -170,7 +171,7 @@ export async function GET(
       endDate: event.endDate.toISOString(),
       venue: venueDto,
       isOnline: event.isOnline,
-      eventSessions: event.eventSessions.map(transformToEventSessionSummary),
+      eventSessions: event.eventSessions.map((s) => transformToEventSessionSummary(s, event.isOnline)),
     };
 
     return NextResponse.json(response, { status: 200 });

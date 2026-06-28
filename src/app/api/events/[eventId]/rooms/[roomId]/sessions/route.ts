@@ -15,6 +15,15 @@ export async function GET(
       return NextResponse.json({ error: "Invalid ID format" }, { status: 400 });
     }
 
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      select: { isOnline: true },
+    });
+
+    if (!event) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
+    }
+
     const sessions = await prisma.eventSession.findMany({
       where: {
         eventId,
@@ -40,13 +49,14 @@ export async function GET(
     }
 
     const data: EventSessionSummaryDto[] = sessions.map((session) => {
-      const roomData = session.room!;
-      const roomDto: RoomDto = {
-        id: roomData.id,
-        name: roomData.name,
-        capacity: roomData.capacity,
-        venueId: roomData.venueId,
-      };
+      const roomDto: RoomDto = session.room
+        ? {
+            id: session.room.id,
+            name: session.room.name,
+            capacity: session.room.capacity,
+            venueId: session.room.venueId,
+          }
+        : { id: "", name: "Unknown", capacity: null, venueId: "" };
 
       return {
         id: session.id,
@@ -55,7 +65,7 @@ export async function GET(
         startTime: session.startTime.toISOString(),
         endTime: session.endTime.toISOString(),
         room: roomDto,
-        isOnline: false,
+        isOnline: event.isOnline,
         isLive: getEventSessionStatus(session) === "live",
         speakers: session.speakers.map((s) => ({
           id: s.speaker.id,
