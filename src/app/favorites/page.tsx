@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useFavorites } from "@/lib/hooks/useFavorites";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { fromEventSessionDetail } from "@/lib/utils/sessionMappers";
 import { sortScheduleSessions } from "@/lib/utils/sortSessions";
@@ -26,6 +26,7 @@ export default function FavoritesPage() {
       return results.filter(Boolean);
     },
     enabled: ids.length > 0,
+    placeholderData: keepPreviousData,
   });
 
   const sorted = sortScheduleSessions(
@@ -84,7 +85,7 @@ export default function FavoritesPage() {
               BROWSE EVENTS
             </Link>
           </div>
-        ) : isLoading ? (
+        ) : isLoading && !sessions ? (
           <div className="card-glass squircle-lg p-6">
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (

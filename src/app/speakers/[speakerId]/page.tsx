@@ -48,6 +48,7 @@ export default function SpeakerProfilePage() {
       return results;
     },
     enabled: sessionIds.length > 0,
+    placeholderData: keepPreviousData,
   });
 
   const questionsWithSession = (questionsBySession ?? []).flatMap(
