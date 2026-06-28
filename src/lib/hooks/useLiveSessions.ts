@@ -8,6 +8,7 @@ export function useLiveSessionCount() {
       const result = await api.getLiveSessionCount();
       return result.count;
     },
+    staleTime: 15_000,
     refetchInterval: 30_000,
   });
 }

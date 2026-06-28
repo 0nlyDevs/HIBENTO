@@ -17,6 +17,7 @@ export function useGetEvents(
   return useQuery({
     queryKey: eventKeys.list(params),
     queryFn: () => api.getEvents(params),
+    staleTime: 60_000,
     ...options,
   });
 }
@@ -28,6 +29,7 @@ export function useGetEvent(
   return useQuery({
     queryKey: eventKeys.detail(eventId),
     queryFn: () => api.getEvent(eventId),
+    staleTime: 60_000,
     enabled: !!eventId,
     ...options,
   });
