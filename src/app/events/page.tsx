@@ -76,14 +76,14 @@ export default function EventsPage() {
     [venuesData],
   );
 
-  const queryParams = {
+  const queryParams = useMemo(() => ({
     page: 1, limit: 50,
     ...(status !== "all" && { status }),
     ...(deferredSearch && { search: deferredSearch }),
     ...(city !== "all" && { city }),
     ...(dateFrom && { dateFrom }),
     ...(dateTo && { dateTo }),
-  };
+  }), [status, deferredSearch, city, dateFrom, dateTo]);
 
   const { data: eventsData, isLoading } = useGetEvents(queryParams);
 
