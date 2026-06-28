@@ -14,7 +14,7 @@ function LiveClock() {
   const { data: liveSessionCount = 0 } = useLiveSessionCount();
 
   useEffect(() => {
-    const i = setInterval(() => setTime(new Date()), 1000);
+    const i = setInterval(() => setTime(new Date()), 30000);
     return () => clearInterval(i);
   }, []);
 
