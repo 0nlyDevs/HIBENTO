@@ -169,7 +169,7 @@ export function SessionModal({
             </Dialog.Close>
 
             <div className="flex-1 overflow-y-auto px-7 py-6 scrollbar-custom">
-              {isLoading && (
+              {isLoading && !session && (
                 <div className="flex items-center justify-center py-20">
                   <Spinner className="border-white/20" />
                 </div>
