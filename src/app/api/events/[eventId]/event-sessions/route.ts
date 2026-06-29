@@ -36,6 +36,7 @@ export async function GET(
     const url = new URL(request.url);
     const roomFilter = url.searchParams.get("room");
     const liveOnly = url.searchParams.get("liveOnly") === "true";
+    const q = url.searchParams.get("q");
 
     if (!isValidUUID(eventId)) {
       return NextResponse.json(
@@ -52,6 +53,13 @@ export async function GET(
       where.room = {
         name: roomFilter,
       };
+    }
+
+    if (q) {
+      where.OR = [
+        { title: { contains: q, mode: "insensitive" } },
+        { description: { contains: q, mode: "insensitive" } },
+      ];
     }
 
     const [eventExists, rawSessions] = await Promise.all([
