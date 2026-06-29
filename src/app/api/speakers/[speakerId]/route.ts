@@ -26,7 +26,7 @@ export async function GET(
           include: {
             eventSession: {
               include: {
-                event: { select: { title: true } },
+                event: { select: { id: true, title: true } },
                 room: { include: { venue: { select: { neighborhood: true } } } },
                 speakers: {
                   include: { speaker: { select: { id: true, name: true } } },
@@ -56,6 +56,7 @@ export async function GET(
       })),
       eventSessions: speaker.sessions.map((s) => ({
         id: s.eventSession.id,
+        eventId: s.eventSession.event.id,
         title: s.eventSession.title,
         description: s.eventSession.description,
         eventName: s.eventSession.event.title,
