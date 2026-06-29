@@ -3,30 +3,6 @@ import prisma from "@/lib/db/prisma";
 import type { EventSessionSummaryDto, RoomDto } from "@/types/dto";
 import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
-type EventSessionWithSpeakers = {
-  id: string;
-  eventId: string;
-  title: string;
-  description: string | null;
-  startTime: Date;
-  endTime: Date;
-  roomId: string | null;
-  room: {
-    id: string;
-    name: string;
-    capacity: number | null;
-    venueId: string;
-  } | null;
-  speakers: Array<{
-    speaker: {
-      id: string;
-      name: string;
-      avatarUrl: string | null;
-      bio: string | null;
-    };
-  }>;
-};
-
 export async function GET(
   request: NextRequest
 ): Promise<NextResponse<{ data: EventSessionSummaryDto[]; pagination: { page: number; limit: number; total: number } } | { error: string }>> {
@@ -49,9 +25,19 @@ export async function GET(
     }
     if (q) {
       where.OR = [
-        { title: { contains: q, mode: "insensitive" } },
-        { description: { contains: q, mode: "insensitive" } },
+        { title: { contains: q, mode: "insensitive" as const } },
+        { description: { contains: q, mode: "insensitive" as const } },
       ];
+    }
+
+    const now = new Date();
+    if (status === "live") {
+      where.startTime = { lte: now };
+      where.endTime = { gte: now };
+    } else if (status === "upcoming") {
+      where.startTime = { gt: now };
+    } else if (status === "ended") {
+      where.endTime = { lt: now };
     }
 
     const [sessions, total] = await Promise.all([
@@ -78,6 +64,9 @@ export async function GET(
               },
             },
           },
+          _count: {
+            select: { questions: true },
+          },
         },
         skip: (page - 1) * limit,
         take: limit,
@@ -86,23 +75,7 @@ export async function GET(
       prisma.eventSession.count({ where }),
     ]);
 
-    let filteredSessions = sessions as unknown as EventSessionWithSpeakers[];
-
-    if (status === "live") {
-      filteredSessions = filteredSessions.filter(
-        (session) => getEventSessionStatus(session) === "live"
-      );
-    } else if (status === "upcoming") {
-      filteredSessions = filteredSessions.filter(
-        (session) => getEventSessionStatus(session) === "upcoming"
-      );
-    } else if (status === "ended") {
-      filteredSessions = filteredSessions.filter(
-        (session) => getEventSessionStatus(session) === "ended"
-      );
-    }
-
-    const data: EventSessionSummaryDto[] = filteredSessions.map((session) => {
+    const data: EventSessionSummaryDto[] = sessions.map((session) => {
       const roomDto: RoomDto | null = session.room
         ? {
             id: session.room.id,
@@ -128,7 +101,7 @@ export async function GET(
           avatar: s.speaker.avatarUrl,
           bio: s.speaker.bio,
         })),
-        questionCount: 0,
+        questionCount: session._count.questions,
       };
     });
 
