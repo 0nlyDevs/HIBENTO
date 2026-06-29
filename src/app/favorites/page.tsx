@@ -106,6 +106,7 @@ export default function FavoritesPage() {
             </div>
           </div>
         ) : (
+          <>
           <div
             className="flex items-center gap-3 p-3 mb-6 squircle-lg"
             style={{ background: "#222222E6", border: "1px dashed rgba(255,255,255,0.18)" }}
@@ -128,6 +129,7 @@ export default function FavoritesPage() {
             sort={false}
             emptyMessage="No favorite sessions found"
           />
+          </>
         )}
 
         <TablePagination

@@ -176,7 +176,7 @@ export default function SpeakerProfilePage() {
                     </div>
                   ))}
                 </div>
-              ) : questionsWithSession.length > 0 ? (
+              ) : searchedQuestions.length > 0 ? (
                 <div className="space-y-3 pr-1 flex-1">
                   {paginatedQuestions.map((q) => (
                     <div key={q.id} className="p-4 rounded-lg" style={{ background: "rgba(255,255,255,0.03)", border: "1px dashed rgba(255,255,255,0.08)" }}>
