@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, startTransition } from "react";
 
 export function ProgressBar() {
   const [visible, setVisible] = useState(false);
@@ -17,9 +17,11 @@ export function ProgressBar() {
   const startProgress = () => {
     clearInterval(timerRef.current);
     clearTimeout(hideTimerRef.current);
-    setVisible(true);
+    startTransition(() => {
+      setVisible(true);
+      setProgress(30);
+    });
     progressRef.current = 30;
-    setProgress(30);
     timerRef.current = setInterval(() => {
       progressRef.current = Math.min(
         progressRef.current + (100 - progressRef.current) * 0.2,
