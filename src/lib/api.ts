@@ -166,6 +166,9 @@ export const api = {
 
   searchEvents: (q: string) =>
     http<{ data: SearchResultDto[] }>(`/api/ai/search?q=${encodeURIComponent(q)}`),
+
+  getRecommendations: (eventId: string) =>
+    http<{ data: SearchResultDto[] }>(`/api/ai/events/${eventId}/recommendations`),
 };
 
 export function isEventLive(event: {
