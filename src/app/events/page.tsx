@@ -3,11 +3,11 @@
 import { useState, useMemo, useDeferredValue } from "react";
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
-import { useGetEvents } from "@/lib/hooks/useEvents";
+import { useGetEvents, useSearchEvents } from "@/lib/hooks/useEvents";
 import { api } from "@/lib/api";
 import { Select } from "@/components/ui/Select";
 import { Search, X } from "lucide-react";
-import type { EventSummaryDto } from "@/types/dto";
+import type { EventSummaryDto, SearchResultDto } from "@/types/dto";
 import { BentoGrid } from "@/components/features/EventsList/event-cards";
 
 const DateRangePicker = dynamic(() =>
@@ -80,18 +80,40 @@ export default function EventsPage() {
   const queryParams = useMemo(() => ({
     page: 1, limit: 50,
     ...(status !== "all" && { status }),
-    ...(deferredSearch && { search: deferredSearch }),
     ...(city !== "all" && { city }),
     ...(dateFrom && { dateFrom }),
     ...(dateTo && { dateTo }),
-  }), [status, deferredSearch, city, dateFrom, dateTo]);
+  }), [status, city, dateFrom, dateTo]);
 
-  const { data: eventsData, isLoading } = useGetEvents(queryParams);
-
-  const events = useMemo(
-    () => filterEvents(eventsData?.data || [], format),
-    [eventsData, format],
+  const { data: searchData, isLoading: isSearching } = useSearchEvents(deferredSearch, {
+    city: city !== "all" ? city : undefined,
+    dateFrom: dateFrom || undefined,
+    dateTo: dateTo || undefined,
+    status: status !== "all" ? status : undefined,
+  });
+  const { data: eventsData, isLoading: isLoadingEvents } = useGetEvents(
+    deferredSearch ? { page: 1, limit: 50, ...(status !== "all" && { status }) } : queryParams,
+    { enabled: !deferredSearch },
   );
+
+  const events = useMemo(() => {
+    if (deferredSearch && searchData?.data) {
+      const results: EventSummaryDto[] = searchData.data.map((r: SearchResultDto) => ({
+        id: r.id,
+        title: r.title,
+        description: r.description,
+        startDate: r.startDate,
+        endDate: r.endDate,
+        isOnline: r.isOnline,
+        venue: r.match?.venue || null,
+        eventSessionCount: 0,
+      }));
+      return filterEvents(results, format);
+    }
+    return filterEvents(eventsData?.data || [], format);
+  }, [deferredSearch, searchData, eventsData, format]);
+
+  const isLoading = deferredSearch ? isSearching : isLoadingEvents;
 
   const hasActiveFilters = status !== "all" || format !== "all" || city !== "all" || !!search || !!dateFrom || !!dateTo;
 

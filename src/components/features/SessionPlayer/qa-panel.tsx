@@ -1,11 +1,13 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { ArrowUp, Clock, Send } from "lucide-react";
+import { ArrowUp, Clock, Send, AlertTriangle } from "lucide-react";
 import type { QuestionDto } from "@/types/dto";
+import { api } from "@/lib/api";
 
 interface QaPanelProps {
   questions: QuestionDto[];
+  sessionId: string;
   isLive: boolean;
   isUpcoming: boolean;
   isEnded: boolean;
@@ -65,6 +67,7 @@ function QuestionCard({
 
 export function QaPanel({
   questions,
+  sessionId,
   isLive,
   isUpcoming,
   isEnded,
@@ -77,6 +80,11 @@ export function QaPanel({
   const [questionText, setQuestionText] = useState("");
   const [authorName, setAuthorName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [duplicateWarning, setDuplicateWarning] = useState<{
+    similarQuestion: QuestionDto;
+    similarity: number;
+  } | null>(null);
+  const [isChecking, setIsChecking] = useState(false);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -85,6 +93,35 @@ export function QaPanel({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!questionText.trim()) return;
+
+    if (duplicateWarning) {
+      setDuplicateWarning(null);
+      setIsSubmitting(true);
+      try {
+        await onSubmitQuestion(questionText, authorName);
+        setQuestionText("");
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
+    }
+
+    setIsChecking(true);
+    try {
+      const result = await api.checkDuplicateQuestion(sessionId, questionText);
+      if (result.data.isDuplicate && result.data.similarQuestion) {
+        setDuplicateWarning({
+          similarQuestion: result.data.similarQuestion,
+          similarity: result.data.similarity,
+        });
+        return;
+      }
+    } catch {
+      // If the check fails, submit anyway
+    } finally {
+      setIsChecking(false);
+    }
+
     setIsSubmitting(true);
     try {
       await onSubmitQuestion(questionText, authorName);
@@ -92,6 +129,11 @@ export function QaPanel({
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleTextChange = (value: string) => {
+    setQuestionText(value);
+    if (duplicateWarning) setDuplicateWarning(null);
   };
 
   const isEmptyQuestions = questions.length === 0;
@@ -160,22 +202,50 @@ export function QaPanel({
 
       {isLive && (
         <form onSubmit={handleSubmit} className="border-t border-white/5 p-4 shrink-0 bg-black/20">
+          {duplicateWarning && (
+            <div className="mb-3 p-3 rounded-lg" style={{ background: "rgba(200,210,50,0.08)", border: "1px solid rgba(200,210,50,0.25)" }}>
+              <div className="flex items-start gap-2 mb-2">
+                <AlertTriangle size={14} className="text-chartreuse shrink-0 mt-0.5" />
+                <p className="text-[10px] font-semibold text-chartreuse label-mono">
+                  SIMILAR QUESTION EXISTS
+                </p>
+              </div>
+              <p className="text-[11px] text-ivory/70 mb-2 leading-relaxed">
+                {'\u201C'}{duplicateWarning.similarQuestion.content}{'\u201D'}
+              </p>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-ivory/40">
+                  {Math.round(duplicateWarning.similarity * 100)}% similar
+                </span>
+                <button
+                  type="submit"
+                  className="ml-auto text-[10px] label-mono font-semibold text-chartreuse/80 hover:text-chartreuse transition-colors cursor-pointer"
+                >
+                  Submit anyway
+                </button>
+              </div>
+            </div>
+          )}
           <div className="flex gap-2 mb-2">
             <input
               type="text"
               value={questionText}
-              onChange={(e) => setQuestionText(e.target.value)}
+              onChange={(e) => handleTextChange(e.target.value)}
               placeholder="Ask a question..."
               className="flex-1 px-3 py-2 text-xs bg-white/5 border border-white/10 text-ivory/80 placeholder-ivory/30 focus:outline-none focus:border-chartreuse/40 rounded-lg"
               required
             />
             <button
               type="submit"
-              disabled={isSubmitting || !questionText.trim()}
+              disabled={isSubmitting || isChecking || !questionText.trim()}
               className="px-3.5 py-2 label-mono text-xs font-bold text-charcoal shrink-0 rounded-lg transition-all disabled:opacity-40 cursor-pointer hover:brightness-110 active:scale-95"
               style={{ background: "hsl(59 73% 52%)" }}
             >
-              <Send size={12} />
+              {isChecking ? (
+                <span className="text-[10px]">...</span>
+              ) : (
+                <Send size={12} />
+              )}
             </button>
           </div>
           <input

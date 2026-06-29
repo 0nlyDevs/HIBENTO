@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useState, useRef, useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { useGetEvent } from "@/lib/hooks/useEvents";
+import { api } from "@/lib/api";
 import { EventHero } from "@/components/events/EventHero";
 import { EventInfoGrid } from "@/components/events/EventInfoGrid";
 import { EventSchedule } from "@/components/features/EventSchedule";
@@ -30,6 +32,12 @@ function NotFound() {
 export default function EventDetailPage() {
   const { eventId } = useParams<{ eventId: string }>();
   const { data: event, isLoading } = useGetEvent(eventId);
+  const { data: recsData } = useQuery({
+    queryKey: ["recommendations", eventId],
+    queryFn: () => api.getRecommendations(eventId),
+    enabled: !!eventId,
+    staleTime: 10 * 60 * 1000,
+  });
   const [selectedDay, setSelectedDay] = useState<string>("all");
   const [viewMode, setViewMode] = useState<ViewMode>("table");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -249,6 +257,39 @@ export default function EventDetailPage() {
             <div className="px-5 py-4 space-y-2">
               <div className="h-5 w-2/3 rounded-lg bg-ivory/5 motion-safe:animate-pulse" />
               <div className="h-4 w-1/2 rounded-lg bg-ivory/5 motion-safe:animate-pulse" />
+            </div>
+          </div>
+        )}
+
+        {recsData?.data && recsData.data.length > 0 && (
+          <div className="mt-12">
+            <p className="label-mono text-chartreuse mb-2">§ RECOMMENDED</p>
+            <h2 className="text-display text-2xl text-ivory mb-6">
+              You might also like
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recsData.data.map((rec) => (
+                <Link
+                  key={rec.id}
+                  href={`/events/${rec.id}`}
+                  className="card-glass squircle-lg p-5 hover:bg-ivory/[0.07] transition-colors group"
+                >
+                  <p className="text-sm font-semibold text-ivory group-hover:text-chartreuse transition-colors mb-1.5">
+                    {rec.title}
+                  </p>
+                  <p className="text-xs text-ivory/50 line-clamp-2 mb-3">
+                    {rec.description || "No description"}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-semibold text-ivory/40 label-mono">
+                      {rec.match?.venue?.city ?? "Online"}
+                    </span>
+                    <span className="text-[10px] font-semibold text-chartreuse/60 label-mono">
+                      {Math.round(rec.score * 100)}% match
+                    </span>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
         )}
