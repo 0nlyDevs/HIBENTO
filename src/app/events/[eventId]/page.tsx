@@ -15,7 +15,6 @@ import {
   buildEventDays,
   filterSessionsByDay,
   filterSessionsByStatus,
-  TABLE_PAGE_SIZE,
 } from "@/components/features/EventSchedule/utils";
 import { formatShortDate } from "@/lib/utils/dates";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
