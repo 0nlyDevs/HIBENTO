@@ -17,6 +17,7 @@ export function useGetEventRooms(
     queryKey: roomKeys.eventRooms(eventId),
     queryFn: () => api.getEventRooms(eventId),
     enabled: !!eventId,
+    staleTime: 5 * 60 * 1000,
     placeholderData: keepPreviousData,
     ...options,
   });
@@ -31,6 +32,7 @@ export function useGetRoomSessions(
     queryKey: roomKeys.roomSessions(eventId, roomName),
     queryFn: () => api.getRoomSessions(eventId, roomName),
     enabled: !!eventId && !!roomName,
+    staleTime: 5 * 60 * 1000,
     placeholderData: keepPreviousData,
     ...options,
   });
