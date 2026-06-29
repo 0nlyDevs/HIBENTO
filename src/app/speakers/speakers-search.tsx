@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function SpeakersSearch() {
@@ -26,9 +26,17 @@ export function SpeakersSearch() {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder="Search a speaker"
-        className="w-full h-9 pl-8 pr-3 text-sm font-medium text-ivory placeholder-ivory/40 focus:outline-none transition-colors rounded-lg"
+        className="w-full h-9 pl-8 pr-8 text-sm font-medium text-ivory placeholder-ivory/40 focus:outline-none transition-colors rounded-lg"
         style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}
       />
+      {value && (
+        <button
+          onClick={() => setValue("")}
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-ivory/40 hover:text-ivory transition-colors cursor-pointer"
+        >
+          <X size={13} />
+        </button>
+      )}
     </div>
   );
 }
