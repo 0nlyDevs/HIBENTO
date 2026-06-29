@@ -46,6 +46,7 @@ export interface SpeakerProfileDto extends SpeakerDetailDto {
 
 export interface SpeakerEventSessionDto {
   id: string;
+  eventId: string;
   title: string;
   description: string | null;
   eventName: string;
