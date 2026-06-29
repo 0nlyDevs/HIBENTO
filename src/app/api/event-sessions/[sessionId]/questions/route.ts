@@ -6,11 +6,13 @@ import type { Question } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(
-  _: Request,
+  request: Request,
   { params }: { params: Promise<{ sessionId: string }> }
 ): Promise<NextResponse<{ data: QuestionDto[] } | { error: string }>> {
   try {
     const { sessionId } = await params;
+    const q = new URL(request.url).searchParams.get("q");
+
     if (!isValidUUID(sessionId)) {
       return NextResponse.json(
         { error: "Invalid session ID" },
@@ -18,12 +20,20 @@ export async function GET(
       );
     }
 
+    const where: Record<string, unknown> = { eventSessionId: sessionId };
+    if (q) {
+      where.OR = [
+        { content: { contains: q, mode: "insensitive" } },
+        { authorName: { contains: q, mode: "insensitive" } },
+      ];
+    }
+
     const [session, questions] = await Promise.all([
       prisma.eventSession.findUnique({
         where: { id: sessionId },
       }),
       prisma.question.findMany({
-        where: { eventSessionId: sessionId },
+        where,
         orderBy: { upvotes: "desc" },
       }),
     ]);
