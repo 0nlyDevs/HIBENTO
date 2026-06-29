@@ -6,6 +6,7 @@ import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
 type EventSessionWithSpeakers = {
   id: string;
+  eventId: string;
   title: string;
   description: string | null;
   startTime: Date;
@@ -25,6 +26,7 @@ type EventSessionWithSpeakers = {
       bio: string | null;
     };
   }>;
+  _count: { questions: number };
 };
 
 export async function GET(
@@ -57,9 +59,15 @@ export async function GET(
 
     if (q) {
       where.OR = [
-        { title: { contains: q, mode: "insensitive" } },
-        { description: { contains: q, mode: "insensitive" } },
+        { title: { contains: q, mode: "insensitive" as const } },
+        { description: { contains: q, mode: "insensitive" as const } },
       ];
+    }
+
+    const now = new Date();
+    if (liveOnly) {
+      where.startTime = { lte: now };
+      where.endTime = { gte: now };
     }
 
     const [eventExists, rawSessions] = await Promise.all([
@@ -90,6 +98,9 @@ export async function GET(
             },
           },
         },
+        _count: {
+          select: { questions: true },
+        },
       },
       orderBy: {
         startTime: "asc",
@@ -106,14 +117,7 @@ export async function GET(
 
     const sessions = rawSessions as unknown as EventSessionWithSpeakers[];
 
-    let filteredSessions = sessions;
-    if (liveOnly) {
-      filteredSessions = sessions.filter(
-        (session) => getEventSessionStatus(session) === "live"
-      );
-    }
-
-    const data: EventSessionSummaryDto[] = filteredSessions.map((session) => {
+    const data: EventSessionSummaryDto[] = sessions.map((session) => {
       const roomDto: RoomDto | null = session.room
         ? {
             id: session.room.id,
@@ -125,6 +129,7 @@ export async function GET(
 
       return {
         id: session.id,
+        eventId: session.eventId,
         title: session.title,
         description: session.description,
         startTime: session.startTime.toISOString(),
@@ -138,7 +143,8 @@ export async function GET(
           avatar: sessionSpeaker.speaker.avatarUrl,
           bio: sessionSpeaker.speaker.bio,
         })),
-        questionCount: 0,
+        questionCount: session._count.questions,
+        capacity: session.room?.capacity ?? null,
       };
     });
 
