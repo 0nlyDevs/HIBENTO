@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
+import { LRUCache } from "lru-cache";
 import prisma from "@/lib/db/prisma";
 import { generateEmbedding, generateBatchEmbeddings, findMostSimilar } from "@/ai";
 import type { SearchResultDto } from "@/types/dto";
 
-const RECOMMENDATION_CACHE = new Map<
-  string,
-  { results: SearchResultDto[]; expiresAt: number }
->();
-const CACHE_TTL = 10 * 60 * 1000;
+const RECOMMENDATION_CACHE = new LRUCache<string, SearchResultDto[]>({
+  max: 100,
+  ttl: 10 * 60 * 1000,
+});
 
 export async function GET(
   _: Request,
@@ -29,8 +29,8 @@ export async function GET(
     }
 
     const cached = RECOMMENDATION_CACHE.get(eventId);
-    if (cached && Date.now() < cached.expiresAt) {
-      return NextResponse.json({ data: cached.results }, { status: 200 });
+    if (cached) {
+      return NextResponse.json({ data: cached }, { status: 200 });
     }
 
     const sourceText = [event.title, event.description]
@@ -79,10 +79,7 @@ export async function GET(
       };
     });
 
-    RECOMMENDATION_CACHE.set(eventId, {
-      results,
-      expiresAt: Date.now() + CACHE_TTL,
-    });
+    RECOMMENDATION_CACHE.set(eventId, results);
 
     return NextResponse.json({ data: results }, { status: 200 });
   } catch (err) {
