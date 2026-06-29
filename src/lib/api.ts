@@ -10,7 +10,7 @@ import type {
   VenueDetailDto,
   QuestionDto,
   UpvoteResponseDto,
-
+  SearchResultDto,
 } from "@/types/dto";
 import { API_BASE_URL } from "./constants";
 
@@ -163,6 +163,9 @@ export const api = {
     }),
 
   getLiveSessionCount: () => http<{ count: number }>("/api/live/count"),
+
+  searchEvents: (q: string) =>
+    http<{ data: SearchResultDto[] }>(`/api/ai/search?q=${encodeURIComponent(q)}`),
 };
 
 export function isEventLive(event: {
