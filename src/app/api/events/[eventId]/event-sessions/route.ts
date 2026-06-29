@@ -6,6 +6,7 @@ import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
 type EventSessionWithSpeakers = {
   id: string;
+  eventId: string;
   title: string;
   description: string | null;
   startTime: Date;
@@ -125,6 +126,7 @@ export async function GET(
 
       return {
         id: session.id,
+        eventId: session.eventId,
         title: session.title,
         description: session.description,
         startTime: session.startTime.toISOString(),

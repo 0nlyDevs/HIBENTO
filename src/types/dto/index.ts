@@ -86,6 +86,7 @@ export interface EventDetailDto {
 
 export interface EventSessionSummaryDto {
   id: string;
+  eventId: string;
   title: string;
   description: string | null;
   startTime: string;
