@@ -3,12 +3,17 @@ import { env, pipeline } from "@xenova/transformers";
 env.localModelPath = "";
 env.allowRemoteModels = true;
 
-let embeddingModel: unknown = null;
-let modelLoadPromise: Promise<unknown> | null = null;
+type EmbeddingFn = (
+  texts: string,
+  options?: { pooling?: string; normalize?: boolean },
+) => Promise<{ data: Float32Array }>;
+
+let embeddingModel: EmbeddingFn | null = null;
+let modelLoadPromise: Promise<EmbeddingFn> | null = null;
 
 export const EMBEDDING_DIMENSION = 384;
 
-async function getModel(): Promise<unknown> {
+async function getModel(): Promise<EmbeddingFn> {
   if (embeddingModel) return embeddingModel;
 
   if (!modelLoadPromise) {
@@ -16,8 +21,9 @@ async function getModel(): Promise<unknown> {
       "feature-extraction",
       "Xenova/all-MiniLM-L6-v2",
     ).then((p) => {
-      embeddingModel = p;
-      return p;
+      const fn = p as unknown as EmbeddingFn;
+      embeddingModel = fn;
+      return fn;
     });
   }
 
@@ -29,7 +35,7 @@ export async function warmup(): Promise<void> {
 }
 
 export async function generateEmbedding(text: string): Promise<Float32Array> {
-  const pipe: any = await getModel();
+  const pipe = await getModel();
   const result = await pipe(text, { pooling: "mean", normalize: true });
   return result.data as Float32Array;
 }
@@ -37,11 +43,11 @@ export async function generateEmbedding(text: string): Promise<Float32Array> {
 export async function generateBatchEmbeddings(
   texts: string[],
 ): Promise<Float32Array[]> {
-  const pipe: any = await getModel();
+  const pipe = await getModel();
   const results = await Promise.all(
     texts.map((t) => pipe(t, { pooling: "mean", normalize: true })),
   );
-  return results.map((r: any) => r.data as Float32Array);
+  return results.map((r) => r.data as Float32Array);
 }
 
 export function cosineSimilarity(

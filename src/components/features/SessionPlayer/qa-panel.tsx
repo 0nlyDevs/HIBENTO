@@ -211,7 +211,7 @@ export function QaPanel({
                 </p>
               </div>
               <p className="text-[11px] text-ivory/70 mb-2 leading-relaxed">
-                "{duplicateWarning.similarQuestion.content}"
+                {'\u201C'}{duplicateWarning.similarQuestion.content}{'\u201D'}
               </p>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] text-ivory/40">

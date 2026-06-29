@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { generateEmbedding, cosineSimilarity } from "@/ai";
-import type { DuplicateCheckResponseDto, QuestionDto } from "@/types/dto";
+import type { DuplicateCheckResponseDto } from "@/types/dto";
 
 const SIMILARITY_THRESHOLD = 0.85;
 
