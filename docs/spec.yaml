@@ -438,6 +438,21 @@ paths:
       summary: List all venues
       description: Returns venues list with optional search
       parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+        description: Page number
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+        description: Items per page
       - name: q
         in: query
         schema:
@@ -445,11 +460,11 @@ paths:
         description: Search by venue name, city, or neighborhood
       responses:
         '200':
-          description: Venue list
+          description: Paginated venue list
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VenueListResponse'
+                $ref: '#/components/schemas/PaginatedVenuesResponse'
 
   /venues/{venueId}:
     get:
@@ -919,6 +934,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Room'
+
+    PaginatedVenuesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Venue'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
 
     VenueListResponse:
       type: object
