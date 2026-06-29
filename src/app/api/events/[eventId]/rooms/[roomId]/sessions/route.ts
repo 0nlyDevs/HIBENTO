@@ -10,16 +10,22 @@ export async function GET(
 ): Promise<NextResponse<{ data: EventSessionSummaryDto[] } | { error: string }>> {
   try {
     const { eventId, roomId } = await params;
+    const q = new URL(request.url).searchParams.get("q");
 
     if (!isValidUUID(eventId) || !isValidUUID(roomId)) {
       return NextResponse.json({ error: "Invalid ID format" }, { status: 400 });
     }
 
+    const where: Record<string, unknown> = { eventId, roomId };
+    if (q) {
+      where.OR = [
+        { title: { contains: q, mode: "insensitive" } },
+        { description: { contains: q, mode: "insensitive" } },
+      ];
+    }
+
     const sessions = await prisma.eventSession.findMany({
-      where: {
-        eventId,
-        roomId,
-      },
+      where,
       include: {
         room: true,
         speakers: {
@@ -50,6 +56,7 @@ export async function GET(
 
       return {
         id: session.id,
+        eventId: session.eventId,
         title: session.title,
         description: session.description,
         startTime: session.startTime.toISOString(),
@@ -64,6 +71,7 @@ export async function GET(
           bio: s.speaker.bio,
         })),
         questionCount: session._count.questions,
+        capacity: roomDto.capacity,
       };
     });
 

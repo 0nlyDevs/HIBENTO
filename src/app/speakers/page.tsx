@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import prisma from "@/lib/db/prisma";
 import type { SpeakerSummaryDto } from "@/types/dto";
 import { PaginationBar } from "@/components/ui/PaginationBar";
+import { SpeakersSearch } from "./speakers-search";
 
 function SpeakerCard({ speaker }: { speaker: SpeakerSummaryDto }) {
   return (
@@ -53,10 +54,19 @@ const LIMIT = 8;
 export default async function SpeakersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; q?: string }>;
 }) {
   const resolvedParams = await searchParams;
   const page = Math.max(1, Number(resolvedParams.page) || 1);
+  const q = resolvedParams.q?.trim() || "";
+  const qFilter = q
+    ? {
+        OR: [
+          { name: { contains: q, mode: "insensitive" as const } },
+          { bio: { contains: q, mode: "insensitive" as const } },
+        ],
+      }
+    : {};
 
   const [speakers, total] = await Promise.all([
     prisma.speaker.findMany({
@@ -69,10 +79,11 @@ export default async function SpeakersPage({
           select: { sessions: true },
         },
       },
+      where: qFilter,
       take: LIMIT,
       skip: (page - 1) * LIMIT,
     }),
-    prisma.speaker.count(),
+    prisma.speaker.count({ where: qFilter }),
   ]);
 
   const mappedSpeakers: SpeakerSummaryDto[] = speakers.map((s) => ({
@@ -101,6 +112,13 @@ export default async function SpeakersPage({
           <p className="label-mono text-ivory/40 pt-0.5 shrink-0">
             {total} {total === 1 ? "SPEAKER" : "SPEAKERS"}
           </p>
+        </div>
+
+        <div
+          className="flex items-center justify-between gap-3 p-3 mb-6 squircle-lg"
+          style={{ background: "#222222E6", border: "1px dashed rgba(255,255,255,0.18)" }}
+        >
+          <SpeakersSearch />
         </div>
 
         {mappedSpeakers.length > 0 ? (

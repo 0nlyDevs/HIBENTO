@@ -12,6 +12,7 @@ import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
 type EventSessionWithRelations = {
   id: string;
+  eventId: string;
   title: string;
   description: string | null;
   startTime: Date;
@@ -67,6 +68,7 @@ function transformToEventSessionSummary(
 
   return {
     id: session.id,
+    eventId: session.eventId,
     title: session.title,
     description: session.description,
     startTime: session.startTime.toISOString(),
@@ -83,6 +85,7 @@ function transformToEventSessionSummary(
       })
     ),
     questionCount: session._count.questions,
+    capacity: session.room?.capacity ?? null,
   };
 }
 

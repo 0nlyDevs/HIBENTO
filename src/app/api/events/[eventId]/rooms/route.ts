@@ -1,14 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import type { RoomDto } from "@/types/dto";
 import { isValidUUID } from "@/lib/utils/validation";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ eventId: string }> }
 ): Promise<NextResponse<{ data: RoomDto[] } | { error: string }>> {
   try {
     const { eventId } = await params;
+    const q = new URL(request.url).searchParams.get("q");
 
     if (!isValidUUID(eventId)) {
       return NextResponse.json(
@@ -17,13 +18,18 @@ export async function GET(
       );
     }
 
+    const where: Record<string, unknown> = { eventId };
+    if (q) {
+      where.room = { name: { contains: q, mode: "insensitive" } };
+    }
+
     const [eventExists, sessionsWithRooms] = await Promise.all([
       prisma.event.findUnique({
         where: { id: eventId },
         select: { id: true },
       }),
       prisma.eventSession.findMany({
-      where: { eventId },
+      where,
       select: {
         room: {
           select: {
