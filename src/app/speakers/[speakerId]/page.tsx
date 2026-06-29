@@ -219,7 +219,7 @@ export default function SpeakerProfilePage() {
                 </div>
               </div>
 
-              {!questionsBySession ? (
+              {!questionsBySession && sessionIds.length > 0 ? (
                 <div className="space-y-3 flex-1 animate-pulse">
                   {Array.from({ length: 3 }).map((_, i) => (
                     <div key={i} className="p-4 rounded-lg" style={{ background: "rgba(255,255,255,0.03)" }}>
