@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "i.pravatar.cc",
       },
+      {
+        protocol: "https",
+        hostname: "imgs.search.brave.com",
+      },
     ],
     qualities: [75, 85],
   },
