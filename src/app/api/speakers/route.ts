@@ -12,9 +12,20 @@ export async function GET(
       100,
       Math.max(1, parseInt(searchParams.get("limit") || "20")),
     );
-    
+    const q = searchParams.get("q");
+
+    const where = q
+      ? {
+          OR: [
+            { name: { contains: q, mode: "insensitive" } },
+            { bio: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : {};
+
     const [speakers, total] = await Promise.all([
       prisma.speaker.findMany({
+        where,
         select: {
           id: true,
           name: true,
@@ -29,7 +40,7 @@ export async function GET(
         take: limit,
         skip: (page - 1) * limit,
       }),
-      prisma.speaker.count(),
+      prisma.speaker.count({ where }),
     ]);
     
 const mappedSpeakers: SpeakerSummaryDto[] = speakers.map((s) => ({
