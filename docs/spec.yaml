@@ -22,6 +22,8 @@ tags:
   description: Speaker profiles and their sessions
 - name: Questions
   description: Live Q&A system
+- name: Live Count
+  description: Live session count
 
 paths:
   # ==================== EVENTS ====================
@@ -419,11 +421,8 @@ paths:
               properties:
                 content:
                   type: string
-                  minLength: 1
-                  maxLength: 500
                 authorName:
                   type: string
-                  maxLength: 100
                   description: Defaults to "Anonymous"
       responses:
         '201':
@@ -487,6 +486,19 @@ paths:
                 $ref: '#/components/schemas/VenueDetail'
         '404':
           $ref: '#/components/responses/NotFound'
+
+  /live/count:
+    get:
+      tags: [ Live Count ]
+      summary: Get count of currently live sessions
+      description: Returns the number of sessions that are currently live (started and not yet ended)
+      responses:
+        '200':
+          description: Live session count
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveCountResponse'
 
   /questions/{questionId}:
     get:
@@ -876,6 +888,12 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Room'
+
+    LiveCountResponse:
+      type: object
+      properties:
+        count:
+          type: integer
 
     UpvoteResponse:
       type: object
