@@ -20,10 +20,50 @@ import { sortScheduleSessions } from "@/lib/utils/sortSessions";
 import { ScheduleTable } from "@/components/sessions/ScheduleTable";
 import type { EventScheduleProps } from "./types";
 
-export function EventSchedule({ event, selectedDay, onDayChange, hideHeader }: EventScheduleProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>("table");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
-  const [tablePage, setTablePage] = useState(1);
+export function EventSchedule({
+  event,
+  selectedDay,
+  onDayChange,
+  viewMode: externalViewMode,
+  onViewModeChange,
+  statusFilter: externalStatusFilter,
+  onStatusFilterChange,
+  tablePage: externalTablePage,
+  onTablePageChange,
+}: EventScheduleProps) {
+  const [internalViewMode, setInternalViewMode] = useState<ViewMode>("table");
+  const [internalStatusFilter, setInternalStatusFilter] = useState<StatusFilter>("all");
+  const [internalTablePage, setInternalTablePage] = useState(1);
+
+  const viewMode = externalViewMode ?? internalViewMode;
+  const statusFilter = externalStatusFilter ?? internalStatusFilter;
+  const tablePage = externalTablePage ?? internalTablePage;
+
+  const setViewMode = useCallback(
+    (mode: ViewMode) => {
+      if (onViewModeChange) onViewModeChange(mode);
+      else setInternalViewMode(mode);
+    },
+    [onViewModeChange],
+  );
+
+  const setStatusFilter = useCallback(
+    (filter: StatusFilter) => {
+      if (onStatusFilterChange) onStatusFilterChange(filter);
+      else setInternalStatusFilter(filter);
+    },
+    [onStatusFilterChange],
+  );
+
+  const setTablePage = useCallback(
+    (page: number) => {
+      if (onTablePageChange) onTablePageChange(page);
+      else setInternalTablePage(page);
+    },
+    [onTablePageChange],
+  );
+
+  const hasExternalControls = externalViewMode !== undefined;
   const eventDays = useMemo(() => buildEventDays(event), [event]);
 
   const filteredEventSessions = useMemo(() => {
@@ -107,9 +147,8 @@ export function EventSchedule({ event, selectedDay, onDayChange, hideHeader }: E
   );
 
   return (
-    <div id="event-schedule" className="mb-10 scroll-mt-28">
-      {!hideHeader && (
-        <div className="flex flex-wrap items-center gap-3 mb-5">
+    <div className="mb-10">
+      <div className="flex flex-wrap items-center gap-3 mb-5">
         <div className="shrink-0">
           <p className="label-mono text-chartreuse mb-0.5">§ SCHEDULE</p>
           <h2 className="text-display text-2xl text-ivory">Sessions</h2>
@@ -122,37 +161,41 @@ export function EventSchedule({ event, selectedDay, onDayChange, hideHeader }: E
           <span className="label-mono text-ivory/70 uppercase tracking-wider text-xs">SESSIONS</span>
         </div>
 
-        <div className="relative flex items-center gap-1 p-1 card-glass rounded-full shrink-0 h-11">
-          <SlidingBackground activeIndex={activeViewIndex} pillRefs={viewPillRefs} />
-          {viewModeOptions.map((view, index) => (
-            <Pill
-              key={view.value}
-              label={view.label}
-              value={view.value}
-              isActive={viewMode === view.value}
-              onClick={() => setViewMode(view.value)}
-              index={index}
-              setPillRef={setViewPillRef}
-              uppercase
-            />
-          ))}
-        </div>
+        {!hasExternalControls && (
+          <>
+            <div className="relative flex items-center gap-1 p-1 card-glass rounded-full shrink-0 h-11">
+              <SlidingBackground activeIndex={activeViewIndex} pillRefs={viewPillRefs} />
+              {viewModeOptions.map((view, index) => (
+                <Pill
+                  key={view.value}
+                  label={view.label}
+                  value={view.value}
+                  isActive={viewMode === view.value}
+                  onClick={() => setViewMode(view.value)}
+                  index={index}
+                  setPillRef={setViewPillRef}
+                  uppercase
+                />
+              ))}
+            </div>
 
-        <div className="relative flex items-center gap-1 p-1 card-glass rounded-full shrink-0 h-11">
-          <SlidingBackground activeIndex={activeStatusIndex} pillRefs={statusPillRefs} />
-          {statusOptions.map((status, index) => (
-            <Pill
-              key={status.value}
-              label={status.label}
-              value={status.value}
-              isActive={statusFilter === status.value}
-              onClick={() => handleStatusFilterChange(status.value)}
-              index={index}
-              setPillRef={setStatusPillRef}
-              uppercase
-            />
-          ))}
-        </div>
+            <div className="relative flex items-center gap-1 p-1 card-glass rounded-full shrink-0 h-11">
+              <SlidingBackground activeIndex={activeStatusIndex} pillRefs={statusPillRefs} />
+              {statusOptions.map((status, index) => (
+                <Pill
+                  key={status.value}
+                  label={status.label}
+                  value={status.value}
+                  isActive={statusFilter === status.value}
+                  onClick={() => handleStatusFilterChange(status.value)}
+                  index={index}
+                  setPillRef={setStatusPillRef}
+                  uppercase
+                />
+              ))}
+            </div>
+          </>
+        )}
 
         <div className="relative flex items-center gap-1 p-1 card-glass overflow-x-auto flex-nowrap ml-auto h-11 rounded-full">
           <SlidingBackground activeIndex={activeDayIndex} pillRefs={dayPillRefs} />
@@ -170,7 +213,6 @@ export function EventSchedule({ event, selectedDay, onDayChange, hideHeader }: E
           ))}
         </div>
       </div>
-      )}
 
       {viewMode === "table" ? (
         <>

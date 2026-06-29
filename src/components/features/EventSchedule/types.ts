@@ -7,7 +7,15 @@ export interface EventScheduleProps {
   event: EventDetailDto;
   selectedDay: string;
   onDayChange: (day: string) => void;
-  hideHeader?: boolean;
+  /** External view mode control (when provided, no view pills are rendered) */
+  viewMode?: ViewMode;
+  onViewModeChange?: (mode: ViewMode) => void;
+  /** External status filter control (when provided, no status pills are rendered) */
+  statusFilter?: StatusFilter;
+  onStatusFilterChange?: (filter: StatusFilter) => void;
+  /** External pagination control */
+  tablePage?: number;
+  onTablePageChange?: (page: number) => void;
 }
 
 export interface PillProps {
