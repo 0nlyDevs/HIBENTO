@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
+import { NotificationBell } from "./NotificationBell";
+import { RecommendationPanel } from "./RecommendationPanel";
 
 export function Nav() {
   const pathname = usePathname();
@@ -110,6 +112,8 @@ export function Nav() {
               FAVORITES
             </Link>
 
+            <NotificationBell />
+
             <motion.div
               className="absolute bottom-0 h-0.75 bg-chartreuse rounded-full"
               animate={{
@@ -127,5 +131,7 @@ export function Nav() {
         </div>
       </div>
     </nav>
+
+    <RecommendationPanel />
   );
 }
