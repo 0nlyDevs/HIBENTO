@@ -115,7 +115,7 @@ export default async function SpeakersPage({
         </div>
 
         <div
-          className="flex items-center gap-3 p-3 mb-6 squircle-lg"
+          className="flex items-center justify-between gap-3 p-3 mb-6 squircle-lg"
           style={{ background: "#222222E6", border: "1px dashed rgba(255,255,255,0.18)" }}
         >
           <SpeakersSearch />
