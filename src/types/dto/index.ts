@@ -96,6 +96,7 @@ export interface EventSessionSummaryDto {
   isLive: boolean;
   speakers: SpeakerRefDto[];
   questionCount: number;
+  capacity: number | null;
 }
 
 export interface EventSessionDetailDto {
