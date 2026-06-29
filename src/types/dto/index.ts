@@ -127,6 +127,24 @@ export interface UpvoteResponseDto {
   upvotes: number;
 }
 
+export interface SearchResultDto {
+  id: string;
+  title: string;
+  description: string | null;
+  type: "event" | "session" | "speaker";
+  score: number;
+  match: {
+    venue: VenueDto | null;
+    speakers: SpeakerRefDto[];
+  } | null;
+}
+
+export interface DuplicateCheckResponseDto {
+  isDuplicate: boolean;
+  similarity: number;
+  similarQuestion: QuestionDto | null;
+}
+
 export interface PaginationDto {
   page: number;
   limit: number;
