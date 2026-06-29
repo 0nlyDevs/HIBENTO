@@ -85,6 +85,7 @@ function transformToEventSessionSummary(
       })
     ),
     questionCount: session._count.questions,
+    capacity: session.room?.capacity ?? null,
   };
 }
 

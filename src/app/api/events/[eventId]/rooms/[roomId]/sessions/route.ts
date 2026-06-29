@@ -71,6 +71,7 @@ export async function GET(
           bio: s.speaker.bio,
         })),
         questionCount: session._count.questions,
+        capacity: roomDto.capacity,
       };
     });
 
