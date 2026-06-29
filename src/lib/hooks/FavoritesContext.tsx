@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from "react";
 
 const STORAGE_KEY = "hibento_favorites";
 
@@ -24,17 +24,21 @@ const FavoritesContext = createContext<FavoritesContextValue | null>(null);
 
 export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const [favorites, setFavorites] = useState<Set<string>>(() => loadFavorites());
-  const hydrated = useRef(false);
 
   useEffect(() => {
-    hydrated.current = true;
-  }, []);
-
-  useEffect(() => {
-    if (hydrated.current) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([...favorites]));
-    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...favorites]));
   }, [favorites]);
+
+  const favoritesRef = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    favoritesRef.current = favorites;
+  }, [favorites]);
+
+  const isFavorite = useCallback(
+    (sessionId: string) => favoritesRef.current.has(sessionId),
+    [],
+  );
 
   const toggleFavorite = useCallback((sessionId: string) => {
     setFavorites((prev) => {
@@ -48,13 +52,13 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const isFavorite = useCallback(
-    (sessionId: string) => favorites.has(sessionId),
-    [favorites],
+  const value = useMemo(
+    () => ({ favorites, isFavorite, toggleFavorite }),
+    [favorites, isFavorite, toggleFavorite],
   );
 
   return (
-    <FavoritesContext.Provider value={{ favorites, isFavorite, toggleFavorite }}>
+    <FavoritesContext.Provider value={value}>
       {children}
     </FavoritesContext.Provider>
   );

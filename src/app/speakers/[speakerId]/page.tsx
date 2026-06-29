@@ -10,17 +10,18 @@ import { fromSpeakerEventSession } from "@/lib/utils/sessionMappers";
 import { sortScheduleSessions } from "@/lib/utils/sortSessions";
 import { ScheduleTable } from "@/components/sessions/ScheduleTable";
 import { TablePagination } from "@/components/ui/TablePagination";
-import { PageLoader } from "@/components/ui/Spinner";
+import { keepPreviousData } from "@tanstack/react-query";
 import { MessageCircle, ChevronUp, ExternalLink } from "lucide-react";
 import type { QuestionDto } from "@/types/dto";
 
 export default function SpeakerProfilePage() {
   const { speakerId } = useParams<{ speakerId: string }>();
 
-  const { data: speaker, isLoading } = useQuery({
+  const { data: speaker } = useQuery({
     queryKey: ["speaker", speakerId],
     queryFn: () => api.getSpeaker(speakerId),
     enabled: !!speakerId,
+    placeholderData: keepPreviousData,
   });
 
   const [sessPage, setSessPage] = useState(1);
@@ -47,6 +48,7 @@ export default function SpeakerProfilePage() {
       return results;
     },
     enabled: sessionIds.length > 0,
+    placeholderData: keepPreviousData,
   });
 
   const questionsWithSession = (questionsBySession ?? []).flatMap(
@@ -59,30 +61,16 @@ export default function SpeakerProfilePage() {
   const safeQuestionPage = Math.min(questionPage, totalQuestionPages);
   const paginatedQuestions = questionsWithSession.slice((safeQuestionPage - 1) * QUESTION_PAGE_SIZE, safeQuestionPage * QUESTION_PAGE_SIZE);
 
-  if (isLoading) {
-    return <PageLoader />;
-  }
-
-  if (!speaker) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold text-ivory/80">SPEAKER NOT FOUND</h1>
-        <Link href="/speakers" className="text-sm text-ivory/55 hover:text-ivory underline">Back to speakers</Link>
-      </div>
-    );
-  }
-
-  const sortedSessions = sortScheduleSessions(
-    speaker.eventSessions.map(fromSpeakerEventSession),
-    "asc",
-  );
+  const sortedSessions = speaker
+    ? sortScheduleSessions(speaker.eventSessions.map(fromSpeakerEventSession), "asc")
+    : [];
   const SESSION_PAGE_SIZE = 5;
   const totalSessPages = Math.max(1, Math.ceil(sortedSessions.length / SESSION_PAGE_SIZE));
   const safeSessPage = Math.min(sessPage, totalSessPages);
   const paginatedSessions = sortedSessions.slice((safeSessPage - 1) * SESSION_PAGE_SIZE, safeSessPage * SESSION_PAGE_SIZE);
 
   return (
-    <div className="pt-16 pb-24">
+    <div className="pt-16 pb-24 animate-fade-in">
       <div className="max-w-7xl mx-auto px-6">
         <Link
           href="/speakers"
@@ -97,35 +85,46 @@ export default function SpeakerProfilePage() {
         <div className="grid lg:grid-cols-12 gap-8 mb-12 lg:grid-rows-1">
           <div className="lg:col-span-4">
             <div className="card-glass squircle-lg overflow-hidden h-full flex flex-col">
-              <div className="p-6 pb-4 flex flex-col items-center">
-                <div className="w-36 h-36 rounded-full bg-ivory/5 flex items-center justify-center overflow-hidden mb-3" style={{ border: "1px solid rgba(255,255,255,0.12)" }}>
-                  {speaker.avatar ? (
-                    <Image src={speaker.avatar} alt={speaker.name} width={144} height={144} className="object-cover w-full h-full" />
-                  ) : (
-                    <span className="text-5xl font-bold text-ivory/30">{speaker.name.charAt(0)}</span>
+              {speaker ? (
+                <>
+                  <div className="p-6 pb-4 flex flex-col items-center">
+                    <div className="w-36 h-36 rounded-full bg-ivory/5 flex items-center justify-center overflow-hidden mb-3" style={{ border: "1px solid rgba(255,255,255,0.12)" }}>
+                      {speaker!.avatar ? (
+                        <Image src={speaker!.avatar} alt={speaker!.name} width={144} height={144} className="object-cover w-full h-full" />
+                      ) : (
+                        <span className="text-5xl font-bold text-ivory/30">{speaker!.name.charAt(0)}</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="px-6 pb-6 text-center">
+                    <h1 className="text-display text-[clamp(1.5rem,3vw,2.2rem)] text-ivory leading-tight mb-3">{speaker!.name}</h1>
+                    <p className="text-sm text-ivory/70 leading-relaxed">{speaker!.bio || "No bio available"}</p>
+                  </div>
+                  {speaker!.externalLinks && speaker!.externalLinks.length > 0 && (
+                    <div className="px-6 pb-6 space-y-2 mt-auto">
+                      <div className="h-px bg-ivory/10 mb-3" />
+                      {speaker!.externalLinks.map((link) => (
+                        <a
+                          key={link.url}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between w-full px-4 py-2.5 label-mono text-xs text-ivory/70 rounded-lg transition-all hover:text-ivory"
+                          style={{ background: "rgba(255,255,255,0.05)", border: "1px dashed rgba(255,255,255,0.12)" }}
+                        >
+                          <span>{link.type.toUpperCase()}</span>
+                          <ExternalLink size={11} className="text-ivory/40" />
+                        </a>
+                      ))}
+                    </div>
                   )}
-                </div>
-              </div>
-              <div className="px-6 pb-6 text-center">
-                <h1 className="text-display text-[clamp(1.5rem,3vw,2.2rem)] text-ivory leading-tight mb-3">{speaker.name}</h1>
-                <p className="text-sm text-ivory/70 leading-relaxed">{speaker.bio || "No bio available"}</p>
-              </div>
-              {speaker.externalLinks && speaker.externalLinks.length > 0 && (
-                <div className="px-6 pb-6 space-y-2 mt-auto">
-                  <div className="h-px bg-ivory/10 mb-3" />
-                  {speaker.externalLinks.map((link) => (
-                    <a
-                      key={link.url}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-between w-full px-4 py-2.5 label-mono text-xs text-ivory/70 rounded-lg transition-all hover:text-ivory"
-                      style={{ background: "rgba(255,255,255,0.05)", border: "1px dashed rgba(255,255,255,0.12)" }}
-                    >
-                      <span>{link.type.toUpperCase()}</span>
-                      <ExternalLink size={11} className="text-ivory/40" />
-                    </a>
-                  ))}
+                </>
+              ) : (
+                <div className="p-6 flex flex-col items-center animate-pulse">
+                  <div className="w-36 h-36 rounded-full bg-white/5 mb-3" />
+                  <div className="h-6 w-40 rounded-lg bg-white/5" />
+                  <div className="h-4 w-full rounded bg-white/5 mt-4" />
+                  <div className="h-4 w-3/4 rounded bg-white/5 mt-2" />
                 </div>
               )}
             </div>
@@ -140,7 +139,16 @@ export default function SpeakerProfilePage() {
                 <span className="label-mono text-ivory/40">{questionsWithSession.length}</span>
               </div>
 
-              {questionsWithSession.length > 0 ? (
+              {!questionsBySession ? (
+                <div className="space-y-3 flex-1 animate-pulse">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="p-4 rounded-lg" style={{ background: "rgba(255,255,255,0.03)" }}>
+                      <div className="h-3 w-full rounded bg-white/5 mb-2" />
+                      <div className="h-3 w-2/3 rounded bg-white/5" />
+                    </div>
+                  ))}
+                </div>
+              ) : questionsWithSession.length > 0 ? (
                 <div className="space-y-3 pr-1 flex-1">
                   {paginatedQuestions.map((q) => (
                     <div key={q.id} className="p-4 rounded-lg" style={{ background: "rgba(255,255,255,0.03)", border: "1px dashed rgba(255,255,255,0.08)" }}>
@@ -191,30 +199,48 @@ export default function SpeakerProfilePage() {
           </div>
         </div>
 
-        {sortedSessions.length > 0 && (
-          <div>
-            <div className="flex items-center gap-3 mb-5">
-              <svg className="w-4 h-4 text-chartreuse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" />
-                <path d="M16 2v4M8 2v4M3 10h18" />
-              </svg>
-              <span className="label-mono text-ivory/85">SESSIONS</span>
-              <div className="flex-1 h-px bg-ivory/10" />
-              <span className="label-mono text-ivory/40">{sortedSessions.length} TOTAL</span>
-            </div>
-            <ScheduleTable
-              sessions={paginatedSessions}
-              variant="extended"
-              sort={false}
-              emptyMessage="No sessions found"
-            />
-            <TablePagination
-              page={safeSessPage}
-              totalPages={totalSessPages}
-              onChange={setSessPage}
-            />
+        <div>
+          <div className="flex items-center gap-3 mb-5">
+            <svg className="w-4 h-4 text-chartreuse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+              <path d="M16 2v4M8 2v4M3 10h18" />
+            </svg>
+            <span className="label-mono text-ivory/85">SESSIONS</span>
+            <div className="flex-1 h-px bg-ivory/10" />
+            <span className="label-mono text-ivory/40">{sortedSessions.length} TOTAL</span>
           </div>
-        )}
+          {!speaker ? (
+            <div className="space-y-3 animate-pulse">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="squircle-lg p-5 flex items-center gap-4"
+                  style={{ background: "#222222E6" }}
+                >
+                  <div className="h-10 w-10 rounded-lg bg-white/5" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-48 rounded bg-white/5" />
+                    <div className="h-3 w-32 rounded bg-white/5" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : sortedSessions.length > 0 ? (
+            <>
+              <ScheduleTable
+                sessions={paginatedSessions}
+                variant="extended"
+                sort={false}
+                emptyMessage="No sessions found"
+              />
+              <TablePagination
+                page={safeSessPage}
+                totalPages={totalSessPages}
+                onChange={setSessPage}
+              />
+            </>
+          ) : null}
+        </div>
       </div>
     </div>
   );

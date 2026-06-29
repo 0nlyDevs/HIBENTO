@@ -1,31 +1,22 @@
-export default function EventsLoading() {
+export function EventsSkeleton({ className }: { className?: string }) {
   return (
-    <div className="pt-20 pb-20">
+    <div className={`pt-20 pb-20 ${className ?? ""}`}>
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-start justify-between mb-6">
-          <div>
-            <p className="label-mono text-chartreuse mb-2">§ EXPLORE</p>
-            <h1 className="text-display text-[clamp(2.2rem,5vw,4rem)] text-ivory leading-none mb-3">
-              Discover our events
-            </h1>
-            <p className="text-sm text-ivory/70 leading-relaxed">
-              Join our upcoming sessions and expand your skills.
-            </p>
+          <div className="space-y-3">
+            <div className="h-3 w-20 rounded-full bg-white/5 animate-pulse" />
+            <div className="h-10 w-72 rounded-xl bg-white/5 animate-pulse" />
+            <div className="h-4 w-56 rounded-lg bg-white/5 animate-pulse" />
           </div>
-          <div className="h-4 w-16 rounded-lg bg-white/5 animate-pulse shrink-0 mt-0.5" />
+          <div className="h-4 w-16 rounded-lg bg-white/5 animate-pulse" />
         </div>
 
         <div
           className="flex items-center justify-between gap-3 p-3 mb-8 squircle-lg"
           style={{ background: "#222222E6", border: "1px dashed rgba(255,255,255,0.18)" }}
         >
-          <div className="relative w-56 shrink-0">
-            <div
-              className="w-full h-9 rounded-lg"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}
-            />
-          </div>
-          <div className="flex items-center gap-2 flex-wrap justify-end">
+          <div className="h-9 w-56 rounded-lg bg-white/5 animate-pulse" />
+          <div className="flex items-center gap-2">
             <div className="h-9 w-28 rounded-lg bg-white/5 animate-pulse" />
             <div className="h-9 w-24 rounded-lg bg-white/5 animate-pulse" />
             <div className="h-9 w-28 rounded-lg bg-white/5 animate-pulse" />
@@ -41,7 +32,7 @@ export default function EventsLoading() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-48 animate-pulse squircle-lg"
+              className="h-64 animate-pulse squircle-lg"
               style={{ background: "#222222E6" }}
             />
           ))}
