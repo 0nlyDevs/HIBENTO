@@ -130,7 +130,8 @@ export function Nav() {
             />
           </div>
         </div>
-      </nav>
+      </div>
+    </nav>
 
       <RecommendationPanel />
     </>
