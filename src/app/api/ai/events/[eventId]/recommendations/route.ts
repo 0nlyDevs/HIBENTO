@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import { generateEmbedding, findMostSimilar } from "@/ai";
+import { generateEmbedding, generateBatchEmbeddings, findMostSimilar } from "@/ai";
 import type { SearchResultDto } from "@/types/dto";
 
 const RECOMMENDATION_CACHE = new Map<
@@ -48,9 +48,7 @@ export async function GET(
         .join(" "),
     );
 
-    const otherVecs = await Promise.all(
-      otherTexts.map((t) => generateEmbedding(t)),
-    );
+    const otherVecs = await generateBatchEmbeddings(otherTexts);
 
     const scored = findMostSimilar(sourceVec, otherVecs, 0.15).slice(0, 5);
 

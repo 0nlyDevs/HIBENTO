@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import { generateEmbedding, cosineSimilarity } from "@/ai";
+import { generateEmbedding, generateBatchEmbeddings, cosineSimilarity } from "@/ai";
 import type { DuplicateCheckResponseDto } from "@/types/dto";
 
 const SIMILARITY_THRESHOLD = 0.85;
@@ -51,9 +51,7 @@ export async function POST(
     const queryVec = await generateEmbedding(trimmed);
 
     const existingTexts = existingQuestions.map((q) => q.content);
-    const existingVecs = await Promise.all(
-      existingTexts.map((t) => generateEmbedding(t)),
-    );
+    const existingVecs = await generateBatchEmbeddings(existingTexts);
 
     let bestScore = 0;
     let bestIndex = -1;
