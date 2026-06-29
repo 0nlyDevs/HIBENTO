@@ -12,7 +12,7 @@ export async function GET(
     const upcoming = searchParams.get("upcoming") === "true";
     const status = searchParams.get("status");
     const city = searchParams.get("city");
-    const search = searchParams.get("search");
+    const search = searchParams.get("search") || searchParams.get("q");
     const dateFrom = searchParams.get("dateFrom");
     const dateTo = searchParams.get("dateTo");
 
