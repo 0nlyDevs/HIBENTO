@@ -73,7 +73,7 @@ export function EventSchedule({
 
   const sortedTableSessions = useMemo(() => {
     const mapped = filteredEventSessions.map((s) => fromEventSessionSummary(s, event.id));
-    return sortScheduleSessions(mapped, "asc");
+    return sortScheduleSessions(mapped);
   }, [filteredEventSessions, event.id]);
 
   const totalTablePages = Math.max(1, Math.ceil(sortedTableSessions.length / TABLE_PAGE_SIZE));

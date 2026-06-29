@@ -53,7 +53,6 @@ export default function FavoritesPage() {
 
   const sorted = sortScheduleSessions(
     (sessions ?? []).filter(Boolean).map(fromEventSessionDetail),
-    "asc",
   );
   const filtered = useMemo(() => {
     const now = new Date();

@@ -89,7 +89,7 @@ export default function SpeakerProfilePage() {
   const paginatedQuestions = searchedQuestions.slice((safeQuestionPage - 1) * QUESTION_PAGE_SIZE, safeQuestionPage * QUESTION_PAGE_SIZE);
 
   const sortedSessions = speaker
-    ? sortScheduleSessions(speaker.eventSessions.map(fromSpeakerEventSession), "asc")
+    ? sortScheduleSessions(speaker.eventSessions.map(fromSpeakerEventSession))
     : [];
   const filteredSessions = useMemo(() => {
     const now = new Date();
