@@ -13,6 +13,8 @@ export const EVENT_IMAGES = [
   "/images/hibento-vibes-03.jpg",
   "/images/hibento-vibes-04.jpg",
   "/images/hibento-vibes-05.jpg",
+  "/images/hibento-vibes-06.jpg",
+  "/images/hibento-vibes-07.jpg",
   "/images/liveqa.jpg",
 ] as const;
 
