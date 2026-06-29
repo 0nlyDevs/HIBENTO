@@ -39,6 +39,7 @@ export function useUpvote(sessionId: string, onRefetch?: () => void) {
     loadUpvotedSet(sessionId),
   );
   const [upvotingQuestions, setUpvotingQuestions] = useState<Set<string>>(new Set());
+  const [upvoteCounts, setUpvoteCounts] = useState<Record<string, number>>({});
 
   const handleUpvote = useCallback(
     async (questionId: string, toast?: (message: string, type?: "success" | "error" | "info") => void) => {
@@ -46,7 +47,8 @@ export function useUpvote(sessionId: string, onRefetch?: () => void) {
       const isAlreadyUpvoted = upvotedQuestions.has(questionId);
       setUpvotingQuestions((prev) => new Set(prev).add(questionId));
       try {
-        await api.upvoteQuestion(questionId, visitorId);
+        const res = await api.upvoteQuestion(questionId, visitorId);
+        setUpvoteCounts((prev) => ({ ...prev, [questionId]: res.upvotes }));
         setUpvotedQuestions((prev) => {
           const next = new Set(prev);
           if (isAlreadyUpvoted) next.delete(questionId);
@@ -72,5 +74,5 @@ export function useUpvote(sessionId: string, onRefetch?: () => void) {
     [upvotedQuestions, upvotingQuestions, visitorId, onRefetch, sessionId],
   );
 
-  return { upvotedQuestions, upvotingQuestions, handleUpvote };
+  return { upvotedQuestions, upvotingQuestions, handleUpvote, upvoteCounts };
 }
