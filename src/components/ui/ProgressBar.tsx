@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState, startTransition } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function ProgressBar() {
   const [visible, setVisible] = useState(false);
@@ -17,7 +17,7 @@ export function ProgressBar() {
   const startProgress = () => {
     clearInterval(timerRef.current);
     clearTimeout(hideTimerRef.current);
-    startTransition(() => {
+    queueMicrotask(() => {
       setVisible(true);
       setProgress(30);
     });
