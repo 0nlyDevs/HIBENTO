@@ -299,6 +299,12 @@ paths:
           maximum: 100
           default: 20
         description: Items per page
+      - name: venueId
+        in: query
+        schema:
+          type: string
+          format: uuid
+        description: Filter by venue ID
       - name: q
         in: query
         schema:
@@ -345,17 +351,11 @@ paths:
         schema:
           type: integer
           default: 20
-      - name: venueId
-        in: query
-        schema:
-          type: string
-          format: uuid
-        description: Filter by venue ID
       - name: q
         in: query
         schema:
           type: string
-        description: Search by room name
+        description: Search by speaker name or bio
       responses:
         '200':
           description: Speaker list
