@@ -50,6 +50,7 @@ export async function GET(
 
       return {
         id: session.id,
+        eventId: session.eventId,
         title: session.title,
         description: session.description,
         startTime: session.startTime.toISOString(),
@@ -64,6 +65,7 @@ export async function GET(
           bio: s.speaker.bio,
         })),
         questionCount: session._count.questions,
+        capacity: roomDto.capacity,
       };
     });
 
