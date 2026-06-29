@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useDeferredValue } from "react";
 import Link from "next/link";
 import { useFavorites } from "@/lib/hooks/useFavorites";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
@@ -9,6 +9,7 @@ import { fromEventSessionDetail } from "@/lib/utils/sessionMappers";
 import { sortScheduleSessions } from "@/lib/utils/sortSessions";
 import { ScheduleTable } from "@/components/sessions/ScheduleTable";
 import { TablePagination } from "@/components/ui/TablePagination";
+import { Search } from "lucide-react";
 
 const PAGE_SIZE = 5;
 
@@ -29,14 +30,22 @@ export default function FavoritesPage() {
     placeholderData: keepPreviousData,
   });
 
+  const [favSearch, setFavSearch] = useState("");
+  const deferredFavSearch = useDeferredValue(favSearch);
+
   const sorted = sortScheduleSessions(
     (sessions ?? []).filter(Boolean).map(fromEventSessionDetail),
     "asc",
   );
+  const searchedSessions = deferredFavSearch
+    ? sorted.filter((s) =>
+        s.title.toLowerCase().includes(deferredFavSearch.toLowerCase()),
+      )
+    : sorted;
 
-  const totalFavPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const totalFavPages = Math.max(1, Math.ceil(searchedSessions.length / PAGE_SIZE));
   const safeFavPage = Math.min(favPage, totalFavPages);
-  const paginatedSessions = sorted.slice(
+  const paginatedSessions = searchedSessions.slice(
     (safeFavPage - 1) * PAGE_SIZE,
     safeFavPage * PAGE_SIZE,
   );
@@ -97,6 +106,22 @@ export default function FavoritesPage() {
             </div>
           </div>
         ) : (
+          <div
+            className="flex items-center gap-3 p-3 mb-6 squircle-lg"
+            style={{ background: "#222222E6", border: "1px dashed rgba(255,255,255,0.18)" }}
+          >
+            <div className="relative w-56">
+              <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-ivory/40 pointer-events-none" />
+              <input
+                type="text"
+                value={favSearch}
+                onChange={(e) => { setFavSearch(e.target.value); setFavPage(1); }}
+                placeholder="Search favorites"
+                className="w-full h-9 pl-8 pr-3 text-sm font-medium text-ivory placeholder-ivory/40 focus:outline-none transition-colors rounded-lg"
+                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}
+              />
+            </div>
+          </div>
           <ScheduleTable
             sessions={paginatedSessions}
             variant="extended"
