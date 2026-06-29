@@ -165,8 +165,14 @@ export const api = {
 
   getLiveSessionCount: () => http<{ count: number }>("/api/live/count"),
 
-  searchEvents: (q: string) =>
-    http<{ data: SearchResultDto[] }>(`/api/ai/search?q=${encodeURIComponent(q)}`),
+  searchEvents: (q: string, params?: { city?: string; dateFrom?: string; dateTo?: string; status?: string }) => {
+    const searchParams = new URLSearchParams({ q });
+    if (params?.city && params.city !== "all") searchParams.set("city", params.city);
+    if (params?.dateFrom) searchParams.set("dateFrom", params.dateFrom);
+    if (params?.dateTo) searchParams.set("dateTo", params.dateTo);
+    if (params?.status && params.status !== "all") searchParams.set("status", params.status);
+    return http<{ data: SearchResultDto[] }>(`/api/ai/search?${searchParams.toString()}`);
+  },
 
   getRecommendations: (eventId: string) =>
     http<{ data: SearchResultDto[] }>(`/api/ai/events/${eventId}/recommendations`),

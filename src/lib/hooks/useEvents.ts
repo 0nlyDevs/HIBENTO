@@ -40,11 +40,12 @@ export function useGetEvent(
 
 export function useSearchEvents(
   query: string,
+  params?: { city?: string; dateFrom?: string; dateTo?: string; status?: string },
   options?: Omit<UseQueryOptions<{ data: SearchResultDto[] }>, "queryKey" | "queryFn">,
 ) {
   return useQuery({
-    queryKey: eventKeys.search(query),
-    queryFn: () => api.searchEvents(query),
+    queryKey: eventKeys.search(`${query}|${JSON.stringify(params || {})}`),
+    queryFn: () => api.searchEvents(query, params),
     enabled: query.length > 0,
     staleTime: 30 * 1000,
     ...options,

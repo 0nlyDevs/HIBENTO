@@ -35,10 +35,21 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("q")?.trim();
     const limit = Math.min(50, parseInt(searchParams.get("limit") || "10"));
+    const city = searchParams.get("city");
+    const dateFrom = searchParams.get("dateFrom");
+    const dateTo = searchParams.get("dateTo");
+    const status = searchParams.get("status");
 
     if (!query) {
       return NextResponse.json(
         { error: "Query parameter 'q' is required" },
+        { status: 400 },
+      );
+    }
+
+    if (query.length > 500) {
+      return NextResponse.json(
+        { error: "Query too long (max 500 characters)" },
         { status: 400 },
       );
     }
@@ -83,7 +94,22 @@ export async function GET(
 
     const queryVec = await generateEmbedding(query);
 
+    const nowDate = new Date();
+
     const scored = cachedEmbeddings
+      .filter((item) => {
+        if (city && item.event.venue?.city !== city) return false;
+        if (dateFrom && item.event.startDate < new Date(dateFrom)) return false;
+        if (dateTo && item.event.endDate > new Date(dateTo)) return false;
+        if (status === "live") {
+          if (!(item.event.startDate <= nowDate && item.event.endDate >= nowDate)) return false;
+        } else if (status === "upcoming") {
+          if (item.event.startDate <= nowDate) return false;
+        } else if (status === "ended") {
+          if (item.event.endDate >= nowDate) return false;
+        }
+        return true;
+      })
       .map((item) => ({
         item,
         score: cosineSimilarity(queryVec, item.embedding),

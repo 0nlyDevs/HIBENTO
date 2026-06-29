@@ -85,7 +85,12 @@ export default function EventsPage() {
     ...(dateTo && { dateTo }),
   }), [status, city, dateFrom, dateTo]);
 
-  const { data: searchData, isLoading: isSearching } = useSearchEvents(deferredSearch);
+  const { data: searchData, isLoading: isSearching } = useSearchEvents(deferredSearch, {
+    city: city !== "all" ? city : undefined,
+    dateFrom: dateFrom || undefined,
+    dateTo: dateTo || undefined,
+    status: status !== "all" ? status : undefined,
+  });
   const { data: eventsData, isLoading: isLoadingEvents } = useGetEvents(
     deferredSearch ? { page: 1, limit: 50, ...(status !== "all" && { status }) } : queryParams,
     { enabled: !deferredSearch },
@@ -103,9 +108,6 @@ export default function EventsPage() {
         venue: r.match?.venue || null,
         eventSessionCount: 0,
       }));
-      if (city !== "all") {
-        results = results.filter((e) => e.venue?.city === city);
-      }
       return filterEvents(results, format);
     }
     return filterEvents(eventsData?.data || [], format);
