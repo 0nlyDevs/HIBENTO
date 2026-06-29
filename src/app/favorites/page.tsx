@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useDeferredValue, useMemo } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useFavorites } from "@/lib/hooks/useFavorites";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -9,6 +10,21 @@ import { fromEventSessionDetail } from "@/lib/utils/sessionMappers";
 import { sortScheduleSessions } from "@/lib/utils/sortSessions";
 import { ScheduleTable } from "@/components/sessions/ScheduleTable";
 import { TablePagination } from "@/components/ui/TablePagination";
+import { Select } from "@/components/ui/Select";
+import { Search, X } from "lucide-react";
+
+const DateRangePicker = dynamic(() =>
+  import("@/components/ui/DateRangePicker").then((m) => ({ default: m.DateRangePicker })),
+);
+
+type FavStatus = "all" | "live" | "upcoming" | "ended";
+
+const STATUS_OPTIONS = [
+  { value: "all" as const, label: "All statuses" },
+  { value: "live" as const, label: "Live now" },
+  { value: "upcoming" as const, label: "Upcoming" },
+  { value: "ended" as const, label: "Ended" },
+];
 
 const PAGE_SIZE = 5;
 
@@ -29,17 +45,63 @@ export default function FavoritesPage() {
     placeholderData: keepPreviousData,
   });
 
+  const [favSearch, setFavSearch] = useState("");
+  const deferredFavSearch = useDeferredValue(favSearch);
+  const [favStatus, setFavStatus] = useState<FavStatus>("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+
   const sorted = sortScheduleSessions(
     (sessions ?? []).filter(Boolean).map(fromEventSessionDetail),
     "asc",
   );
+  const filtered = useMemo(() => {
+    const now = new Date();
+    let result = sorted;
 
-  const totalFavPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+    if (deferredFavSearch) {
+      result = result.filter((s) =>
+        s.title.toLowerCase().includes(deferredFavSearch.toLowerCase()),
+      );
+    }
+
+    if (favStatus !== "all") {
+      result = result.filter((s) => {
+        if (favStatus === "live") return s.isLive;
+        if (favStatus === "upcoming") return s.startTime > now;
+        if (favStatus === "ended") return s.endTime < now;
+        return true;
+      });
+    }
+
+    if (dateFrom) {
+      const from = new Date(dateFrom);
+      result = result.filter((s) => s.endTime >= from);
+    }
+    if (dateTo) {
+      const to = new Date(dateTo);
+      to.setHours(23, 59, 59, 999);
+      result = result.filter((s) => s.startTime <= to);
+    }
+
+    return result;
+  }, [sorted, deferredFavSearch, favStatus, dateFrom, dateTo]);
+
+  const totalFavPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const safeFavPage = Math.min(favPage, totalFavPages);
-  const paginatedSessions = sorted.slice(
+  const paginatedSessions = filtered.slice(
     (safeFavPage - 1) * PAGE_SIZE,
     safeFavPage * PAGE_SIZE,
   );
+  const hasActiveFilters = favStatus !== "all" || !!favSearch || !!dateFrom || !!dateTo;
+
+  const clearAll = () => {
+    setFavSearch("");
+    setFavStatus("all");
+    setDateFrom("");
+    setDateTo("");
+    setFavPage(1);
+  };
 
   return (
     <div className="pt-16 pb-24">
@@ -97,12 +159,43 @@ export default function FavoritesPage() {
             </div>
           </div>
         ) : (
+          <>
+          <div
+            className="flex items-center justify-between gap-3 p-3 mb-6 squircle-lg"
+            style={{ background: "#222222E6", border: "1px dashed rgba(255,255,255,0.18)" }}
+          >
+            <div className="relative w-56 shrink-0">
+              <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-ivory/40 pointer-events-none" />
+              <input
+                type="text"
+                value={favSearch}
+                onChange={(e) => { setFavSearch(e.target.value); setFavPage(1); }}
+                placeholder="Search favorites"
+                className="w-full h-9 pl-8 pr-3 text-sm font-medium text-ivory placeholder-ivory/40 focus:outline-none transition-colors rounded-lg"
+                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}
+              />
+            </div>
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              <Select value={favStatus} onValueChange={(v) => { setFavStatus(v as FavStatus); setFavPage(1); }} options={STATUS_OPTIONS} placeholder="Status" />
+              <DateRangePicker from={dateFrom} to={dateTo} onFromChange={(v) => { setDateFrom(v); setFavPage(1); }} onToChange={(v) => { setDateTo(v); setFavPage(1); }} />
+              {hasActiveFilters && (
+                <button
+                  onClick={clearAll}
+                  className="flex items-center gap-1.5 h-9 px-3 text-xs font-semibold text-ivory/60 hover:text-ivory transition-colors rounded-lg whitespace-nowrap"
+                  style={{ background: "rgba(255,255,255,0.08)", border: "1px dashed rgba(255,255,255,0.18)" }}
+                >
+                  <X size={11} /> Clear all
+                </button>
+              )}
+            </div>
+          </div>
           <ScheduleTable
             sessions={paginatedSessions}
             variant="extended"
             sort={false}
             emptyMessage="No favorite sessions found"
           />
+          </>
         )}
 
         <TablePagination

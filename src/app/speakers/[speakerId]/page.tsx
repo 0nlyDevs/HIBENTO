@@ -1,18 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useDeferredValue, useMemo } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { fromSpeakerEventSession } from "@/lib/utils/sessionMappers";
 import { sortScheduleSessions } from "@/lib/utils/sortSessions";
 import { ScheduleTable } from "@/components/sessions/ScheduleTable";
 import { TablePagination } from "@/components/ui/TablePagination";
+import { Select } from "@/components/ui/Select";
 import { keepPreviousData } from "@tanstack/react-query";
-import { MessageCircle, ChevronUp, ExternalLink } from "lucide-react";
+import { MessageCircle, ChevronUp, ExternalLink, Search, X } from "lucide-react";
 import type { QuestionDto } from "@/types/dto";
+
+const DateRangePicker = dynamic(() =>
+  import("@/components/ui/DateRangePicker").then((m) => ({ default: m.DateRangePicker })),
+);
+
+type SessStatus = "all" | "live" | "upcoming" | "ended";
+
+const STATUS_OPTIONS = [
+  { value: "all" as const, label: "All statuses" },
+  { value: "live" as const, label: "Live now" },
+  { value: "upcoming" as const, label: "Upcoming" },
+  { value: "ended" as const, label: "Ended" },
+];
 
 export default function SpeakerProfilePage() {
   const { speakerId } = useParams<{ speakerId: string }>();
@@ -26,6 +41,13 @@ export default function SpeakerProfilePage() {
 
   const [sessPage, setSessPage] = useState(1);
   const [questionPage, setQuestionPage] = useState(1);
+  const [sessSearch, setSessSearch] = useState("");
+  const deferredSessSearch = useDeferredValue(sessSearch);
+  const [sessStatus, setSessStatus] = useState<SessStatus>("all");
+  const [sessDateFrom, setSessDateFrom] = useState("");
+  const [sessDateTo, setSessDateTo] = useState("");
+  const [questionSearch, setQuestionSearch] = useState("");
+  const deferredQuestionSearch = useDeferredValue(questionSearch);
 
   const sessionIds = speaker?.eventSessions.map((s) => s.id) ?? [];
 
@@ -56,18 +78,63 @@ export default function SpeakerProfilePage() {
   ).sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
+  const searchedQuestions = deferredQuestionSearch
+    ? questionsWithSession.filter((qq) =>
+        qq.content.toLowerCase().includes(deferredQuestionSearch.toLowerCase()),
+      )
+    : questionsWithSession;
   const QUESTION_PAGE_SIZE = 5;
-  const totalQuestionPages = Math.max(1, Math.ceil(questionsWithSession.length / QUESTION_PAGE_SIZE));
+  const totalQuestionPages = Math.max(1, Math.ceil(searchedQuestions.length / QUESTION_PAGE_SIZE));
   const safeQuestionPage = Math.min(questionPage, totalQuestionPages);
-  const paginatedQuestions = questionsWithSession.slice((safeQuestionPage - 1) * QUESTION_PAGE_SIZE, safeQuestionPage * QUESTION_PAGE_SIZE);
+  const paginatedQuestions = searchedQuestions.slice((safeQuestionPage - 1) * QUESTION_PAGE_SIZE, safeQuestionPage * QUESTION_PAGE_SIZE);
 
   const sortedSessions = speaker
     ? sortScheduleSessions(speaker.eventSessions.map(fromSpeakerEventSession), "asc")
     : [];
+  const filteredSessions = useMemo(() => {
+    const now = new Date();
+    let result = sortedSessions;
+
+    if (deferredSessSearch) {
+      result = result.filter((s) =>
+        s.title.toLowerCase().includes(deferredSessSearch.toLowerCase()),
+      );
+    }
+
+    if (sessStatus !== "all") {
+      result = result.filter((s) => {
+        if (sessStatus === "live") return s.isLive;
+        if (sessStatus === "upcoming") return s.startTime > now;
+        if (sessStatus === "ended") return s.endTime < now;
+        return true;
+      });
+    }
+
+    if (sessDateFrom) {
+      const from = new Date(sessDateFrom);
+      result = result.filter((s) => s.endTime >= from);
+    }
+    if (sessDateTo) {
+      const to = new Date(sessDateTo);
+      to.setHours(23, 59, 59, 999);
+      result = result.filter((s) => s.startTime <= to);
+    }
+
+    return result;
+  }, [sortedSessions, deferredSessSearch, sessStatus, sessDateFrom, sessDateTo]);
   const SESSION_PAGE_SIZE = 5;
-  const totalSessPages = Math.max(1, Math.ceil(sortedSessions.length / SESSION_PAGE_SIZE));
+  const totalSessPages = Math.max(1, Math.ceil(filteredSessions.length / SESSION_PAGE_SIZE));
   const safeSessPage = Math.min(sessPage, totalSessPages);
-  const paginatedSessions = sortedSessions.slice((safeSessPage - 1) * SESSION_PAGE_SIZE, safeSessPage * SESSION_PAGE_SIZE);
+  const paginatedSessions = filteredSessions.slice((safeSessPage - 1) * SESSION_PAGE_SIZE, safeSessPage * SESSION_PAGE_SIZE);
+  const hasActiveSessionFilters = sessSearch !== "" || sessStatus !== "all" || sessDateFrom !== "" || sessDateTo !== "";
+
+  const clearSessionFilters = () => {
+    setSessSearch("");
+    setSessStatus("all");
+    setSessDateFrom("");
+    setSessDateTo("");
+    setSessPage(1);
+  };
 
   return (
     <div className="pt-16 pb-24 animate-fade-in">
@@ -136,10 +203,23 @@ export default function SpeakerProfilePage() {
                 <MessageCircle size={16} className="text-chartreuse" />
                 <span className="label-mono text-ivory/85">QUESTIONS FROM THEIR SESSIONS</span>
                 <div className="flex-1 h-px bg-ivory/10" />
-                <span className="label-mono text-ivory/40">{questionsWithSession.length}</span>
+                <span className="label-mono text-ivory/40">{searchedQuestions.length}</span>
+              </div>
+              <div className="mb-4">
+                <div className="relative w-full">
+                  <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-ivory/40 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={questionSearch}
+                    onChange={(e) => { setQuestionSearch(e.target.value); setQuestionPage(1); }}
+                    placeholder="Search questions"
+                    className="w-full h-9 pl-8 pr-3 text-sm font-medium text-ivory placeholder-ivory/40 focus:outline-none transition-colors rounded-lg"
+                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}
+                  />
+                </div>
               </div>
 
-              {!questionsBySession ? (
+              {!questionsBySession && sessionIds.length > 0 ? (
                 <div className="space-y-3 flex-1 animate-pulse">
                   {Array.from({ length: 3 }).map((_, i) => (
                     <div key={i} className="p-4 rounded-lg" style={{ background: "rgba(255,255,255,0.03)" }}>
@@ -148,7 +228,7 @@ export default function SpeakerProfilePage() {
                     </div>
                   ))}
                 </div>
-              ) : questionsWithSession.length > 0 ? (
+              ) : searchedQuestions.length > 0 ? (
                 <div className="space-y-3 pr-1 flex-1">
                   {paginatedQuestions.map((q) => (
                     <div key={q.id} className="p-4 rounded-lg" style={{ background: "rgba(255,255,255,0.03)", border: "1px dashed rgba(255,255,255,0.08)" }}>
@@ -207,7 +287,36 @@ export default function SpeakerProfilePage() {
             </svg>
             <span className="label-mono text-ivory/85">SESSIONS</span>
             <div className="flex-1 h-px bg-ivory/10" />
-            <span className="label-mono text-ivory/40">{sortedSessions.length} TOTAL</span>
+            <span className="label-mono text-ivory/40">{filteredSessions.length} TOTAL</span>
+          </div>
+          <div
+            className="flex items-center justify-between gap-3 p-3 mb-6 squircle-lg"
+            style={{ background: "#222222E6", border: "1px dashed rgba(255,255,255,0.18)" }}
+          >
+            <div className="relative w-56 shrink-0">
+              <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-ivory/40 pointer-events-none" />
+              <input
+                type="text"
+                value={sessSearch}
+                onChange={(e) => { setSessSearch(e.target.value); setSessPage(1); }}
+                placeholder="Search a session"
+                className="w-full h-9 pl-8 pr-3 text-sm font-medium text-ivory placeholder-ivory/40 focus:outline-none transition-colors rounded-lg"
+                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}
+              />
+            </div>
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              <Select value={sessStatus} onValueChange={(v) => { setSessStatus(v as SessStatus); setSessPage(1); }} options={STATUS_OPTIONS} placeholder="Status" />
+              <DateRangePicker from={sessDateFrom} to={sessDateTo} onFromChange={(v) => { setSessDateFrom(v); setSessPage(1); }} onToChange={(v) => { setSessDateTo(v); setSessPage(1); }} />
+              {hasActiveSessionFilters && (
+                <button
+                  onClick={clearSessionFilters}
+                  className="flex items-center gap-1.5 h-9 px-3 text-xs font-semibold text-ivory/60 hover:text-ivory transition-colors rounded-lg whitespace-nowrap"
+                  style={{ background: "rgba(255,255,255,0.08)", border: "1px dashed rgba(255,255,255,0.18)" }}
+                >
+                  <X size={11} /> Clear all
+                </button>
+              )}
+            </div>
           </div>
           {!speaker ? (
             <div className="space-y-3 animate-pulse">
@@ -225,7 +334,7 @@ export default function SpeakerProfilePage() {
                 </div>
               ))}
             </div>
-          ) : sortedSessions.length > 0 ? (
+          ) : filteredSessions.length > 0 ? (
             <>
               <ScheduleTable
                 sessions={paginatedSessions}
