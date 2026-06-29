@@ -10,9 +10,9 @@ export async function GET(
     const where = q
       ? {
           OR: [
-            { name: { contains: q, mode: "insensitive" } },
-            { city: { contains: q, mode: "insensitive" } },
-            { neighborhood: { contains: q, mode: "insensitive" } },
+            { name: { contains: q, mode: "insensitive" as const } },
+            { city: { contains: q, mode: "insensitive" as const } },
+            { neighborhood: { contains: q, mode: "insensitive" as const } },
           ],
         }
       : {};
