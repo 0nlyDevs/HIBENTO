@@ -108,8 +108,8 @@ export function NotificationProvider({
     await fetchRecs();
   }, [fetchRecs]);
 
-  const value = useMemo(
-    ({
+  const value = useMemo<NotificationContextValue>(
+    () => ({
       recommendations,
       hasNew,
       isOpen,
@@ -118,7 +118,7 @@ export function NotificationProvider({
       toggle,
       refresh,
       setCurrentEventId,
-    } satisfies NotificationContextValue),
+    }),
     [recommendations, hasNew, isOpen, open, close, toggle, refresh, setCurrentEventId],
   );
 

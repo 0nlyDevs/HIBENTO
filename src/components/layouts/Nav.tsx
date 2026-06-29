@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Fragment } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -63,7 +63,8 @@ export function Nav() {
   const isFavoritesActive = pathname.startsWith("/favorites");
 
   return (
-    <nav className="sticky top-0 z-40 backdrop-blur border-b border-white/10">
+    <>
+      <nav className="sticky top-0 z-40 backdrop-blur border-b border-white/10">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center h-7">
@@ -129,9 +130,9 @@ export function Nav() {
             />
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
 
-    <RecommendationPanel />
+      <RecommendationPanel />
+    </>
   );
 }

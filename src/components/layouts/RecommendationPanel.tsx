@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
-import { X, ExternalLink, TrendingUp, Heart, MapPin, Sparkles } from "lucide-react";
+import { X, TrendingUp, Heart, MapPin, Sparkles } from "lucide-react";
 import { useNotifications } from "@/lib/hooks/NotificationContext";
 import { formatShortDate } from "@/lib/utils/dates";
 import type { RecommendedEventDto } from "@/types/dto";
