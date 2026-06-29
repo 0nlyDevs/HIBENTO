@@ -98,7 +98,7 @@ export default function EventsPage() {
 
   const events = useMemo(() => {
     if (deferredSearch && searchData?.data) {
-      let results: EventSummaryDto[] = searchData.data.map((r: SearchResultDto) => ({
+      const results: EventSummaryDto[] = searchData.data.map((r: SearchResultDto) => ({
         id: r.id,
         title: r.title,
         description: r.description,
@@ -111,7 +111,7 @@ export default function EventsPage() {
       return filterEvents(results, format);
     }
     return filterEvents(eventsData?.data || [], format);
-  }, [deferredSearch, searchData, eventsData, city, format]);
+  }, [deferredSearch, searchData, eventsData, format]);
 
   const isLoading = deferredSearch ? isSearching : isLoadingEvents;
 
