@@ -11,6 +11,7 @@ import type {
   QuestionDto,
   UpvoteResponseDto,
   SearchResultDto,
+  DuplicateCheckResponseDto,
 } from "@/types/dto";
 import { API_BASE_URL } from "./constants";
 
@@ -169,6 +170,12 @@ export const api = {
 
   getRecommendations: (eventId: string) =>
     http<{ data: SearchResultDto[] }>(`/api/ai/events/${eventId}/recommendations`),
+
+  checkDuplicateQuestion: (sessionId: string, content: string) =>
+    http<{ data: DuplicateCheckResponseDto }>("/api/ai/questions/check", {
+      method: "POST",
+      body: JSON.stringify({ sessionId, content }),
+    }),
 };
 
 export function isEventLive(event: {
