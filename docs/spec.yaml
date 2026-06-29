@@ -467,6 +467,25 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  /questions/{questionId}:
+    get:
+      tags: [ Questions ]
+      summary: Get a single question by ID
+      parameters:
+      - $ref: '#/components/parameters/QuestionId'
+      responses:
+        '200':
+          description: Question details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Question'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # ==================== UPVOTES ====================
   /questions/{questionId}/upvote:
     post:
@@ -769,6 +788,9 @@ components:
             $ref: '#/components/schemas/SpeakerRef'
         questionCount:
           type: integer
+        capacity:
+          type: integer
+          nullable: true
 
     SessionDetail:
       type: object
