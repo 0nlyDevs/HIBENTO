@@ -345,11 +345,17 @@ paths:
         schema:
           type: integer
           default: 20
+      - name: venueId
+        in: query
+        schema:
+          type: string
+          format: uuid
+        description: Filter by venue ID
       - name: q
         in: query
         schema:
           type: string
-        description: Search by speaker name or bio
+        description: Search by room name
       responses:
         '200':
           description: Speaker list

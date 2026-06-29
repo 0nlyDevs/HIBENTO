@@ -10,10 +10,14 @@ export async function GET(
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20")));
     const q = searchParams.get("q");
+    const venueId = searchParams.get("venueId");
 
     const where: Record<string, unknown> = {};
     if (q) {
       where.name = { contains: q, mode: "insensitive" };
+    }
+    if (venueId) {
+      where.venueId = venueId;
     }
 
     const [rooms, total] = await Promise.all([
