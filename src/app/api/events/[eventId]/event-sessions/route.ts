@@ -57,18 +57,19 @@ export async function GET(
       };
     }
 
+    if (q) {
+      where.OR = [
+        { title: { contains: q, mode: "insensitive" as const } },
+        { description: { contains: q, mode: "insensitive" as const } },
+      ];
+    }
+
     const now = new Date();
     if (liveOnly) {
       where.startTime = { lte: now };
       where.endTime = { gte: now };
     }
 
-    if (q) {
-      where.OR = [
-        { title: { contains: q, mode: "insensitive" } },
-        { description: { contains: q, mode: "insensitive" } },
-      ];
-    }
 
     const [eventExists, rawSessions] = await Promise.all([
       prisma.event.findUnique({

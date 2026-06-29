@@ -12,6 +12,7 @@ import { getEventSessionStatus } from "@/lib/utils/getEventSessionStatus";
 
 type EventSessionWithRelations = {
   id: string;
+  eventId: string;
   title: string;
   description: string | null;
   startTime: Date;
