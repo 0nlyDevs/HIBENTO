@@ -64,7 +64,7 @@ export async function POST(
       }
     }
 
-    if (bestScore >= SIMILARITY_THRESHOLD && bestIndex >= 0) {
+    if (bestScore >= SIMILARITY_THRESHOLD) {
       const match = existingQuestions[bestIndex];
       return NextResponse.json(
         {
