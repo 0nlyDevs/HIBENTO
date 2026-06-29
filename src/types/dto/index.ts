@@ -86,6 +86,7 @@ export interface EventDetailDto {
 
 export interface EventSessionSummaryDto {
   id: string;
+  eventId: string;
   title: string;
   description: string | null;
   startTime: string;
@@ -95,6 +96,7 @@ export interface EventSessionSummaryDto {
   isLive: boolean;
   speakers: SpeakerRefDto[];
   questionCount: number;
+  capacity: number | null;
 }
 
 export interface EventSessionDetailDto {
