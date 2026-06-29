@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ sessionId: string }> }
+  { params }: { params: Promise<{ sessionId: string }> },
 ): Promise<NextResponse<{ data: QuestionDto[] } | { error: string }>> {
   try {
     const { sessionId } = await params;
@@ -16,7 +16,7 @@ export async function GET(
     if (!isValidUUID(sessionId)) {
       return NextResponse.json(
         { error: "Invalid session ID" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -34,15 +34,19 @@ export async function GET(
       }),
       prisma.question.findMany({
         where,
-        orderBy: { upvotes: "desc" },
+        orderBy: [
+          {
+            upvotes: "desc",
+          },
+          {
+            createdAt: "asc",
+          },
+        ],
       }),
     ]);
 
     if (!session) {
-      return NextResponse.json(
-        { error: "Session not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Session not found" }, { status: 404 });
     }
 
     const response: QuestionDto[] = questions.map((q: Question) => ({
@@ -58,14 +62,14 @@ export async function GET(
     console.error("GET /api/event-sessions/[sessionId]/questions error: ", err);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ sessionId: string }> }
+  { params }: { params: Promise<{ sessionId: string }> },
 ): Promise<NextResponse<QuestionDto | { error: string }>> {
   try {
     const { sessionId } = await params;
@@ -75,7 +79,7 @@ export async function POST(
     if (!isValidUUID(sessionId)) {
       return NextResponse.json(
         { error: "Invalid session ID" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -84,10 +88,7 @@ export async function POST(
     });
 
     if (!session) {
-      return NextResponse.json(
-        { error: "Session not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Session not found" }, { status: 404 });
     }
 
     const isLive = getEventSessionStatus(session) === "live";
@@ -96,7 +97,7 @@ export async function POST(
         {
           error: "Questions can only be submitted for live sessions",
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -121,7 +122,7 @@ export async function POST(
     console.error("POST /api/event-sessions/[sessionId]/questions error", err);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

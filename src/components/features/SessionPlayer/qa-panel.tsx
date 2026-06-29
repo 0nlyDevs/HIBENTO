@@ -14,6 +14,7 @@ interface QaPanelProps {
   onUpvote: (questionId: string) => void;
   upvotedQuestions: Set<string>;
   upvotingQuestions: Set<string>;
+  upvoteCounts: Record<string, number>;
   onSubmitQuestion: (text: string, authorName: string) => Promise<void>;
 }
 
@@ -22,11 +23,13 @@ function QuestionCard({
   hasUpvoted,
   isUpvoting,
   onUpvote,
+  upvoteCount,
 }: {
   question: QuestionDto;
   hasUpvoted: boolean;
   isUpvoting: boolean;
   onUpvote: () => void;
+  upvoteCount: number;
 }) {
   return (
     <div className="card-glass p-3.5 rounded-xl flex flex-col gap-2">
@@ -58,7 +61,7 @@ function QuestionCard({
             className={`transition-transform duration-200 ${hasUpvoted ? "scale-110" : ""}`}
             fill={hasUpvoted ? "currentColor" : "none"}
           />
-          <span>{question.upvotes} UPVOTE{question.upvotes === 1 ? "" : "S"}</span>
+          <span>{upvoteCount} UPVOTE{upvoteCount === 1 ? "" : "S"}</span>
         </button>
       </div>
     </div>
@@ -74,6 +77,7 @@ export function QaPanel({
   onUpvote,
   upvotedQuestions,
   upvotingQuestions,
+  upvoteCounts,
   onSubmitQuestion,
 }: QaPanelProps) {
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -176,6 +180,7 @@ export function QaPanel({
                 question={q}
                 hasUpvoted={upvotedQuestions.has(q.id)}
                 isUpvoting={upvotingQuestions.has(q.id)}
+                upvoteCount={upvoteCounts[q.id] ?? q.upvotes}
                 onUpvote={() => onUpvote(q.id)}
               />
             ));

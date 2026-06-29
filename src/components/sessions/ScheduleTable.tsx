@@ -20,7 +20,7 @@ export function ScheduleTable({
   const [edges, setEdges] = useState({ left: false, right: false });
 
   const displaySessions = useMemo(
-    () => (sort ? sortScheduleSessions(sessions, "asc") : sessions),
+    () => (sort ? sortScheduleSessions(sessions) : sessions),
     [sessions, sort],
   );
 

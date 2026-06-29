@@ -33,7 +33,7 @@ export default function SessionPlayerPage() {
 
   const questions = questionsData?.data ?? session?.questions ?? [];
 
-  const { upvotedQuestions, upvotingQuestions, handleUpvote } = useUpvote(
+  const { upvotedQuestions, upvotingQuestions, handleUpvote, upvoteCounts } = useUpvote(
     sessionId,
     refetchQuestions,
   );
@@ -154,6 +154,7 @@ export default function SessionPlayerPage() {
           onUpvote={(questionId) => handleUpvote(questionId, toast)}
           upvotedQuestions={upvotedQuestions}
           upvotingQuestions={upvotingQuestions}
+          upvoteCounts={upvoteCounts}
           onSubmitQuestion={async (text, authorName) => {
             await api.createQuestion(sessionId, text, authorName);
             refetchQuestions();
