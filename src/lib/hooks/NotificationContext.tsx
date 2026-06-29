@@ -21,6 +21,7 @@ interface NotificationContextValue {
   close: () => void;
   toggle: () => void;
   refresh: () => Promise<void>;
+  setCurrentEventId: (id: string | null) => void;
 }
 
 const NotificationContext =
@@ -108,7 +109,7 @@ export function NotificationProvider({
   }, [fetchRecs]);
 
   const value = useMemo(
-    () => ({
+    ({
       recommendations,
       hasNew,
       isOpen,
@@ -116,8 +117,9 @@ export function NotificationProvider({
       close,
       toggle,
       refresh,
-    }),
-    [recommendations, hasNew, isOpen, open, close, toggle, refresh],
+      setCurrentEventId,
+    } satisfies NotificationContextValue),
+    [recommendations, hasNew, isOpen, open, close, toggle, refresh, setCurrentEventId],
   );
 
   return (
