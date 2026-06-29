@@ -11,6 +11,7 @@ import type {
   QuestionDto,
   UpvoteResponseDto,
   SearchResultDto,
+  RecommendedEventDto,
   DuplicateCheckResponseDto,
 } from "@/types/dto";
 import { API_BASE_URL } from "./constants";
@@ -176,6 +177,15 @@ export const api = {
 
   getRecommendations: (eventId: string) =>
     http<{ data: SearchResultDto[] }>(`/api/ai/events/${eventId}/recommendations`),
+
+  getGlobalRecommendations: (favorites?: string[], currentEventId?: string) => {
+    const params = new URLSearchParams();
+    if (favorites?.length) params.set("favorites", favorites.join(","));
+    if (currentEventId) params.set("currentEventId", currentEventId);
+    return http<{ data: RecommendedEventDto[] }>(
+      `/api/ai/recommendations/global?${params.toString()}`,
+    );
+  },
 
   checkDuplicateQuestion: (sessionId: string, content: string) =>
     http<{ data: DuplicateCheckResponseDto }>("/api/ai/questions/check", {

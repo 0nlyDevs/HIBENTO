@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
+import { NotificationBell } from "./NotificationBell";
+import { RecommendationPanel } from "./RecommendationPanel";
 
 export function Nav() {
   const pathname = usePathname();
@@ -61,7 +63,8 @@ export function Nav() {
   const isFavoritesActive = pathname.startsWith("/favorites");
 
   return (
-    <nav className="sticky top-0 z-40 backdrop-blur border-b border-white/10">
+    <>
+      <nav className="sticky top-0 z-40 backdrop-blur border-b border-white/10">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center h-7">
@@ -110,6 +113,8 @@ export function Nav() {
               FAVORITES
             </Link>
 
+            <NotificationBell />
+
             <motion.div
               className="absolute bottom-0 h-0.75 bg-chartreuse rounded-full"
               animate={{
@@ -127,5 +132,8 @@ export function Nav() {
         </div>
       </div>
     </nav>
+
+      <RecommendationPanel />
+    </>
   );
 }

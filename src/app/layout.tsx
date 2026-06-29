@@ -53,8 +53,8 @@ export default function RootLayout({
           <ProgressBar />
         </Suspense>
         <DotGrid />
-        <NavSelector />
         <Providers>
+          <NavSelector />
           <MainWrapper>{children}</MainWrapper>
         </Providers>
       </body>

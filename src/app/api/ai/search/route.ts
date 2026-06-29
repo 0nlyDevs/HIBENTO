@@ -34,7 +34,7 @@ export async function GET(
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("q")?.trim();
-    const limit = Math.min(50, parseInt(searchParams.get("limit") || "10"));
+    const limit = Math.min(50, parseInt(searchParams.get("limit") || "20"));
     const city = searchParams.get("city");
     const dateFrom = searchParams.get("dateFrom");
     const dateTo = searchParams.get("dateTo");
@@ -114,7 +114,7 @@ export async function GET(
         item,
         score: cosineSimilarity(queryVec, item.embedding),
       }))
-      .filter((s) => s.score > 0.3)
+      .filter((s) => s.score > 0.2)
       .sort((a, b) => b.score - a.score)
       .slice(0, limit);
 

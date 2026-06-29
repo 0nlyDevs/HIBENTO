@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useRef, useCallback, useMemo } from "react";
+import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useGetEvent } from "@/lib/hooks/useEvents";
+import { useNotifications } from "@/lib/hooks/NotificationContext";
 import { api } from "@/lib/api";
 import { EventHero } from "@/components/events/EventHero";
 import { EventInfoGrid } from "@/components/events/EventInfoGrid";
@@ -32,6 +33,7 @@ function NotFound() {
 export default function EventDetailPage() {
   const { eventId } = useParams<{ eventId: string }>();
   const { data: event, isLoading } = useGetEvent(eventId);
+  const { setCurrentEventId } = useNotifications();
   const { data: recsData } = useQuery({
     queryKey: ["recommendations", eventId],
     queryFn: () => api.getRecommendations(eventId),
@@ -42,6 +44,12 @@ export default function EventDetailPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("table");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [tablePage, setTablePage] = useState(1);
+
+  // Register this event as the current context for global recommendations
+  useEffect(() => {
+    setCurrentEventId(eventId);
+    return () => setCurrentEventId(null);
+  }, [eventId, setCurrentEventId]);
 
   const viewPillRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const statusPillRefs = useRef<(HTMLButtonElement | null)[]>([]);
