@@ -147,6 +147,7 @@ export default function SessionPlayerPage() {
 
         <QaPanel
           questions={questions}
+          sessionId={sessionId}
           isLive={isLive}
           isUpcoming={isUpcoming}
           isEnded={isEnded}
