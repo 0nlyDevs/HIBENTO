@@ -46,7 +46,7 @@ export function HeroCard({ event, imageIdx }: HeroCardProps) {
       href={ROUTES.EVENT_DETAIL(event.id)}
       className="group relative col-span-full overflow-hidden squircle-lg min-h-80 flex flex-col justify-end"
     >
-      <Image src={img} alt={event.title} fill className="object-cover object-center transition-transform duration-700 group-hover:scale-105" sizes="100vw" quality={85} />
+      <Image src={img} alt={event.title} fill className="object-cover object-center transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 1200px" quality={85} />
       <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent" />
 
       {isLive && (

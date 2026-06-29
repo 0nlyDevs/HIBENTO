@@ -1,5 +1,5 @@
-import { PageLoader } from "@/components/ui/Spinner";
+import { EventsSkeleton } from "@/components/ui/skeletons/EventsSkeleton";
 
 export default function EventsLoading() {
-  return <PageLoader className="pt-24 pb-24" />;
+  return <EventsSkeleton />;
 }

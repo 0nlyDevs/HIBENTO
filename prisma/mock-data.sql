@@ -17,7 +17,7 @@ INSERT INTO venue (id, name, city, neighborhood, total_rooms, created_at, update
 ('550e8400-e29b-41d4-a716-446655440005'::uuid, 'Tech Hub', 'Toamasina', 'Port', 2, NOW(), NOW());
 
 -- ==================== EVENTS ====================
-INSERT INTO event (id, title, description, "venueId", is_online, start_date, end_date, created_at, updated_at) VALUES
+INSERT INTO event (id, title, description, venue_id, is_online, start_date, end_date, created_at, updated_at) VALUES
 ('660e8400-e29b-41d4-a716-446655440001'::uuid, 'DevFest Antananarivo 2024', 'Annual developer festival with workshops and talks about web, mobile, and cloud technologies.', '550e8400-e29b-41d4-a716-446655440001'::uuid, false, '2024-11-15 08:00:00+00', '2024-11-16 18:00:00+00', NOW(), NOW()),
 ('660e8400-e29b-41d4-a716-446655440002'::uuid, 'Tech Innovation Summit 2026', 'Ongoing summit about AI, blockchain, and digital transformation in Madagascar.', '550e8400-e29b-41d4-a716-446655440002'::uuid, false, '2026-05-19 09:00:00+00', '2026-05-22 17:00:00+00', NOW(), NOW()),
 ('660e8400-e29b-41d4-a716-446655440003'::uuid, 'Startup Weekend Antsirabe', '54-hour weekend event to pitch ideas, form teams, and launch startups.', '550e8400-e29b-41d4-a716-446655440003'::uuid, false, '2026-07-10 18:00:00+00', '2026-07-12 20:00:00+00', NOW(), NOW()),
@@ -28,7 +28,7 @@ INSERT INTO event (id, title, description, "venueId", is_online, start_date, end
 ('660e8400-e29b-41d4-a716-446655440008'::uuid, 'HiBento Live Day 2026', 'A full day of live-streamed tech talks, workshops, and panels broadcast from HEI campus in Antananarivo. Featuring 14 sessions across 4 tracks with local and international speakers.', '550e8400-e29b-41d4-a716-446655440001'::uuid, true, '2026-06-27 08:00:00+00', '2026-06-27 18:00:00+00', NOW(), NOW());
 
 -- ==================== ROOMS ====================
-INSERT INTO room (id, "venueId", name, capacity, created_at, updated_at) VALUES
+INSERT INTO room (id, venue_id, name, capacity, created_at, updated_at) VALUES
 ('770e8400-e29b-41d4-a716-446655440001'::uuid, '550e8400-e29b-41d4-a716-446655440001'::uuid, 'Grand Amphithéâtre', 300, NOW(), NOW()),
 ('770e8400-e29b-41d4-a716-446655440002'::uuid, '550e8400-e29b-41d4-a716-446655440001'::uuid, 'Salle NP', 80, NOW(), NOW()),
 ('770e8400-e29b-41d4-a716-446655440003'::uuid, '550e8400-e29b-41d4-a716-446655440001'::uuid, 'Labo Informatique', 40, NOW(), NOW()),
@@ -63,7 +63,7 @@ INSERT INTO speaker (id, name, avatar_url, bio, created_at, updated_at) VALUES
 ('880e8400-e29b-41d4-a716-446655440015'::uuid, 'Sitraka Andrianoely', 'https://i.pravatar.cc/300?u=sitraka', 'Senior frontend engineer and web performance advocate.', NOW(), NOW());
 
 -- ==================== SPEAKER LINKS ====================
-INSERT INTO speaker_external_link (id, "speakerId", link_type, url, created_at) VALUES
+INSERT INTO speaker_external_link (id, speaker_id, link_type, url, created_at) VALUES
 ('990e8400-e29b-41d4-a716-446655440001'::uuid, '880e8400-e29b-41d4-a716-446655440001'::uuid, 'X', 'https://twitter.com/rijarakoto', NOW()),
 ('990e8400-e29b-41d4-a716-446655440002'::uuid, '880e8400-e29b-41d4-a716-446655440001'::uuid, 'GITHUB', 'https://github.com/rijarakoto', NOW()),
 ('990e8400-e29b-41d4-a716-446655440003'::uuid, '880e8400-e29b-41d4-a716-446655440002'::uuid, 'LINKEDIN', 'https://linkedin.com/in/miora', NOW()),
@@ -87,33 +87,33 @@ INSERT INTO speaker_external_link (id, "speakerId", link_type, url, created_at) 
 -- ==================== LIVE SESSIONS (ALL HAPPENING RIGHT NOW - JUNE 27, 2026) ====================
 
 -- Grand Amphithéâtre (room 001) — 4 sessions
-INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
+INSERT INTO event_session (id, title, description, start_time, end_time, room_id, capacity, event_id, created_at, updated_at) VALUES
 ('aa0e8400-e29b-41d4-a716-446655440032'::uuid, 'Keynote: The Future of Web Development in Africa', 'Live keynote exploring emerging trends, the rise of AI-assisted development, and opportunities for African developers in the global web ecosystem.', '2026-06-27 08:00:00+00', '2026-06-27 10:00:00+00', '770e8400-e29b-41d4-a716-446655440001'::uuid, 300, '660e8400-e29b-41d4-a716-446655440008'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440033'::uuid, 'Building Scalable APIs with Node.js & Fastify', 'Live coding session on designing and deploying high-throughput APIs using Fastify, Redis caching, and PostgreSQL partitioning.', '2026-06-27 10:30:00+00', '2026-06-27 12:30:00+00', '770e8400-e29b-41d4-a716-446655440001'::uuid, 300, '660e8400-e29b-41d4-a716-446655440008'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440034'::uuid, 'Panel: Open Source in Madagascar', 'Community leaders discuss the state of open source in Madagascar — successes, challenges, and how to get involved.', '2026-06-27 14:00:00+00', '2026-06-27 15:30:00+00', '770e8400-e29b-41d4-a716-446655440001'::uuid, 300, '660e8400-e29b-41d4-a716-446655440008'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440035'::uuid, 'Lightning Talks: Community Showcase', 'Five rapid-fire 10-minute talks from community members on WebAssembly, Edge Computing, PWAs, Web3, and Green Software.', '2026-06-27 16:00:00+00', '2026-06-27 17:30:00+00', '770e8400-e29b-41d4-a716-446655440001'::uuid, 300, '660e8400-e29b-41d4-a716-446655440008'::uuid, NOW(), NOW());
 
 -- Salle NP (room 002) — 4 sessions
-INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
+INSERT INTO event_session (id, title, description, start_time, end_time, room_id, capacity, event_id, created_at, updated_at) VALUES
 ('aa0e8400-e29b-41d4-a716-446655440036'::uuid, 'React Server Components Deep Dive', 'Live walkthrough of the RSC mental model: streaming, data fetching, server actions, and when to use client vs server components in Next.js.', '2026-06-27 09:00:00+00', '2026-06-27 11:00:00+00', '770e8400-e29b-41d4-a716-446655440002'::uuid, 80, '660e8400-e29b-41d4-a716-446655440008'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440037'::uuid, 'TypeScript Advanced Patterns Workshop', 'Master conditional types, template literal types, mapped types, and branded types in TypeScript 5 — with real-world examples.', '2026-06-27 11:30:00+00', '2026-06-27 13:30:00+00', '770e8400-e29b-41d4-a716-446655440002'::uuid, 80, '660e8400-e29b-41d4-a716-446655440008'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440038'::uuid, 'UI/UX Design Principles for Developers', 'Practical design fundamentals: color theory, typography, layout systems, and accessibility — no design background required.', '2026-06-27 14:00:00+00', '2026-06-27 16:00:00+00', '770e8400-e29b-41d4-a716-446655440002'::uuid, 80, '660e8400-e29b-41d4-a716-446655440008'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440045'::uuid, 'State Management in 2026: Signals, Stores, and Beyond', 'Comparing modern state management approaches: signals, Zustand, Jotai, and the rise of URL-as-state.', '2026-06-27 16:30:00+00', '2026-06-27 18:00:00+00', '770e8400-e29b-41d4-a716-446655440002'::uuid, 80, '660e8400-e29b-41d4-a716-446655440008'::uuid, NOW(), NOW());
 
 -- Labo Informatique (room 003) — 3 sessions
-INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
+INSERT INTO event_session (id, title, description, start_time, end_time, room_id, capacity, event_id, created_at, updated_at) VALUES
 ('aa0e8400-e29b-41d4-a716-446655440039'::uuid, 'Hands-on Docker & Kubernetes', 'Interactive workshop: containerize a full-stack app, deploy to a local K8s cluster, configure auto-scaling and rolling updates.', '2026-06-27 09:00:00+00', '2026-06-27 12:00:00+00', '770e8400-e29b-41d4-a716-446655440003'::uuid, 40, '660e8400-e29b-41d4-a716-446655440008'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440040'::uuid, 'Testing Strategies for Modern Web Apps', 'From Vitest unit tests to Playwright e2e: build a comprehensive testing pyramid and integrate it into your CI/CD pipeline.', '2026-06-27 13:00:00+00', '2026-06-27 15:00:00+00', '770e8400-e29b-41d4-a716-446655440003'::uuid, 40, '660e8400-e29b-41d4-a716-446655440008'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440041'::uuid, 'Workshop: Real-time Chat with WebSockets', 'Build a real-time chat application from scratch using WebSockets, Redis Pub/Sub, and React. Covers reconnection, presence, and scaling.', '2026-06-27 15:30:00+00', '2026-06-27 17:30:00+00', '770e8400-e29b-41d4-a716-446655440003'::uuid, 40, '660e8400-e29b-41d4-a716-446655440008'::uuid, NOW(), NOW());
 
 -- Salle Pi (room 004) — 3 sessions
-INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
+INSERT INTO event_session (id, title, description, start_time, end_time, room_id, capacity, event_id, created_at, updated_at) VALUES
 ('aa0e8400-e29b-41d4-a716-446655440042'::uuid, 'Introduction to Machine Learning with Python', 'Beginner-friendly workshop covering regression, classification, and model evaluation using scikit-learn and Jupyter notebooks.', '2026-06-27 10:00:00+00', '2026-06-27 12:00:00+00', '770e8400-e29b-41d4-a716-446655440004'::uuid, 50, '660e8400-e29b-41d4-a716-446655440008'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440043'::uuid, 'Cybersecurity for Web Developers', 'Essential security practices: OWASP Top 10, input validation, CSRF, XSS prevention, and secure authentication patterns.', '2026-06-27 12:30:00+00', '2026-06-27 14:30:00+00', '770e8400-e29b-41d4-a716-446655440004'::uuid, 50, '660e8400-e29b-41d4-a716-446655440008'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440044'::uuid, 'Building Cross-Platform Apps with Flutter', 'Live coding session: build a cross-platform mobile app with Flutter 4, covering state management, platform channels, and deployment.', '2026-06-27 15:00:00+00', '2026-06-27 17:00:00+00', '770e8400-e29b-41d4-a716-446655440004'::uuid, 50, '660e8400-e29b-41d4-a716-446655440008'::uuid, NOW(), NOW());
 
 -- ==================== SESSION-SPEAKER ASSIGNMENTS (EACH SESSION HAS AT LEAST 1 SPEAKER) ====================
-INSERT INTO event_session_speaker ("eventSessionId", "speakerId", created_at) VALUES
+INSERT INTO event_session_speaker (event_session_id, speaker_id, created_at) VALUES
 -- Grand Amphithéâtre
 ('aa0e8400-e29b-41d4-a716-446655440032'::uuid, '880e8400-e29b-41d4-a716-446655440001'::uuid, NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440032'::uuid, '880e8400-e29b-41d4-a716-446655440013'::uuid, NOW()),
@@ -145,7 +145,7 @@ INSERT INTO event_session_speaker ("eventSessionId", "speakerId", created_at) VA
 ('aa0e8400-e29b-41d4-a716-446655440044'::uuid, '880e8400-e29b-41d4-a716-446655440011'::uuid, NOW());
 
 -- ==================== QUESTIONS FOR LIVE SESSIONS ====================
-INSERT INTO question (id, content, author_name, upvotes, "eventSessionId", created_at) VALUES
+INSERT INTO question (id, content, author_name, upvotes, event_session_id, created_at) VALUES
 -- Keynote questions
 ('bb0e8400-e29b-41d4-a716-446655440008'::uuid, 'Will the recording be available after the event?', 'Miora', 23, 'aa0e8400-e29b-41d4-a716-446655440032'::uuid, NOW()),
 ('bb0e8400-e29b-41d4-a716-446655440009'::uuid, 'What AI tools do you recommend for frontend devs?', 'Rado', 18, 'aa0e8400-e29b-41d4-a716-446655440032'::uuid, NOW()),
@@ -187,7 +187,7 @@ INSERT INTO question (id, content, author_name, upvotes, "eventSessionId", creat
 
 -- ==================== PAST SESSIONS (FOR COMPLETENESS) ====================
 -- DevFest Antananarivo 2024
-INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
+INSERT INTO event_session (id, title, description, start_time, end_time, room_id, capacity, event_id, created_at, updated_at) VALUES
 ('aa0e8400-e29b-41d4-a716-446655440001'::uuid, 'Keynote: Web Development Trends', 'Overview of the latest trends in web development for 2024.', '2024-11-15 09:00:00+00', '2024-11-15 10:30:00+00', '770e8400-e29b-41d4-a716-446655440001'::uuid, 300, '660e8400-e29b-41d4-a716-446655440001'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440002'::uuid, 'Workshop: React Hooks Deep Dive', 'Advanced React patterns with hooks.', '2024-11-15 11:00:00+00', '2024-11-15 13:00:00+00', '770e8400-e29b-41d4-a716-446655440003'::uuid, 40, '660e8400-e29b-41d4-a716-446655440001'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440003'::uuid, 'Cloud Migration Strategies', 'How to migrate legacy apps to the cloud.', '2024-11-15 14:00:00+00', '2024-11-15 15:30:00+00', '770e8400-e29b-41d4-a716-446655440002'::uuid, 80, '660e8400-e29b-41d4-a716-446655440001'::uuid, NOW(), NOW()),
@@ -196,7 +196,7 @@ INSERT INTO event_session (id, title, description, start_time, end_time, "roomId
 ('aa0e8400-e29b-41d4-a716-446655440006'::uuid, 'Closing Panel', 'Discussion on the future of tech in Madagascar.', '2024-11-16 14:00:00+00', '2024-11-16 17:00:00+00', '770e8400-e29b-41d4-a716-446655440001'::uuid, 300, '660e8400-e29b-41d4-a716-446655440001'::uuid, NOW(), NOW());
 
 -- Tech Innovation Summit 2026
-INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
+INSERT INTO event_session (id, title, description, start_time, end_time, room_id, capacity, event_id, created_at, updated_at) VALUES
 ('aa0e8400-e29b-41d4-a716-446655440007'::uuid, 'Opening Ceremony', 'Welcome and introduction to the summit.', '2026-05-19 09:00:00+00', '2026-05-19 10:00:00+00', '770e8400-e29b-41d4-a716-446655440005'::uuid, 500, '660e8400-e29b-41d4-a716-446655440002'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440008'::uuid, 'AI in Healthcare', 'How AI is transforming healthcare in Africa.', '2026-05-19 10:30:00+00', '2026-05-19 12:00:00+00', '770e8400-e29b-41d4-a716-446655440005'::uuid, 500, '660e8400-e29b-41d4-a716-446655440002'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440009'::uuid, 'Blockchain Workshop', 'Hands-on blockchain development.', '2026-05-19 14:00:00+00', '2026-05-19 17:00:00+00', '770e8400-e29b-41d4-a716-446655440007'::uuid, 60, '660e8400-e29b-41d4-a716-446655440002'::uuid, NOW(), NOW()),
@@ -206,32 +206,32 @@ INSERT INTO event_session (id, title, description, start_time, end_time, "roomId
 ('aa0e8400-e29b-41d4-a716-446655440013'::uuid, 'Closing & Awards', 'Summit closing ceremony and awards.', '2026-05-22 15:00:00+00', '2026-05-22 17:00:00+00', '770e8400-e29b-41d4-a716-446655440005'::uuid, 500, '660e8400-e29b-41d4-a716-446655440002'::uuid, NOW(), NOW());
 
 -- Startup Weekend Antsirabe
-INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
+INSERT INTO event_session (id, title, description, start_time, end_time, room_id, capacity, event_id, created_at, updated_at) VALUES
 ('aa0e8400-e29b-41d4-a716-446655440014'::uuid, 'Pitch Workshop', 'Learn how to pitch your startup idea.', '2026-07-10 18:00:00+00', '2026-07-10 20:00:00+00', '770e8400-e29b-41d4-a716-446655440008'::uuid, 100, '660e8400-e29b-41d4-a716-446655440003'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440015'::uuid, 'Team Formation', 'Form teams and start brainstorming.', '2026-07-10 20:00:00+00', '2026-07-10 22:00:00+00', '770e8400-e29b-41d4-a716-446655440008'::uuid, 100, '660e8400-e29b-41d4-a716-446655440003'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440016'::uuid, 'Mentoring Sessions', 'Get advice from experienced mentors.', '2026-07-11 09:00:00+00', '2026-07-11 18:00:00+00', '770e8400-e29b-41d4-a716-446655440009'::uuid, 30, '660e8400-e29b-41d4-a716-446655440003'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440017'::uuid, 'Final Presentations', 'Teams present their projects.', '2026-07-12 14:00:00+00', '2026-07-12 18:00:00+00', '770e8400-e29b-41d4-a716-446655440008'::uuid, 100, '660e8400-e29b-41d4-a716-446655440003'::uuid, NOW(), NOW());
 
 -- AI Conference Fianarantsoa
-INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
+INSERT INTO event_session (id, title, description, start_time, end_time, room_id, capacity, event_id, created_at, updated_at) VALUES
 ('aa0e8400-e29b-41d4-a716-446655440018'::uuid, 'Machine Learning Fundamentals', 'Introduction to ML algorithms and tools.', '2026-08-20 09:00:00+00', '2026-08-20 12:00:00+00', '770e8400-e29b-41d4-a716-446655440010'::uuid, 250, '660e8400-e29b-41d4-a716-446655440004'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440019'::uuid, 'Deep Learning Workshop', 'Practical deep learning with TensorFlow.', '2026-08-20 14:00:00+00', '2026-08-20 17:00:00+00', '770e8400-e29b-41d4-a716-446655440011'::uuid, 60, '660e8400-e29b-41d4-a716-446655440004'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440020'::uuid, 'AI Ethics Panel', 'Discussion on ethical AI development.', '2026-08-21 09:00:00+00', '2026-08-21 11:00:00+00', '770e8400-e29b-41d4-a716-446655440010'::uuid, 250, '660e8400-e29b-41d4-a716-446655440004'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440021'::uuid, 'NLP Applications', 'Natural Language Processing use cases.', '2026-08-21 14:00:00+00', '2026-08-21 17:00:00+00', '770e8400-e29b-41d4-a716-446655440012'::uuid, 60, '660e8400-e29b-41d4-a716-446655440004'::uuid, NOW(), NOW());
 
 -- Mobile Dev Workshop Toamasina
-INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
+INSERT INTO event_session (id, title, description, start_time, end_time, room_id, capacity, event_id, created_at, updated_at) VALUES
 ('aa0e8400-e29b-41d4-a716-446655440022'::uuid, 'Flutter Basics', 'Getting started with Flutter development.', '2026-09-05 10:00:00+00', '2026-09-05 13:00:00+00', '770e8400-e29b-41d4-a716-446655440013'::uuid, 120, '660e8400-e29b-41d4-a716-446655440005'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440023'::uuid, 'React Native Advanced', 'Advanced patterns in React Native.', '2026-09-05 14:00:00+00', '2026-09-05 17:00:00+00', '770e8400-e29b-41d4-a716-446655440014'::uuid, 40, '660e8400-e29b-41d4-a716-446655440005'::uuid, NOW(), NOW());
 
 -- Cloud & DevOps Day
-INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
+INSERT INTO event_session (id, title, description, start_time, end_time, room_id, capacity, event_id, created_at, updated_at) VALUES
 ('aa0e8400-e29b-41d4-a716-446655440024'::uuid, 'Docker & Kubernetes 101', 'Container orchestration fundamentals.', '2026-10-15 09:00:00+00', '2026-10-15 12:00:00+00', '770e8400-e29b-41d4-a716-446655440003'::uuid, 40, '660e8400-e29b-41d4-a716-446655440006'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440025'::uuid, 'CI/CD Pipeline Workshop', 'Build automated deployment pipelines.', '2026-10-15 14:00:00+00', '2026-10-15 17:00:00+00', '770e8400-e29b-41d4-a716-446655440003'::uuid, 40, '660e8400-e29b-41d4-a716-446655440006'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440026'::uuid, 'AWS Best Practices', 'Optimize your cloud infrastructure.', '2026-10-15 14:00:00+00', '2026-10-15 16:00:00+00', '770e8400-e29b-41d4-a716-446655440001'::uuid, 300, '660e8400-e29b-41d4-a716-446655440006'::uuid, NOW(), NOW());
 
 -- Global Web Development Summit (Online)
-INSERT INTO event_session (id, title, description, start_time, end_time, "roomId", capacity, "eventId", created_at, updated_at) VALUES
+INSERT INTO event_session (id, title, description, start_time, end_time, room_id, capacity, event_id, created_at, updated_at) VALUES
 ('aa0e8400-e29b-41d4-a716-446655440027'::uuid, 'Keynote: The State of Web 2026', 'Live stream keynote covering the latest web platform features.', '2026-05-20 09:00:00+00', '2026-05-20 10:30:00+00', NULL, NULL, '660e8400-e29b-41d4-a716-446655440007'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440028'::uuid, 'Workshop: Web Components in Production', 'Build reusable components with the native web platform.', '2026-05-20 11:00:00+00', '2026-05-20 13:00:00+00', NULL, NULL, '660e8400-e29b-41d4-a716-446655440007'::uuid, NOW(), NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440029'::uuid, 'Panel: The Future of JavaScript', 'Experts discuss where JavaScript is heading.', '2026-05-21 09:00:00+00', '2026-05-21 10:30:00+00', NULL, NULL, '660e8400-e29b-41d4-a716-446655440007'::uuid, NOW(), NOW()),
@@ -239,7 +239,7 @@ INSERT INTO event_session (id, title, description, start_time, end_time, "roomId
 ('aa0e8400-e29b-41d4-a716-446655440031'::uuid, 'Closing: What is Next for the Web', 'Closing keynote and community announcements.', '2026-05-22 16:00:00+00', '2026-05-22 18:00:00+00', NULL, NULL, '660e8400-e29b-41d4-a716-446655440007'::uuid, NOW(), NOW());
 
 -- ==================== PAST SESSION SPEAKERS ====================
-INSERT INTO event_session_speaker ("eventSessionId", "speakerId", created_at) VALUES
+INSERT INTO event_session_speaker (event_session_id, speaker_id, created_at) VALUES
 ('aa0e8400-e29b-41d4-a716-446655440001'::uuid, '880e8400-e29b-41d4-a716-446655440001'::uuid, NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440002'::uuid, '880e8400-e29b-41d4-a716-446655440001'::uuid, NOW()),
 ('aa0e8400-e29b-41d4-a716-446655440003'::uuid, '880e8400-e29b-41d4-a716-446655440002'::uuid, NOW()),
@@ -275,7 +275,7 @@ INSERT INTO event_session_speaker ("eventSessionId", "speakerId", created_at) VA
 ('aa0e8400-e29b-41d4-a716-446655440031'::uuid, '880e8400-e29b-41d4-a716-446655440001'::uuid, NOW());
 
 -- ==================== PAST QUESTIONS ====================
-INSERT INTO question (id, content, author_name, upvotes, "eventSessionId", created_at) VALUES
+INSERT INTO question (id, content, author_name, upvotes, event_session_id, created_at) VALUES
 ('bb0e8400-e29b-41d4-a716-446655440001'::uuid, 'What are the prerequisites for the React workshop?', 'Alice', 12, 'aa0e8400-e29b-41d4-a716-446655440002'::uuid, NOW()),
 ('bb0e8400-e29b-41d4-a716-446655440002'::uuid, 'Will the slides be available after the keynote?', 'Bob', 8, 'aa0e8400-e29b-41d4-a716-446655440001'::uuid, NOW()),
 ('bb0e8400-e29b-41d4-a716-446655440003'::uuid, 'Can you recommend resources for learning AI?', 'Charlie', 15, 'aa0e8400-e29b-41d4-a716-446655440005'::uuid, NOW()),
@@ -285,4 +285,4 @@ INSERT INTO question (id, content, author_name, upvotes, "eventSessionId", creat
 ('bb0e8400-e29b-41d4-a716-446655440007'::uuid, 'Can we access the workshop materials online?', 'Faly', 7, 'aa0e8400-e29b-41d4-a716-446655440024'::uuid, NOW());
 
 -- Update venue room counts
-UPDATE venue SET total_rooms = (SELECT COUNT(*) FROM room WHERE room."venueId" = venue.id);
+UPDATE venue SET total_rooms = (SELECT COUNT(*) FROM room WHERE room.venue_id = venue.id);

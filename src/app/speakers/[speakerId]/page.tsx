@@ -10,17 +10,18 @@ import { fromSpeakerEventSession } from "@/lib/utils/sessionMappers";
 import { sortScheduleSessions } from "@/lib/utils/sortSessions";
 import { ScheduleTable } from "@/components/sessions/ScheduleTable";
 import { TablePagination } from "@/components/ui/TablePagination";
-import { PageLoader } from "@/components/ui/Spinner";
+import { keepPreviousData } from "@tanstack/react-query";
 import { MessageCircle, ChevronUp, ExternalLink } from "lucide-react";
 import type { QuestionDto } from "@/types/dto";
 
 export default function SpeakerProfilePage() {
   const { speakerId } = useParams<{ speakerId: string }>();
 
-  const { data: speaker, isLoading } = useQuery({
+  const { data: speaker } = useQuery({
     queryKey: ["speaker", speakerId],
     queryFn: () => api.getSpeaker(speakerId),
     enabled: !!speakerId,
+    placeholderData: keepPreviousData,
   });
 
   const [sessPage, setSessPage] = useState(1);
@@ -47,6 +48,7 @@ export default function SpeakerProfilePage() {
       return results;
     },
     enabled: sessionIds.length > 0,
+    placeholderData: keepPreviousData,
   });
 
   const questionsWithSession = (questionsBySession ?? []).flatMap(
@@ -59,15 +61,30 @@ export default function SpeakerProfilePage() {
   const safeQuestionPage = Math.min(questionPage, totalQuestionPages);
   const paginatedQuestions = questionsWithSession.slice((safeQuestionPage - 1) * QUESTION_PAGE_SIZE, safeQuestionPage * QUESTION_PAGE_SIZE);
 
-  if (isLoading) {
-    return <PageLoader />;
-  }
-
   if (!speaker) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold text-ivory/80">SPEAKER NOT FOUND</h1>
-        <Link href="/speakers" className="text-sm text-ivory/55 hover:text-ivory underline">Back to speakers</Link>
+      <div className="pt-16 pb-24">
+        <div className="max-w-7xl mx-auto px-6 animate-pulse">
+          <div className="h-3 w-24 rounded-lg bg-white/5 mb-6" />
+          <div className="grid lg:grid-cols-12 gap-8 mb-12">
+            <div className="lg:col-span-4">
+              <div className="squircle-lg overflow-hidden flex flex-col p-6" style={{ background: "#222222E6" }}>
+                <div className="flex flex-col items-center">
+                  <div className="w-36 h-36 rounded-full bg-white/5 mb-3" />
+                  <div className="h-6 w-40 rounded-lg bg-white/5" />
+                </div>
+              </div>
+            </div>
+            <div className="lg:col-span-8">
+              <div className="squircle-lg p-6 flex flex-col" style={{ background: "#222222E6" }}>
+                <div className="h-3 w-48 rounded-full bg-white/5 mb-5" />
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="h-12 rounded-lg bg-white/5 mb-3" />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -82,7 +99,7 @@ export default function SpeakerProfilePage() {
   const paginatedSessions = sortedSessions.slice((safeSessPage - 1) * SESSION_PAGE_SIZE, safeSessPage * SESSION_PAGE_SIZE);
 
   return (
-    <div className="pt-16 pb-24">
+    <div className="pt-16 pb-24 animate-fade-in">
       <div className="max-w-7xl mx-auto px-6">
         <Link
           href="/speakers"

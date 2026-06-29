@@ -1,5 +1,5 @@
-import { PageLoader } from "@/components/ui/Spinner";
+import { SpeakersSkeleton } from "@/components/ui/skeletons/SpeakersSkeleton";
 
 export default function SpeakersLoading() {
-  return <PageLoader className="pt-24 pb-24" />;
+  return <SpeakersSkeleton />;
 }

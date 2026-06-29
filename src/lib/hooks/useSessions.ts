@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { useQuery, keepPreviousData, UseQueryOptions } from "@tanstack/react-query";
 import { api, GetEventSessionsParams } from "@/lib/api";
 import type { EventSessionSummaryDto, EventSessionDetailDto } from "@/types/dto";
 
@@ -19,6 +19,7 @@ export function useGetEventSessions(
     queryFn: () => api.getEventSessions(eventId, params),
     enabled: !!eventId,
     staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
     ...options,
   });
 }
@@ -32,6 +33,7 @@ export function useGetEventSession(
     queryFn: () => api.getEventSession(sessionId),
     enabled: !!sessionId,
     staleTime: 2 * 60 * 1000,
+    placeholderData: keepPreviousData,
     ...options,
   });
 }

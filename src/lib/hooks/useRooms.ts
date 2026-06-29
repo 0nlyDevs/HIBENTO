@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { useQuery, keepPreviousData, UseQueryOptions } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import type { RoomDto, EventSessionSummaryDto } from "@/types/dto";
 
@@ -18,6 +18,7 @@ export function useGetEventRooms(
     queryFn: () => api.getEventRooms(eventId),
     enabled: !!eventId,
     staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
     ...options,
   });
 }
@@ -32,6 +33,7 @@ export function useGetRoomSessions(
     queryFn: () => api.getRoomSessions(eventId, roomName),
     enabled: !!eventId && !!roomName,
     staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
     ...options,
   });
 }
