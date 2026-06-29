@@ -11,6 +11,8 @@ export const EVENT_IMAGES = [
   "/images/hibento-vibes-01.jpg",
   "/images/hibento-vibes-02.webp",
   "/images/hibento-vibes-03.jpg",
+  "/images/hibento-vibes-04.jpg",
+  "/images/hibento-vibes-05.jpg",
   "/images/liveqa.jpg",
 ] as const;
 
