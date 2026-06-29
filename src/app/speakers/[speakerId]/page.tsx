@@ -269,7 +269,7 @@ export default function SpeakerProfilePage() {
                 </div>
               ))}
             </div>
-          ) : sortedSessions.length > 0 ? (
+          ) : searchedSessions.length > 0 ? (
             <>
               <ScheduleTable
                 sessions={paginatedSessions}
