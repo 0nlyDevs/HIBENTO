@@ -131,6 +131,9 @@ export interface SearchResultDto {
   id: string;
   title: string;
   description: string | null;
+  startDate: string;
+  endDate: string;
+  isOnline: boolean;
   type: "event" | "session" | "speaker";
   score: number;
   match: {

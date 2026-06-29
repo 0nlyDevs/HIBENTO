@@ -98,6 +98,9 @@ export async function GET(
         id: s.item.event.id,
         title: s.item.event.title,
         description: s.item.event.description,
+        startDate: s.item.event.startDate.toISOString(),
+        endDate: s.item.event.endDate.toISOString(),
+        isOnline: s.item.event.isOnline,
         type: "event",
         score: Math.round(s.score * 1000) / 1000,
         match: {
