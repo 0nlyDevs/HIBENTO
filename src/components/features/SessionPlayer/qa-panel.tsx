@@ -217,12 +217,27 @@ export function QaPanel({
                 <span className="text-[10px] text-ivory/40">
                   {Math.round(duplicateWarning.similarity * 100)}% similar
                 </span>
-                <button
-                  type="submit"
-                  className="ml-auto text-[10px] label-mono font-semibold text-chartreuse/80 hover:text-chartreuse transition-colors cursor-pointer"
-                >
-                  Submit anyway
-                </button>
+                <div className="ml-auto flex items-center">
+                  {upvotedQuestions.has(duplicateWarning.similarQuestion.id) ? (
+                    <span className="text-[10px] text-ivory/40">Already upvoted</span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onUpvote(duplicateWarning.similarQuestion.id);
+                        setDuplicateWarning(null);
+                      }}
+                      disabled={upvotingQuestions.has(duplicateWarning.similarQuestion.id)}
+                      className="flex items-center gap-1 text-[10px] label-mono font-semibold text-chartreuse/80 hover:text-chartreuse transition-colors cursor-pointer disabled:opacity-40"
+                    >
+                      <ArrowUp size={12} />
+                      Upvote
+                      {duplicateWarning.similarQuestion.upvotes > 0 && (
+                        <span className="text-ivory/50">({duplicateWarning.similarQuestion.upvotes})</span>
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )}

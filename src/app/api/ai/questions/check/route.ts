@@ -3,7 +3,7 @@ import prisma from "@/lib/db/prisma";
 import { generateEmbedding, generateBatchEmbeddings, cosineSimilarity } from "@/ai";
 import type { DuplicateCheckResponseDto } from "@/types/dto";
 
-const SIMILARITY_THRESHOLD = 0.85;
+const SIMILARITY_THRESHOLD = 0.75;
 
 export async function POST(
   request: NextRequest,
