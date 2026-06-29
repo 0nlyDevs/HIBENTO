@@ -114,7 +114,7 @@ export async function GET(
         item,
         score: cosineSimilarity(queryVec, item.embedding),
       }))
-      .filter((s) => s.score > 0.3)
+      .filter((s) => s.score > 0.2)
       .sort((a, b) => b.score - a.score)
       .slice(0, limit);
 
