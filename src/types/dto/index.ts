@@ -151,6 +151,10 @@ export interface DuplicateCheckResponseDto {
   similarQuestion: QuestionDto | null;
 }
 
+export interface RecommendedEventDto extends SearchResultDto {
+  reasons: string[];
+}
+
 export interface PaginationDto {
   page: number;
   limit: number;
