@@ -50,7 +50,7 @@ export async function GET(
 
     const otherVecs = await generateBatchEmbeddings(otherTexts);
 
-    const scored = findMostSimilar(sourceVec, otherVecs, 0.4).slice(0, 5);
+    const scored = findMostSimilar(sourceVec, otherVecs, 0.3).slice(0, 6);
 
     const results: SearchResultDto[] = scored.map((s) => {
       const e = otherEvents[s.index];
